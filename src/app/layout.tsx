@@ -1,38 +1,46 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Figtree, Roboto_Serif } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 
-import { SiteHeader } from "@/components/site-header";
-import { AppProvider } from "@/context/app-context";
+import { SiteFooter } from "@/components/site/site-footer";
+import { SiteHeader } from "@/components/site/site-header";
+import { SiteUIProvider } from "@/context/site-ui-context";
+import { site } from "@/content/site";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const figtree = Figtree({
+  variable: "--font-figtree",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const robotoSerif = Roboto_Serif({
+  variable: "--font-roboto-serif",
   subsets: ["latin"],
+  axes: ["opsz"],
 });
 
 export const metadata: Metadata = {
-  title: "Baluti",
-  description: "Baluti",
+  metadataBase: new URL(site.url),
+  title: {
+    default: "Baluti & Co. Advocates — Law firm in Kampala, Uganda",
+    template: "%s | Baluti & Co. Advocates",
+  },
+  description:
+    "Baluti & Co. Advocates is a full-service law firm in Kampala serving individuals, businesses, and institutions across Uganda.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <ClerkProvider>
-      <html
-        lang="en"
-        className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-      >
-        <body className="flex min-h-full flex-col font-sans">
-          <AppProvider>
-            <SiteHeader />
-            <main className="flex flex-1 flex-col">{children}</main>
-          </AppProvider>
+      <html lang="en" className={`${figtree.variable} ${robotoSerif.variable}`}>
+        <body>
+          <SiteUIProvider>
+            <div className="overflow-x-clip">
+              <SiteHeader />
+              <main>{children}</main>
+              <SiteFooter />
+            </div>
+          </SiteUIProvider>
         </body>
       </html>
     </ClerkProvider>

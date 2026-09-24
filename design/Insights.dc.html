@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  input, textarea, select, button { font-family: inherit; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: 'Figtree', system-ui, sans-serif; }
+  a { color: #C8102E; text-decoration: none; }
+  a:hover { color: #97071F; }
+  ::selection { background: #C8102E; color: #fff; }
+</style>
+</helmet>
+
+<div style="font-family:'Figtree',system-ui,sans-serif;color:#000000;background:#FAFAF9;overflow-x:clip;line-height:1.6">
+
+  <div id="site-header-sticky" style="position:sticky;top:0;z-index:60"><dc-import name="SiteHeader" current="insights" hint-size="100%,148px"></dc-import></div>
+
+  <!-- PAGE HERO -->
+  <section data-screen-label="Insights hero" style="position:relative;overflow:hidden;background:#000000;color:#fff;padding:clamp(56px,7vw,104px) clamp(16px,4vw,40px)">
+    <div aria-hidden="true" style="position:absolute;left:88%;top:6%;width:min(760px,121vw);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(255,255,255,.10);pointer-events:none"></div>
+    <div aria-hidden="true" style="position:absolute;left:88%;top:6%;width:min(520px,83vw);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(200,16,46,.28);pointer-events:none"></div>
+    <div aria-hidden="true" style="position:absolute;left:88%;top:6%;width:min(280px,44vw);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(255,255,255,.07);pointer-events:none"></div>
+    <div style="position:relative;max-width:1280px;margin:0 auto">
+      <div style="font-size:13px;color:rgba(255,255,255,.55);margin-bottom:22px"><a href="Home.dc.html" style="color:rgba(255,255,255,.55)">Home</a> &nbsp;/&nbsp; <span style="color:#C8102E">Insights</span></div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+        <span style="width:34px;height:1px;background:#C8102E"></span>
+        <span style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#C8102E;font-weight:600">News &amp; insights</span>
+      </div>
+      <h1 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(2.4rem,5vw,4rem);line-height:1.05;margin:0 0 20px;max-width:20ch">Perspectives on the law that affects you</h1>
+      <p style="font-size:clamp(1.05rem,1.5vw,1.25rem);color:rgba(255,255,255,.74);max-width:58ch;margin:0">Analysis, commentary, and firm news from the advocates at Baluti &amp; Co. — written to keep you informed and ahead.</p>
+    </div>
+  </section>
+
+  <!-- FEATURED -->
+  <section style="background:#FAFAF9;padding:clamp(56px,7vw,88px) clamp(16px,4vw,40px) clamp(32px,4vw,48px)">
+    <div style="max-width:1280px;margin:0 auto">
+      <a href="Article.dc.html" style="display:grid;grid-template-columns:{{ featCols }};gap:0;border:1px solid rgba(0,0,0,.1);background:#fff;overflow:hidden;transition:box-shadow .3s" style-hover="{{ featHover }}">
+        <div style="position:relative;min-height:300px;overflow:hidden">
+          <img src="https://images.unsplash.com/photo-1505664194779-8beaceb93744?w=1200&q=80" alt="Gavel and law books" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />
+        </div>
+        <div style="padding:clamp(28px,3.5vw,48px);display:flex;flex-direction:column;justify-content:center">
+          <span style="align-self:flex-start;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:#C8102E;border:1px solid rgba(158,27,47,.4);padding:5px 11px;border-radius:100px;margin-bottom:20px">Featured · Employment</span>
+          <h2 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(1.5rem,2.6vw,2.1rem);line-height:1.2;margin:0 0 16px">The Employment (Amendment) Act, 2025: what every Ugandan employer must change now</h2>
+          <p style="color:#5A6570;font-size:15.5px;margin:0 0 22px;max-width:52ch">The most significant reform of Uganda's labour law since 2006 widens who counts as an employee, reshapes termination, and raises the cost of getting it wrong. Here's what to act on.</p>
+          <div style="display:flex;align-items:center;gap:14px">
+            <span style="width:40px;height:40px;border-radius:50%;background:linear-gradient(165deg,#EAEAEA,#D0D0D0);position:relative;overflow:hidden;flex:0 0 auto">
+              <span style="position:absolute;left:50%;top:20%;width:38%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:#BEBEBE"></span>
+              <span style="position:absolute;left:50%;bottom:-20%;width:70%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:#BEBEBE"></span>
+            </span>
+            <div style="font-size:13.5px"><div style="font-weight:600;color:#000000">Emmanuel Baluti</div><div style="color:#8A8A8A">June 2026 · 7 min read</div></div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- FILTER + GRID -->
+  <section style="background:#FAFAF9;padding:clamp(24px,3vw,40px) clamp(16px,4vw,40px) clamp(64px,8vw,110px)">
+    <div style="max-width:1280px;margin:0 auto">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:40px">
+        <sc-for list="{{ categories }}" as="c" hint-placeholder-count="5">
+          <span style="border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};padding:9px 18px;border-radius:100px;font-size:13.5px;font-weight:500;cursor:pointer">{{ c.label }}</span>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px">
+        <sc-for list="{{ articles }}" as="p" hint-placeholder-count="6">
+          <a href="Article.dc.html" style="display:flex;flex-direction:column;background:#fff;border:1px solid rgba(0,0,0,.09);overflow:hidden;transition:transform .3s,box-shadow .3s" style-hover="{{ cardHover }}">
+            <div style="position:relative;height:230px;background-color:#EAEAEA;background-image:url({{ p.img }});background-size:cover;background-position:center">
+              <span style="position:absolute;top:14px;left:14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#fff;background:#C8102E;padding:6px 12px;border-radius:3px">{{ p.cat }}</span>
+            </div>
+            <div style="padding:22px 24px 24px;display:flex;flex-direction:column;flex:1">
+              <h3 style="font-family:'Roboto Serif',Georgia,serif;font-weight:600;font-size:1.22rem;line-height:1.3;margin:0 0 10px">{{ p.title }}</h3>
+              <p style="color:#5A6570;font-size:14px;margin:0 0 auto">{{ p.excerpt }}</p>
+              <div style="color:#8A8A8A;font-size:13px;margin-top:14px">{{ p.meta }}</div>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+      <div style="text-align:center;margin-top:52px">
+        <a href="Insights.dc.html" style="{{ ctaLoad }}" style-hover="{{ ghostHover }}">Load more articles</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section style="background:#000000;color:#fff;padding:clamp(56px,7vw,96px) clamp(16px,4vw,40px)">
+    <div style="max-width:920px;margin:0 auto;text-align:center">
+      <div style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#C8102E;font-weight:600;margin-bottom:16px">Stay informed</div>
+      <h2 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(1.8rem,3.4vw,2.7rem);margin:0 0 16px;line-height:1.14">Get our insights in your inbox</h2>
+      <p style="color:rgba(255,255,255,.7);font-size:16px;margin:0 0 32px">Occasional, considered updates on the legal developments that matter to you. No noise.</p>
+      <form onSubmit="{{ onSubmit }}" style="display:flex;gap:12px;max-width:520px;margin:0 auto;flex-wrap:wrap">
+        <input required type="email" placeholder="Your email address" value="{{ email }}" onChange="{{ onEmail }}" style="flex:1;min-width:220px;background:#26262B;border:1px solid rgba(255,255,255,.16);color:#fff;padding:15px;font-size:15px;border-radius:2px" />
+        <button type="submit" style="background:#C8102E;color:#ffffff;border:none;padding:15px 28px;font-weight:600;font-size:15px;cursor:pointer;border-radius:2px;transition:transform .25s" style-hover="{{ btnHover }}">{{ subLabel }}</button>
+      </form>
+    </div>
+  </section>
+
+  <dc-import name="SiteFooter" hint-size="100%,440px"></dc-import>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { isMobile: false, narrow: false, email: '', subscribed: false }; }
+  componentDidMount() {
+    this._onResize = () => { const w = window.innerWidth; const m = w < 860, nar = w < 640; if (m !== this.state.isMobile || nar !== this.state.narrow) this.setState({ isMobile: m, narrow: nar }); };
+    this._onResize(); window.addEventListener('resize', this._onResize);
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this._onResize); }
+  renderVals() {
+    const cats = ['All', 'Data Protection', 'Employment', 'Property', 'Corporate'];
+    const categories = cats.map((label, i) => ({
+      label,
+      bg: i === 0 ? '#000000' : 'transparent',
+      color: i === 0 ? '#fff' : '#5A6570',
+      border: i === 0 ? '#000000' : 'rgba(0,0,0,.2)'
+    }));
+    return {
+      featCols: this.state.isMobile ? '1fr' : '1fr 1.1fr',
+      categories,
+      articles: [
+        { cat: 'Employment', img: 'https://images.unsplash.com/photo-1505664194779-8beaceb93744?w=800&q=80', title: 'The Employment (Amendment) Act, 2025: what employers must change now', excerpt: 'The biggest overhaul of Uganda\u2019s labour framework since 2006 — broader definition of \u201cemployee\u201d, new termination grounds, and greater exposure for non-compliance.', meta: 'June 2026 · 7 min read' },
+        { cat: 'Data Protection', img: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&q=80', title: 'Cross-border data transfers: lessons from the PDPO\u2019s orders against Google and Meta', excerpt: 'Why blanket reliance on global privacy policies no longer satisfies Section 19 of the Data Protection and Privacy Act.', meta: 'May 2026 · 6 min read' },
+        { cat: 'Data Protection', img: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&q=80', title: 'Health facilities must now appoint DPOs: the Ministry of Health directive explained', excerpt: 'What the April 2026 mandate means for hospitals, clinics and the data they hold.', meta: 'May 2026 · 5 min read' },
+        { cat: 'Employment', img: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80', title: 'New duties for employers: breastfeeding facilities and recruitment-agency licensing', excerpt: 'A closer look at the day-one obligations introduced by the 2025 amendments.', meta: 'April 2026 · 6 min read' },
+        { cat: 'Property', img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80', title: 'Joint tenancy vs tenancy in common: when registration overrides intention', excerpt: 'How Uganda\u2019s land registration regime can defeat what co-owners believed they had agreed.', meta: 'March 2026 · 8 min read' },
+        { cat: 'Corporate', img: 'https://images.unsplash.com/photo-1479142506502-19b3a3b7ff33?w=800&q=80', title: 'PDPO secures its first criminal conviction: the compliance takeaways', excerpt: 'The conviction of a lending director signals a shift from awareness-building to active enforcement.', meta: 'February 2026 · 4 min read' }
+      ],
+      email: this.state.email,
+      subLabel: this.state.subscribed ? 'Subscribed ✓' : 'Subscribe',
+      onEmail: (e) => this.setState({ email: e.target.value }),
+      onSubmit: (e) => { e.preventDefault(); this.setState({ subscribed: true }); },
+      cardHover: { transform: 'translateY(-4px)', boxShadow: '0 24px 44px -24px rgba(20,20,24,.4)' },
+      featHover: { boxShadow: '0 24px 48px -28px rgba(20,20,24,.45)' },
+      ghostHover: { borderColor: '#C8102E', color: '#C8102E' },
+      btnHover: { transform: 'translateY(-2px)', background: '#E11B3C' },
+      ctaLoad: (this.state.narrow
+        ? { display: 'block', width: '90%', margin: '0 auto', textAlign: 'center', border: '1px solid rgba(0,0,0,.25)', color: '#000000', padding: '15px 32px', fontWeight: 600, fontSize: '15px', borderRadius: '2px' }
+        : { display: 'inline-block', border: '1px solid rgba(0,0,0,.25)', color: '#000000', padding: '15px 32px', fontWeight: 600, fontSize: '15px', borderRadius: '2px' })
+    };
+  }
+}
+</script>
+</body>
+</html>

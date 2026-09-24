@@ -1,10 +1,8 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware } from "@clerk/nextjs/server";
 
-const isProtectedRoute = createRouteMatcher(["/dashboard(.*)"]);
-
-export default clerkMiddleware(async (auth, req) => {
-  if (isProtectedRoute(req)) await auth.protect();
-});
+// Every marketing page is public. To protect a route later, match it with
+// createRouteMatcher and call `await auth.protect()` for it here.
+export default clerkMiddleware();
 
 export const config = {
   matcher: [

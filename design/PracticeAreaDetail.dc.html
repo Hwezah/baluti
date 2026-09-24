@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  input, textarea, select, button { font-family: inherit; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: 'Figtree', system-ui, sans-serif; }
+  a { color: #C8102E; text-decoration: none; }
+  a:hover { color: #97071F; }
+  ::selection { background: #C8102E; color: #fff; }
+</style>
+</helmet>
+
+<div style="font-family:'Figtree',system-ui,sans-serif;color:#000000;background:#FAFAF9;overflow-x:clip;line-height:1.6">
+
+  <div id="site-header-sticky" style="position:sticky;top:0;z-index:60"><dc-import name="SiteHeader" current="practice" hint-size="100%,148px"></dc-import></div>
+
+  <!-- HERO -->
+  <section data-screen-label="Practice detail hero" style="position:relative;overflow:hidden;background:#000000;color:#fff;padding:clamp(52px,7vw,92px) clamp(16px,4vw,40px)">
+    <div aria-hidden="true" style="position:absolute;left:88%;top:6%;width:min(760px,121vw);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(255,255,255,.10);pointer-events:none"></div>
+    <div aria-hidden="true" style="position:absolute;left:88%;top:6%;width:min(520px,83vw);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(200,16,46,.28);pointer-events:none"></div>
+    <div aria-hidden="true" style="position:absolute;left:88%;top:6%;width:min(280px,44vw);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(255,255,255,.07);pointer-events:none"></div>
+    <div style="position:relative;max-width:1280px;margin:0 auto">
+      <div style="font-size:13px;color:rgba(255,255,255,.55);margin-bottom:22px"><a href="Home.dc.html" style="color:rgba(255,255,255,.55)">Home</a> &nbsp;/&nbsp; <a href="PracticeAreas.dc.html" style="color:rgba(255,255,255,.55)">Practice Areas</a> &nbsp;/&nbsp; <span style="color:#C8102E">{{ area.title }}</span></div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+        <span style="width:34px;height:1px;background:#C8102E"></span>
+        <span style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#C8102E;font-weight:600">{{ area.group }}</span>
+      </div>
+      <h1 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(2.3rem,4.6vw,3.7rem);line-height:1.06;margin:0 0 20px;max-width:20ch">{{ area.title }}</h1>
+      <p style="font-size:clamp(1.05rem,1.5vw,1.25rem);color:rgba(255,255,255,.74);max-width:60ch;margin:0">{{ area.intro }}</p>
+    </div>
+  </section>
+
+  <!-- BODY + SIDEBAR -->
+  <section style="background:#FAFAF9;padding:clamp(56px,7vw,96px) clamp(16px,4vw,40px)">
+    <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:{{ bodyCols }};gap:clamp(36px,5vw,64px);align-items:start">
+      <div>
+        <h2 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(1.6rem,2.8vw,2.2rem);margin:0 0 18px">How we can help</h2>
+        <p style="color:#3a4652;font-size:16.5px;margin:0 0 18px">{{ area.overview1 }}</p>
+        <p style="color:#5A6570;font-size:16px;margin:0 0 40px">{{ area.overview2 }}</p>
+
+        <h3 style="font-family:'Roboto Serif',Georgia,serif;font-weight:600;font-size:1.4rem;margin:0 0 22px">Our services include</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2px;background:rgba(0,0,0,.1);border:1px solid rgba(0,0,0,.1);margin-bottom:44px">
+          <sc-for list="{{ area.services }}" as="s" hint-placeholder-count="6">
+            <div style="background:#FAFAF9;padding:22px 24px;display:flex;gap:14px;align-items:center">
+              <span style="flex:0 0 auto;width:28px;height:28px;border-radius:50%;background:rgba(158,27,47,.09);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#C8102E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+              <span style="font-size:15px;color:#31414F">{{ s }}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="background:#000000;color:#fff;padding:clamp(28px,3.5vw,44px)">
+          <h3 style="font-family:'Roboto Serif',Georgia,serif;font-weight:600;font-size:1.4rem;margin:0 0 26px">Our approach</h3>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:28px">
+            <sc-for list="{{ steps }}" as="p" hint-placeholder-count="4">
+              <div style="border-top:2px solid #C8102E;padding-top:16px">
+                <span style="font-family:'Roboto Serif',Georgia,serif;font-size:1.2rem;color:#C8102E">0{{ p.n }}</span>
+                <h4 style="font-family:'Roboto Serif',Georgia,serif;font-weight:600;font-size:1.1rem;margin:8px 0 8px">{{ p.title }}</h4>
+                <p style="color:rgba(255,255,255,.66);font-size:13.5px;margin:0">{{ p.body }}</p>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIDEBAR -->
+      <aside style="display:flex;flex-direction:column;gap:24px;position:sticky;top:100px">
+        <div style="background:#fff;border:1px solid rgba(0,0,0,.1);padding:28px">
+          <h3 style="font-family:'Roboto Serif',Georgia,serif;font-weight:600;font-size:1.2rem;margin:0 0 6px">Speak to our team</h3>
+          <p style="color:#5A6570;font-size:14px;margin:0 0 18px">Book a free, confidential consultation about your matter.</p>
+          <a href="Contact.dc.html" style="display:block;text-align:center;background:#C8102E;color:#ffffff;padding:13px;font-weight:600;font-size:14.5px;border-radius:2px;transition:transform .25s" style-hover="{{ btnHover }}">Free consultation</a>
+          <a href="tel:+256414344124" style="display:block;text-align:center;color:#000000;font-weight:600;font-size:14.5px;margin-top:12px">+256 414 344 124</a>
+          <a href="tel:+256752605525" style="display:block;text-align:center;color:#000000;font-weight:600;font-size:14.5px;margin-top:6px">+256 752 605 525</a>
+        </div>
+        <div style="background:#F0EFEC;border:1px solid rgba(0,0,0,.1);padding:28px">
+          <h3 style="font-family:'Roboto Serif',Georgia,serif;font-weight:600;font-size:1.15rem;margin:0 0 16px">Related areas</h3>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ relatedAreas }}" as="r" hint-placeholder-count="4">
+              <a href="PracticeAreaDetail.dc.html?area={{ r.slug }}" style="padding:11px 0;border-bottom:1px solid rgba(0,0,0,.1);color:#31414F;font-size:14.5px;display:flex;justify-content:space-between;align-items:center" style-hover="{{ relHover }}">{{ r.title }} <span style="color:#C8102E;display:inline-flex;align-items:center"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></span></a>
+            </sc-for>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- LEAD ATTORNEYS -->
+  <section style="background:#F0EFEC;padding:clamp(56px,7vw,96px) clamp(16px,4vw,40px)">
+    <div style="max-width:1280px;margin:0 auto">
+      <div style="margin-bottom:40px">
+        <div style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#C8102E;font-weight:600;margin-bottom:14px">Key contacts</div>
+        <h2 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(1.7rem,3vw,2.4rem);margin:0">Advocates in this practice</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:26px">
+        <sc-for list="{{ leads }}" as="p" hint-placeholder-count="3">
+          <a href="AttorneyBio.dc.html" style="display:flex;gap:18px;align-items:center;background:#fff;border:1px solid rgba(0,0,0,.09);padding:20px;transition:box-shadow .3s" style-hover="{{ cardHover }}">
+            <span style="width:76px;height:76px;flex:0 0 auto;border-radius:50%;background:linear-gradient(165deg,#EAEAEA,#D0D0D0);position:relative;overflow:hidden">
+              <span style="position:absolute;left:50%;top:20%;width:36%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:#BEBEBE"></span>
+              <span style="position:absolute;left:50%;bottom:-20%;width:66%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:#BEBEBE"></span>
+            </span>
+            <div>
+              <h3 style="font-family:'Roboto Serif',Georgia,serif;font-weight:600;font-size:1.15rem;margin:0 0 3px">{{ p.name }}</h3>
+              <div style="color:#C8102E;font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:600">{{ p.role }}</div>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section style="background:#FAFAF9;padding:clamp(56px,7vw,96px) clamp(16px,4vw,40px);border-top:1px solid rgba(0,0,0,.08)">
+    <div style="max-width:820px;margin:0 auto;text-align:center">
+      <h2 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(1.9rem,3.4vw,2.7rem);margin:0 0 20px;line-height:1.12">Facing a matter in this area?</h2>
+      <p style="color:#5A6570;font-size:16px;margin:0 0 32px">Tell us what you're dealing with and we'll advise on the best way forward.</p>
+      <a href="Contact.dc.html" style="{{ ctaGet }}" style-hover="{{ ctaHover }}">Get in touch</a>
+    </div>
+  </section>
+
+  <dc-import name="SiteFooter" hint-size="100%,440px"></dc-import>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900},&quot;area&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;litigation&quot;,&quot;options&quot;:[&quot;litigation&quot;,&quot;banking&quot;,&quot;business&quot;,&quot;ma&quot;,&quot;tax&quot;,&quot;labour&quot;,&quot;family&quot;,&quot;property&quot;,&quot;ip&quot;],&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { isMobile: false, narrow: false, slug: props.area || 'litigation' };
+  }
+  componentDidMount() {
+    try {
+      const q = new URLSearchParams(window.location.search).get('area');
+      if (q && Component.AREAS[q]) this.setState({ slug: q });
+    } catch (e) {}
+    this._onResize = () => { const w = window.innerWidth; const m = w < 900, nar = w < 640; if (m !== this.state.isMobile || nar !== this.state.narrow) this.setState({ isMobile: m, narrow: nar }); };
+    this._onResize(); window.addEventListener('resize', this._onResize);
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this._onResize); }
+  renderVals() {
+    const AREAS = Component.AREAS;
+    const slug = AREAS[this.state.slug] ? this.state.slug : 'litigation';
+    const area = AREAS[slug];
+    const defaultSteps = [
+      { n: 1, title: 'Listen', body: 'We begin by understanding your situation, your goals, and what a good outcome looks like for you.' },
+      { n: 2, title: 'Advise', body: 'We set out the law and your options clearly, so you can make informed decisions.' },
+      { n: 3, title: 'Act', body: 'We move deliberately on your behalf, keeping you informed at every stage of the matter.' },
+      { n: 4, title: 'Deliver', body: 'We pursue the result that best protects your interests, and stand behind our work.' }
+    ];
+    const defaultLeads = [
+      { name: 'Emmanuel Baluti', role: 'Founder & Principal Attorney' },
+      { name: 'Name', role: 'Senior Associate' },
+      { name: 'Name', role: 'Associate' }
+    ];
+    const relatedAreas = (area.related || [])
+      .filter(s => AREAS[s])
+      .map(s => ({ title: AREAS[s].title, slug: s }));
+    return {
+      bodyCols: this.state.isMobile ? '1fr' : '1.7fr 1fr',
+      ctaGet: (this.state.narrow
+        ? { display: 'block', width: '90%', margin: '0 auto', textAlign: 'center', background: '#000000', color: '#fff', padding: '15px 32px', fontWeight: 600, fontSize: '15px', borderRadius: '2px', transition: 'background .25s' }
+        : { display: 'inline-block', background: '#000000', color: '#fff', padding: '15px 32px', minWidth: '280px', textAlign: 'center', fontWeight: 600, fontSize: '15px', borderRadius: '2px', transition: 'background .25s' }),
+      area,
+      steps: area.steps || defaultSteps,
+      leads: area.leads || defaultLeads,
+      relatedAreas,
+      btnHover: { transform: 'translateY(-2px)', background: '#E11B3C' },
+      ctaHover: { background: '#C8102E' },
+      cardHover: { boxShadow: '0 20px 40px -24px rgba(20,20,24,.4)' },
+      relHover: { color: '#C8102E' }
+    };
+  }
+}
+
+Component.AREAS = {
+  litigation: {
+    group: 'Disputes & Litigation',
+    title: 'Litigation and Dispute Resolution',
+    intro: 'When a dispute cannot be avoided, you want advocates who are strategic, prepared, and unafraid. We represent clients through negotiation, arbitration, and the courtroom.',
+    overview1: 'Disputes are disruptive, costly, and personal. Our litigation team combines sharp legal analysis with practical judgement — resolving matters efficiently where possible, and fighting hard where necessary.',
+    overview2: 'From commercial disputes and debt recovery to employment and property conflicts, we guide clients through every stage of the process, always with a clear view of the outcome that matters most to you.',
+    services: [
+      'Commercial and contract disputes', 'Debt recovery and enforcement',
+      'Arbitration and mediation', 'Employment and labour disputes',
+      'Property and land litigation', 'Injunctions and urgent relief',
+      'Appeals and judicial review', 'Regulatory and administrative hearings'
+    ],
+    related: ['labour', 'property', 'business', 'banking'],
+    steps: [
+      { n: 1, title: 'Assess', body: 'We review the facts, the law, and the realistic range of outcomes.' },
+      { n: 2, title: 'Strategise', body: 'We agree a clear plan — settlement, arbitration, or trial.' },
+      { n: 3, title: 'Advocate', body: 'We represent you firmly and prepare every matter to win.' },
+      { n: 4, title: 'Resolve', body: 'We pursue the result that best protects your interests.' }
+    ]
+  },
+  banking: {
+    group: 'Corporate & Commercial',
+    title: 'Banking and Financial Services',
+    intro: 'Financial institutions and borrowers operate in a demanding regulatory environment. We advise banks, lenders, and businesses on financing, compliance, and the transactions that keep capital moving.',
+    overview1: 'From syndicated facilities to everyday lending, our banking practice combines technical precision with commercial awareness. We structure and document transactions that protect our clients and withstand scrutiny.',
+    overview2: 'We act for licensed institutions, microfinance providers, and corporate borrowers — guiding them through Bank of Uganda regulation, security arrangements, and enforcement when facilities fall into default.',
+    services: [
+      'Loan and facility agreements', 'Security and collateral documentation',
+      'Regulatory and licensing compliance', 'Debt recovery and enforcement',
+      'Project and asset finance', 'Syndicated and cross-border lending',
+      'Restructuring of distressed facilities', 'Advice on Bank of Uganda requirements'
+    ],
+    related: ['business', 'ma', 'tax', 'litigation']
+  },
+  business: {
+    group: 'Corporate & Commercial',
+    title: 'Business',
+    intro: 'Every business decision carries legal consequences. We are the counsel companies turn to for formation, governance, contracts, and the day-to-day advice that keeps them running.',
+    overview1: 'We act as outside counsel to companies of every size — from start-ups finding their footing to established enterprises managing complex operations. Our advice is practical, commercial, and delivered in plain language.',
+    overview2: 'Whether you are incorporating, negotiating a supply contract, resolving a shareholder question, or expanding into new markets, we help you move with confidence and stay on the right side of the law.',
+    services: [
+      'Company formation and structuring', 'Shareholder and partnership agreements',
+      'Commercial contracts and negotiations', 'Corporate governance and compliance',
+      'Joint ventures and strategic alliances', 'Regulatory and licensing matters',
+      'Company secretarial support', 'Ongoing outside general counsel'
+    ],
+    related: ['ma', 'banking', 'tax', 'litigation']
+  },
+  ma: {
+    group: 'Corporate & Commercial',
+    title: 'Mergers and Acquisitions',
+    intro: 'Deals are won or lost in the detail. We guide buyers and sellers through every stage of a transaction — from first approach to completion — protecting value and managing risk throughout.',
+    overview1: 'Our M&A practice supports acquisitions, disposals, mergers, and restructurings across sectors. We combine rigorous due diligence with sharp negotiation to get deals done on the right terms.',
+    overview2: 'We coordinate the legal, regulatory, and commercial threads of a transaction, working alongside your other advisers to keep momentum without compromising on the protections that matter.',
+    services: [
+      'Due diligence and risk assessment', 'Transaction structuring',
+      'Sale and purchase agreements', 'Shareholder and investment agreements',
+      'Regulatory and competition clearances', 'Warranties, indemnities and disclosure',
+      'Post-completion integration', 'Corporate restructuring'
+    ],
+    related: ['business', 'banking', 'tax', 'litigation']
+  },
+  tax: {
+    group: 'Corporate & Commercial',
+    title: 'Tax',
+    intro: 'Tax touches every transaction and every business. We help clients plan efficiently, stay compliant, and resolve disputes with the revenue authority when they arise.',
+    overview1: 'Our tax practice offers clear, commercial advice on the tax dimensions of doing business in Uganda — from structuring transactions to managing obligations and defending assessments.',
+    overview2: 'We advise on income tax, VAT, and duties, and represent clients in engagements and disputes with the Uganda Revenue Authority, always seeking the most efficient and defensible position.',
+    services: [
+      'Tax planning and structuring', 'VAT and income tax advisory',
+      'Transaction tax advice', 'URA assessments and objections',
+      'Tax dispute resolution and appeals', 'Compliance and filing support',
+      'Withholding tax matters', 'Cross-border and transfer pricing'
+    ],
+    related: ['business', 'ma', 'banking', 'litigation']
+  },
+  labour: {
+    group: 'People & Workplace',
+    title: 'Labour and Employment',
+    intro: 'The relationship between employer and employee is governed by law at every turn. We advise both sides on their rights, obligations, and the disputes that can arise.',
+    overview1: 'Our employment practice supports employers in building compliant, well-run workplaces — and represents employees when their rights are at stake. We handle the sensitive and the contentious with equal care.',
+    overview2: 'From drafting contracts and policies to managing terminations and defending claims, we help clients navigate the Employment Act and resolve workplace disputes efficiently.',
+    services: [
+      'Employment contracts and policies', 'Terminations and redundancies',
+      'Disciplinary and grievance processes', 'Workplace investigations',
+      'Employment disputes and claims', 'Executive and severance arrangements',
+      'Compliance with the Employment Act', 'Collective and union matters'
+    ],
+    related: ['litigation', 'family', 'business', 'property']
+  },
+  family: {
+    group: 'People & Workplace',
+    title: 'Family',
+    intro: 'Family matters are among the most personal a person can face. We offer sensitive, discreet guidance through separation, custody, succession, and the decisions that shape family life.',
+    overview1: 'Our family practice combines legal skill with genuine compassion. We understand that behind every matter is a family, and we work to resolve issues with as little conflict as possible.',
+    overview2: 'We advise on marriage and divorce, child custody and maintenance, succession and estate matters, and the agreements that protect families and the assets they build together.',
+    services: [
+      'Divorce and separation', 'Child custody and maintenance',
+      'Division of matrimonial property', 'Wills and succession planning',
+      'Estate administration', 'Prenuptial and family agreements',
+      'Adoption and guardianship', 'Family dispute mediation'
+    ],
+    related: ['property', 'litigation', 'labour']
+  },
+  property: {
+    group: 'Property & Real Estate',
+    title: 'Property',
+    intro: 'Land and property are among the most valuable assets people and businesses own — and among the most disputed. We advise on every stage of a property matter, from acquisition to conflict.',
+    overview1: 'Our property practice supports individuals, developers, and businesses in buying, selling, leasing, and developing land. We conduct thorough due diligence and document transactions that stand up over time.',
+    overview2: 'We also act in land disputes — a common and complex feature of the Ugandan landscape — guiding clients through title, boundary, and ownership conflicts with clarity and resolve.',
+    services: [
+      'Sale and purchase of land', 'Title searches and due diligence',
+      'Leases and tenancy agreements', 'Property development and financing',
+      'Land disputes and litigation', 'Conveyancing and transfers',
+      'Landlord and tenant matters', 'Mortgages and securities'
+    ],
+    related: ['business', 'family', 'litigation', 'banking']
+  },
+  ip: {
+    group: 'Intellectual Property',
+    title: 'Intellectual Property',
+    intro: 'Ideas, brands, and creative work are valuable assets that deserve protection. We help clients secure, manage, and enforce their intellectual property in Uganda and beyond.',
+    overview1: 'Our IP practice helps businesses and creators protect what makes them distinctive — their names, inventions, designs, and content — and turn those assets into commercial value.',
+    overview2: 'We handle registration, licensing, and enforcement, acting decisively when a client\u2019s rights are infringed and advising on how to build IP into a broader commercial strategy.',
+    services: [
+      'Trademark registration and strategy', 'Copyright protection and advice',
+      'Patents and industrial designs', 'IP licensing and assignments',
+      'Enforcement and anti-counterfeiting', 'IP due diligence in transactions',
+      'Brand-protection strategy', 'Domain and online IP matters'
+    ],
+    related: ['business', 'ma', 'litigation']
+  }
+};
+</script>
+</body>
+</html>

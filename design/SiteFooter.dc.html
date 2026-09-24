@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&display=swap" rel="stylesheet">
+<style> html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; } a { text-decoration: none; } </style>
+</helmet>
+
+<footer style="background:#000000;color:rgba(255,255,255,.62);padding:clamp(56px,6vw,84px) clamp(16px,4vw,40px) 0;font-family:'Figtree',system-ui,sans-serif;line-height:1.6">
+  <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:{{ footerCols }};gap:40px 44px;padding-bottom:52px;border-bottom:1px solid rgba(255,255,255,.1)">
+    <div style="grid-column:{{ brandSpan }};text-align:{{ ta }}">
+      <div style="display:inline-flex;flex-direction:column;line-height:1;margin-bottom:20px">
+        <span style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:20px;letter-spacing:.01em;color:#C8102E;border-bottom:1.5px solid #C8102E;padding-bottom:3px">BALUTI &amp; Co.</span>
+        <span style="display:flex;justify-content:space-between;font-size:10.5px;color:#fff;font-weight:600;margin-top:4px" aria-label="Advocates"><span>A</span><span>D</span><span>V</span><span>O</span><span>C</span><span>A</span><span>T</span><span>E</span><span>S</span></span>
+      </div>
+      <p style="font-size:14.5px;margin:0 0 20px">Applying law to facts. Caring, dedicated representation for individuals and businesses across Uganda and the region.</p>
+      <div style="font-size:14px;color:rgba(255,255,255,.5);margin:0 0 22px;line-height:1.7">
+        Plot 111 Semawata Road, Ntinda, Kampala<br/>
+        Mon – Fri 8:00–18:00 · Sat 10:00–16:00
+      </div>
+      <div style="display:flex;gap:12px;justify-content:{{ socialJustify }}">
+        <sc-for list="{{ socials }}" as="s" hint-placeholder-count="4">
+          <a href="Home.dc.html" aria-label="{{ s }}" style="width:38px;height:38px;border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.7);font-size:12px;border-radius:2px;font-weight:600" style-hover="{{ socialHover }}">{{ s }}</a>
+        </sc-for>
+      </div>
+    </div>
+
+    <sc-if value="{{ showCompany }}" hint-placeholder-val="{{ true }}">
+    <div style="text-align:{{ ta }}">
+      <h4 style="color:#fff;font-size:14px;letter-spacing:.06em;text-transform:uppercase;margin:0 0 18px;font-weight:600">Company</h4>
+      <div style="display:flex;flex-direction:column;gap:11px;font-size:14.5px;align-items:{{ listAlign }}">
+        <a href="Home.dc.html" style="color:rgba(255,255,255,.62)" style-hover="{{ linkHover }}">Home</a>
+        <a href="About.dc.html" style="color:rgba(255,255,255,.62)" style-hover="{{ linkHover }}">About Us</a>
+        <a href="People.dc.html" style="color:rgba(255,255,255,.62)" style-hover="{{ linkHover }}">Our People</a>
+        <a href="Insights.dc.html" style="color:rgba(255,255,255,.62)" style-hover="{{ linkHover }}">Insights</a>
+        <a href="Contact.dc.html" style="color:rgba(255,255,255,.62)" style-hover="{{ linkHover }}">Contact</a>
+      </div>
+    </div>
+    </sc-if>
+
+    <div style="text-align:{{ ta }}">
+      <h4 style="color:#fff;font-size:14px;letter-spacing:.06em;text-transform:uppercase;margin:0 0 18px;font-weight:600">Practice Areas</h4>
+      <div style="display:flex;flex-direction:column;gap:11px;font-size:14.5px;align-items:{{ listAlign }}">
+        <sc-for list="{{ footerAreas }}" as="a" hint-placeholder-count="5">
+          <a href="{{ a.href }}" style="color:rgba(255,255,255,.62)" style-hover="{{ linkHover }}">{{ a.label }}</a>
+        </sc-for>
+        <a href="PracticeAreas.dc.html" style="color:#C8102E;font-weight:600;margin-top:4px;display:inline-flex;align-items:center;gap:6px" style-hover="{{ linkHover }}">View all areas <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a>
+      </div>
+    </div>
+
+    <div style="text-align:{{ ta }}">
+      <h4 style="color:#fff;font-size:14px;letter-spacing:.06em;text-transform:uppercase;margin:0 0 18px;font-weight:600">Get in touch</h4>
+      <div style="display:flex;flex-direction:column;gap:11px;font-size:14.5px;align-items:{{ listAlign }}">
+        <a href="tel:+256414344124" style="color:rgba(255,255,255,.62)" style-hover="{{ linkHover }}">+256 414 344 124</a>
+        <a href="tel:+256752605525" style="color:rgba(255,255,255,.62)" style-hover="{{ linkHover }}">+256 752 605 525</a>
+        <a href="mailto:legal@baluti.co.ug" style="color:rgba(255,255,255,.62)" style-hover="{{ linkHover }}">legal@baluti.co.ug</a>
+        <a href="mailto:emmanuel@baluti.co.ug" style="color:rgba(255,255,255,.62)" style-hover="{{ linkHover }}">emmanuel@baluti.co.ug</a>
+        <sc-if value="{{ bookInline }}" hint-placeholder-val="{{ true }}">
+        <a href="Contact.dc.html" style="margin-top:8px;align-self:{{ bookAlign }};background:#C8102E;color:#ffffff;padding:12px 22px;font-weight:600;border-radius:2px;font-size:14px" style-hover="{{ bookHover }}">Book an appointment</a>
+        </sc-if>
+      </div>
+    </div>
+
+    <sc-if value="{{ bookFullRow }}" hint-placeholder-val="{{ false }}">
+      <a href="Contact.dc.html" style="grid-column:1 / -1;display:block;text-align:center;background:#C8102E;color:#ffffff;padding:15px 22px;font-weight:600;border-radius:2px;font-size:15px" style-hover="{{ bookHover }}">Book an appointment</a>
+    </sc-if>
+  </div>
+
+  <div style="max-width:1280px;margin:0 auto;padding:24px 0 30px;display:flex;flex-direction:{{ bottomDir }};align-items:center;justify-content:{{ bottomJustify }};gap:12px;text-align:{{ bottomTextAlign }};font-size:13px">
+    <span>© Copyright {{ year }} Baluti &amp; Co. Advocates. All Rights Reserved.</span>
+    <div style="display:flex;gap:22px">
+      <a href="Home.dc.html" style="color:rgba(255,255,255,.62)" style-hover="{{ linkHover }}">Terms of Service</a>
+      <a href="Home.dc.html" style="color:rgba(255,255,255,.62)" style-hover="{{ linkHover }}">Privacy Policy</a>
+    </div>
+  </div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:420}}">
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { mode: 'desktop' }; }
+  componentDidMount() {
+    this._onResize = () => {
+      const w = window.innerWidth, h = window.innerHeight;
+      const mode = w >= 800 ? 'full' : (h >= w ? 'portrait' : 'landscape');
+      if (mode !== this.state.mode) this.setState({ mode });
+    };
+    this._onResize(); window.addEventListener('resize', this._onResize);
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this._onResize); }
+  renderVals() {
+    const mode = this.state.mode;
+    const full = mode === 'full';
+    const isMobile = !full;
+    return {
+      footerCols: full ? 'repeat(4,minmax(0,1fr))' : (mode === 'portrait' ? '1fr' : '1fr 1fr'),
+      brandSpan: full ? 'auto' : '1 / -1',
+      showCompany: full,
+      bookInline: full,
+      bookFullRow: !full,
+      ta: isMobile ? 'center' : 'left',
+      listAlign: isMobile ? 'center' : 'stretch',
+      socialJustify: isMobile ? 'center' : 'flex-start',
+      bookAlign: isMobile ? 'center' : 'flex-start',
+      bottomJustify: isMobile ? 'center' : 'space-between',
+      bottomDir: isMobile ? 'column' : 'row',
+      bottomTextAlign: isMobile ? 'center' : 'left',
+      year: 2026,
+      socials: ['in', 'X', 'f', 'YT'],
+      footerAreas: [
+        { label: 'Litigation & Disputes', href: 'PracticeAreaDetail.dc.html?area=litigation' },
+        { label: 'Banking & Financial', href: 'PracticeAreaDetail.dc.html?area=banking' },
+        { label: 'Business & Corporate', href: 'PracticeAreaDetail.dc.html?area=business' },
+        { label: 'Labour & Employment', href: 'PracticeAreaDetail.dc.html?area=labour' },
+        { label: 'Property & Land', href: 'PracticeAreaDetail.dc.html?area=property' }
+      ],
+      linkHover: { color: '#C8102E' },
+      socialHover: { color: '#C8102E', borderColor: '#C8102E' },
+      bookHover: { background: '#E11B3C' }
+    };
+  }
+}
+</script>
+</body>
+</html>

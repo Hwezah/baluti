@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  input, textarea, select, button { font-family: inherit; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: 'Figtree', system-ui, sans-serif; }
+  a { color: #C8102E; text-decoration: none; }
+  a:hover { color: #97071F; }
+  ::selection { background: #C8102E; color: #fff; }
+</style>
+</helmet>
+
+<div style="font-family:'Figtree',system-ui,sans-serif;color:#000000;background:#FAFAF9;overflow-x:clip;line-height:1.6">
+
+  <div id="site-header-sticky" style="position:sticky;top:0;z-index:60"><dc-import name="SiteHeader" current="people" hint-size="100%,148px"></dc-import></div>
+
+  <!-- HERO -->
+  <section data-screen-label="Attorney hero" style="position:relative;overflow:hidden;background:#000000;color:#fff;padding:clamp(48px,6vw,80px) clamp(16px,4vw,40px)">
+    <div aria-hidden="true" style="position:absolute;left:88%;top:6%;width:min(760px,121vw);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(255,255,255,.10);pointer-events:none"></div>
+    <div aria-hidden="true" style="position:absolute;left:88%;top:6%;width:min(520px,83vw);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(200,16,46,.28);pointer-events:none"></div>
+    <div aria-hidden="true" style="position:absolute;left:88%;top:6%;width:min(280px,44vw);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(255,255,255,.07);pointer-events:none"></div>
+    <div style="position:relative;max-width:1280px;margin:0 auto">
+      <div style="font-size:13px;color:rgba(255,255,255,.55);margin-bottom:28px"><a href="Home.dc.html" style="color:rgba(255,255,255,.55)">Home</a> &nbsp;/&nbsp; <a href="People.dc.html" style="color:rgba(255,255,255,.55)">People</a> &nbsp;/&nbsp; <span style="color:#C8102E">{{ atty.name }}</span></div>
+      <div style="display:grid;grid-template-columns:{{ heroCols }};gap:clamp(28px,4vw,56px);align-items:center">
+        <div style="position:relative;aspect-ratio:4/5;background:linear-gradient(165deg,#EAEAEA,#D8D8D8);overflow:hidden">
+          <div style="position:absolute;left:50%;top:17%;width:32%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:#C6C6C6"></div>
+          <div style="position:absolute;left:50%;top:48%;width:72%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:#C6C6C6"></div>
+          <span style="position:absolute;bottom:12px;right:14px;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.08em;color:#8A8A8A">portrait</span>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+            <span style="width:34px;height:1px;background:#C8102E"></span>
+            <span style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#C8102E;font-weight:600">{{ atty.role }}</span>
+          </div>
+          <h1 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(2.2rem,4.4vw,3.5rem);line-height:1.05;margin:0 0 18px">{{ atty.name }}</h1>
+          <p style="font-size:clamp(1.02rem,1.4vw,1.2rem);color:rgba(255,255,255,.74);max-width:52ch;margin:0 0 28px">{{ atty.tagline }}</p>
+          <div style="display:flex;gap:12px;flex-wrap:nowrap">
+            <a href="mailto:emmanuel@baluti.co.ug" style="background:#C8102E;color:#ffffff;padding:13px clamp(12px,3.5vw,26px);font-weight:600;font-size:14.5px;border-radius:2px;transition:transform .25s;white-space:nowrap;text-align:center;flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis" style-hover="{{ btnHover }}">Email {{ atty.first }}</a>
+            <a href="tel:+256414344124" style="border:1px solid rgba(255,255,255,.28);color:#fff;padding:13px clamp(12px,3.5vw,26px);font-weight:600;font-size:14.5px;border-radius:2px;white-space:nowrap;text-align:center;flex:0 0 auto" style-hover="{{ ghostHover }}">+256 414 344 124</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BODY -->
+  <section style="background:#FAFAF9;padding:clamp(56px,7vw,96px) clamp(16px,4vw,40px)">
+    <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:{{ bodyCols }};gap:clamp(36px,5vw,64px);align-items:start">
+      <div>
+        <h2 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(1.6rem,2.8vw,2.2rem);margin:0 0 18px">About {{ atty.first }}</h2>
+        <sc-for list="{{ atty.bio }}" as="para" hint-placeholder-count="3">
+          <p style="color:#3a4652;font-size:16.5px;margin:0 0 18px">{{ para }}</p>
+        </sc-for>
+
+        <h3 style="font-family:'Roboto Serif',Georgia,serif;font-weight:600;font-size:1.4rem;margin:38px 0 20px">Representative work</h3>
+        <div style="display:flex;flex-direction:column;border-top:1px solid rgba(0,0,0,.14)">
+          <sc-for list="{{ atty.matters }}" as="m" hint-placeholder-count="4">
+            <div style="padding:18px 0;border-bottom:1px solid rgba(0,0,0,.14);display:grid;grid-template-columns:24px 1fr;gap:14px">
+              <span style="color:#C8102E;margin-top:2px">◈</span>
+              <span style="font-size:15.5px;color:#31414F">{{ m }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <aside style="display:flex;flex-direction:column;gap:24px;position:sticky;top:100px">
+        <div style="background:#fff;border:1px solid rgba(0,0,0,.1);padding:28px">
+          <h3 style="font-family:'Roboto Serif',Georgia,serif;font-weight:600;font-size:1.15rem;margin:0 0 16px">Practice areas</h3>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <sc-for list="{{ atty.areas }}" as="a" hint-placeholder-count="3">
+              <a href="PracticeAreaDetail.dc.html?area={{ a.slug }}" style="border:1px solid rgba(0,0,0,.18);color:#31414F;padding:7px 14px;border-radius:100px;font-size:13px" style-hover="{{ chipHover }}">{{ a.title }}</a>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:#F0EFEC;border:1px solid rgba(0,0,0,.1);padding:28px">
+          <h3 style="font-family:'Roboto Serif',Georgia,serif;font-weight:600;font-size:1.15rem;margin:0 0 16px">Credentials</h3>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <sc-for list="{{ atty.credentials }}" as="c" hint-placeholder-count="3">
+              <div>
+                <div style="font-size:14.5px;font-weight:600;color:#000000">{{ c.title }}</div>
+                <div style="font-size:13.5px;color:#5A6570">{{ c.detail }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:#000000;color:#fff;padding:28px">
+          <h3 style="font-family:'Roboto Serif',Georgia,serif;font-weight:600;font-size:1.15rem;margin:0 0 8px">Languages</h3>
+          <p style="color:rgba(255,255,255,.72);font-size:14.5px;margin:0">{{ atty.languages }}</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- OTHER PEOPLE -->
+  <section style="background:#F0EFEC;padding:clamp(56px,7vw,96px) clamp(16px,4vw,40px)">
+    <div style="max-width:1280px;margin:0 auto">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:40px">
+        <h2 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(1.6rem,2.8vw,2.2rem);margin:0">More from our team</h2>
+        <a href="People.dc.html" style="font-weight:600;font-size:14px;color:#000000;border-bottom:2px solid #C8102E;padding-bottom:4px">View all people</a>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:26px">
+        <sc-for list="{{ others }}" as="p" hint-placeholder-count="4">
+          <a href="AttorneyBio.dc.html" style="color:#000000">
+            <div style="position:relative;height:240px;overflow:hidden;margin-bottom:16px;background:linear-gradient(165deg,#EAEAEA,#D8D8D8)">
+              <div style="position:absolute;left:50%;top:24%;width:30%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:#C6C6C6"></div>
+              <div style="position:absolute;left:50%;bottom:-16%;width:58%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:#C6C6C6"></div>
+            </div>
+            <h3 style="font-family:'Roboto Serif',Georgia,serif;font-weight:600;font-size:1.2rem;margin:0 0 3px">{{ p.name }}</h3>
+            <div style="color:#C8102E;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:600">{{ p.role }}</div>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <dc-import name="SiteFooter" hint-size="100%,440px"></dc-import>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { isMobile: false }; }
+  componentDidMount() {
+    this._onResize = () => { const m = window.innerWidth < 900; if (m !== this.state.isMobile) this.setState({ isMobile: m }); };
+    this._onResize(); window.addEventListener('resize', this._onResize);
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this._onResize); }
+  renderVals() {
+    const isMobile = this.state.isMobile;
+    return {
+      heroCols: isMobile ? '1fr' : '0.5fr 1fr',
+      bodyCols: isMobile ? '1fr' : '1.7fr 1fr',
+      atty: {
+        name: 'Emmanuel Baluti', first: 'Emmanuel', role: 'Founder & Principal Attorney',
+        tagline: 'Leads the firm\u2019s litigation practice, representing clients in high-stakes commercial and personal disputes across Uganda.',
+        bio: [
+          'Emmanuel is the founder of Baluti & Co. and heads the firm\u2019s dispute resolution practice. Over more than two decades, he has built a reputation for clear strategy, meticulous preparation, and a genuine commitment to the people he represents.',
+          'He acts for businesses, institutions, and individuals in commercial litigation, arbitration, and complex negotiations — always with a focus on the outcome that matters most to the client, not the process for its own sake.',
+          'Colleagues and clients describe Emmanuel as measured, direct, and relentless when a matter demands it. He believes accountability matters, and that good advocacy begins with truly listening.'
+        ],
+        matters: [
+          'Represented a regional bank in a multi-party commercial dispute, securing a favourable settlement.',
+          'Led arbitration proceedings for a manufacturing client, recovering substantial contractual damages.',
+          'Advised an institutional client through a sensitive employment dispute with minimal disruption.',
+          'Obtained urgent injunctive relief protecting a client\u2019s commercial interests pending trial.'
+        ],
+        areas: [
+          { title: 'Litigation and Dispute Resolution', slug: 'litigation' },
+          { title: 'Business', slug: 'business' },
+          { title: 'Banking and Financial Services', slug: 'banking' }
+        ],
+        credentials: [
+          { title: 'LL.B, Makerere University', detail: 'Bachelor of Laws' },
+          { title: 'Diploma in Legal Practice', detail: 'Law Development Centre, Kampala' },
+          { title: 'Advocate of the High Court', detail: 'Admitted to the Uganda Bar' }
+        ],
+        languages: 'English, Luganda, Swahili'
+      },
+      others: [
+        { name: 'Name', role: 'Partner' },
+        { name: 'Name', role: 'Partner' },
+        { name: 'Name', role: 'Senior Associate' },
+        { name: 'Name', role: 'Associate' }
+      ],
+      btnHover: { transform: 'translateY(-2px)', background: '#E11B3C' },
+      ghostHover: { borderColor: '#C8102E' },
+      chipHover: { borderColor: '#C8102E', color: '#C8102E' }
+    };
+  }
+}
+</script>
+</body>
+</html>

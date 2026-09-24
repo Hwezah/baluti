@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  input, textarea, select, button { font-family: inherit; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: 'Figtree', system-ui, sans-serif; }
+  a { color: #C8102E; text-decoration: none; }
+  a:hover { color: #97071F; }
+  ::selection { background: #C8102E; color: #fff; }
+</style>
+</helmet>
+
+<div style="font-family:'Figtree',system-ui,sans-serif;color:#000000;background:#FAFAF9;overflow-x:clip;line-height:1.6">
+
+  <div id="site-header-sticky" style="position:sticky;top:0;z-index:60"><dc-import name="SiteHeader" current="about" hint-size="100%,148px"></dc-import></div>
+
+  <!-- PAGE HERO -->
+  <section data-screen-label="About hero" style="position:relative;overflow:hidden;background:#000000;color:#fff;padding:clamp(56px,7vw,104px) clamp(16px,4vw,40px)">
+    <div aria-hidden="true" style="position:absolute;left:88%;top:6%;width:min(760px,121vw);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(255,255,255,.10);pointer-events:none"></div>
+    <div aria-hidden="true" style="position:absolute;left:88%;top:6%;width:min(520px,83vw);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(200,16,46,.28);pointer-events:none"></div>
+    <div aria-hidden="true" style="position:absolute;left:88%;top:6%;width:min(280px,44vw);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(255,255,255,.07);pointer-events:none"></div>
+    <div style="position:relative;max-width:1280px;margin:0 auto">
+      <div style="font-size:13px;color:rgba(255,255,255,.55);margin-bottom:22px"><a href="Home.dc.html" style="color:rgba(255,255,255,.55)">Home</a> &nbsp;/&nbsp; <span style="color:#C8102E">About</span></div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+        <span style="width:34px;height:1px;background:#C8102E"></span>
+        <span style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#C8102E;font-weight:600">About the firm</span>
+      </div>
+      <h1 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(2.4rem,5vw,4rem);line-height:1.05;margin:0 0 20px;max-width:18ch">Applying law to facts, with people at the centre</h1>
+      <p style="font-size:clamp(1.05rem,1.5vw,1.25rem);color:rgba(255,255,255,.74);max-width:60ch;margin:0">Baluti &amp; Co. Advocates is a full-service law firm serving individuals, businesses, and institutions across Uganda — combining technical excellence with genuine care for the people we represent.</p>
+    </div>
+  </section>
+
+  <!-- MISSION -->
+  <section style="background:#FAFAF9;padding:clamp(64px,8vw,110px) clamp(16px,4vw,40px)">
+    <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:{{ splitCols }};gap:clamp(36px,5vw,72px);align-items:center">
+      <div>
+        <div style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#C8102E;font-weight:600;margin-bottom:14px">Who we are</div>
+        <h2 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(1.9rem,3.2vw,2.7rem);margin:0 0 22px;line-height:1.14">A firm built on trust, clarity, and results</h2>
+        <p style="color:#3a4652;font-size:16.5px;margin:0 0 18px">Our standard of excellence is fuelled by a single desire: to protect you. We take the time to understand each client's circumstances, explain the law in plain terms, and pursue the outcome that matters most to them.</p>
+        <p style="color:#5A6570;font-size:16px;margin:0 0 28px">Whether we're advising a growing business, resolving a dispute, or guiding a family through a difficult moment, we bring the same rigour, discretion, and commitment to every matter.</p>
+        <div style="display:flex;gap:36px;flex-wrap:wrap">
+          <div><div style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:2.2rem;color:#000000">35+</div><div style="color:#5A6570;font-size:14px">Years of combined practice</div></div>
+          <div><div style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:2.2rem;color:#000000">18</div><div style="color:#5A6570;font-size:14px">Practice areas</div></div>
+          <div><div style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:2.2rem;color:#000000">40+</div><div style="color:#5A6570;font-size:14px">Attorneys &amp; staff</div></div>
+        </div>
+      </div>
+      <div style="height:clamp(320px,42vw,460px);border:1px solid rgba(0,0,0,.12);position:relative;overflow:hidden;background:linear-gradient(165deg,#EAEAEA,#D8D8D8)">
+        <div style="position:absolute;left:50%;top:22%;width:20%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:#C6C6C6"></div>
+        <div style="position:absolute;left:50%;bottom:-12%;width:40%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:#C6C6C6"></div>
+        <span style="position:absolute;bottom:14px;right:16px;font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.08em;color:#8A8A8A">team / office photo</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- STORY / TIMELINE -->
+  <section style="background:#F0EFEC;padding:clamp(64px,8vw,110px) clamp(16px,4vw,40px)">
+    <div style="max-width:1280px;margin:0 auto">
+      <div style="max-width:52ch;margin-bottom:52px">
+        <div style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#C8102E;font-weight:600;margin-bottom:14px">Our story</div>
+        <h2 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(1.9rem,3.2vw,2.7rem);margin:0;line-height:1.12">From a small practice to a trusted name</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2px;background:rgba(0,0,0,.12);border:1px solid rgba(0,0,0,.12)">
+        <sc-for list="{{ milestones }}" as="m" hint-placeholder-count="4">
+          <div style="background:#F0EFEC;padding:38px 30px;min-height:210px;display:flex;flex-direction:column">
+            <span style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:1.6rem;color:#C8102E;margin-bottom:14px">{{ m.year }}</span>
+            <h3 style="font-family:'Roboto Serif',Georgia,serif;font-weight:600;font-size:1.2rem;margin:0 0 10px">{{ m.title }}</h3>
+            <p style="color:#5A6570;font-size:14.5px;margin:0">{{ m.body }}</p>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALUES -->
+  <section style="background:#FAFAF9;padding:clamp(64px,8vw,110px) clamp(16px,4vw,40px)">
+    <div style="max-width:1280px;margin:0 auto">
+      <div style="text-align:center;max-width:52ch;margin:0 auto 52px">
+        <div style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#C8102E;font-weight:600;margin-bottom:14px">Our values</div>
+        <h2 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(1.9rem,3.2vw,2.7rem);margin:0;line-height:1.12">Fundamental principles that define our practice</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:26px">
+        <sc-for list="{{ values }}" as="v" hint-placeholder-count="4">
+          <div style="background:#fff;border:1px solid rgba(0,0,0,.09);padding:34px 30px;min-height:230px;display:flex;flex-direction:column">
+            <span style="font-family:'Roboto Serif',Georgia,serif;font-size:1.6rem;color:#C8102E;margin-bottom:auto">0{{ v.n }}</span>
+            <h3 style="font-family:'Roboto Serif',Georgia,serif;font-weight:600;font-size:1.3rem;margin:20px 0 10px">{{ v.title }}</h3>
+            <p style="color:#5A6570;font-size:14.5px;margin:0">{{ v.body }}</p>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- APPROACH -->
+  <section style="background:#000000;color:#fff;padding:clamp(64px,8vw,110px) clamp(16px,4vw,40px)">
+    <div style="max-width:1280px;margin:0 auto">
+      <div style="max-width:52ch;margin-bottom:52px">
+        <div style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#C8102E;font-weight:600;margin-bottom:14px">How we work</div>
+        <h2 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(1.9rem,3.2vw,2.7rem);margin:0;line-height:1.12">A clear, considered approach to every matter</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:36px">
+        <sc-for list="{{ approach }}" as="a" hint-placeholder-count="4">
+          <div style="border-top:2px solid #C8102E;padding-top:22px">
+            <span style="font-family:'Roboto Serif',Georgia,serif;font-size:1.3rem;color:#C8102E">0{{ a.n }}</span>
+            <h3 style="font-family:'Roboto Serif',Georgia,serif;font-weight:600;font-size:1.3rem;margin:12px 0 10px">{{ a.title }}</h3>
+            <p style="color:rgba(255,255,255,.68);font-size:14.5px;margin:0">{{ a.body }}</p>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEADERSHIP QUOTE -->
+  <section style="background:#F0EFEC;padding:clamp(64px,8vw,104px) clamp(16px,4vw,40px)">
+    <div style="max-width:900px;margin:0 auto;text-align:center">
+      <div style="font-family:'Roboto Serif',Georgia,serif;font-size:3rem;color:#C8102E;line-height:1;margin-bottom:10px">“</div>
+      <p style="font-family:'Roboto Serif',Georgia,serif;font-style:italic;font-size:clamp(1.4rem,2.6vw,2rem);line-height:1.4;margin:0 0 26px;color:#000000">We don't just want to do well — we want our clients to get what they're entitled to, and the defendants to face real accountability.</p>
+      <div style="font-weight:600;font-size:16px">Emmanuel Baluti</div>
+      <div style="color:#5A6570;font-size:14px">Founder &amp; Principal Attorney</div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section style="background:#FAFAF9;padding:clamp(56px,7vw,96px) clamp(16px,4vw,40px);border-top:1px solid rgba(0,0,0,.08)">
+    <div style="max-width:820px;margin:0 auto;text-align:center">
+      <h2 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(1.9rem,3.4vw,2.7rem);margin:0 0 20px;line-height:1.12">Let's talk about how we can help</h2>
+      <p style="color:#5A6570;font-size:16px;margin:0 0 32px">Book a free consultation and speak with an advocate about your situation.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:nowrap">
+        <a href="Contact.dc.html" style="background:#000000;color:#fff;padding:15px clamp(14px,4vw,32px);font-weight:600;font-size:15px;border-radius:2px;transition:background .25s;white-space:nowrap;text-align:center;flex:0 1 auto" style-hover="{{ ctaHover }}">Free consultation</a>
+        <a href="People.dc.html" style="border:1px solid rgba(0,0,0,.25);color:#000000;padding:15px clamp(14px,4vw,32px);font-weight:600;font-size:15px;border-radius:2px;white-space:nowrap;text-align:center;flex:0 1 auto" style-hover="{{ ghostHover }}">Meet our people</a>
+      </div>
+    </div>
+  </section>
+
+  <dc-import name="SiteFooter" hint-size="100%,440px"></dc-import>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { isMobile: false }; }
+  componentDidMount() {
+    this._onResize = () => { const m = window.innerWidth < 900; if (m !== this.state.isMobile) this.setState({ isMobile: m }); };
+    this._onResize(); window.addEventListener('resize', this._onResize);
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this._onResize); }
+  renderVals() {
+    const isMobile = this.state.isMobile;
+    return {
+      splitCols: isMobile ? '1fr' : '1.1fr 1fr',
+      milestones: [
+        { year: '2009', title: 'The firm is founded', body: 'Baluti & Co. opens its doors with a focus on litigation and commercial advisory.' },
+        { year: '2014', title: 'Practice expands', body: 'New partners join, broadening our reach across banking, employment, and property law.' },
+        { year: '2019', title: 'Regional recognition', body: 'The firm is recognised among leading practitioners in the region for client service.' },
+        { year: 'Today', title: 'A full-service firm', body: 'Eighteen practice areas and a team of over forty advocates and support staff.' }
+      ],
+      values: [
+        { n: 1, title: 'Cultivating relationships', body: 'By truly understanding our clients and their unique needs, we forge partnerships that lead to mutual success and growth.' },
+        { n: 2, title: 'Embodying respect', body: 'Everyone we engage with — client, colleague, or partner — is treated with respect and courtesy at every step.' },
+        { n: 3, title: 'Delivering outcomes', body: 'We combine legal expertise, dedication, and effort to ensure every client\u2019s expectations are met and surpassed.' },
+        { n: 4, title: 'Achieving results', body: 'However intricate your situation, we work tirelessly and diligently to achieve outcomes for your circumstances.' }
+      ],
+      approach: [
+        { n: 1, title: 'Listen', body: 'We start by understanding your circumstances, goals, and concerns in full.' },
+        { n: 2, title: 'Advise', body: 'We explain the law and your options in clear, practical terms — no jargon.' },
+        { n: 3, title: 'Act', body: 'We move decisively, keeping you informed and involved at every stage.' },
+        { n: 4, title: 'Deliver', body: 'We pursue the outcome that matters most to you, and stand behind our work.' }
+      ],
+      ctaHover: { background: '#C8102E' },
+      ghostHover: { borderColor: '#C8102E' }
+    };
+  }
+}
+</script>
+</body>
+</html>

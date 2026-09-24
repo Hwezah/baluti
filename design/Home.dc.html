@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Roboto+Serif:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  input, textarea, select, button { font-family: inherit; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: 'Figtree', system-ui, sans-serif; }
+  a { color: #C8102E; text-decoration: none; }
+  a:hover { color: #97071F; }
+  ::selection { background: #C8102E; color: #fff; }
+  @keyframes baluti-fade { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  @keyframes baluti-caret { 0%,49% { opacity: 1; } 50%,100% { opacity: 0; } }
+</style>
+</helmet>
+
+<div style="font-family:'Figtree',system-ui,sans-serif;color:#000000;background:#FAFAF9;overflow-x:clip;line-height:1.6">
+
+  <div id="site-header-sticky" style="position:sticky;top:0;z-index:60"><dc-import name="SiteHeader" current="home" hint-size="100%,148px"></dc-import></div>
+
+  <!-- HERO -->
+  <section data-screen-label="Hero" style="position:relative;background:#000000;color:#fff">
+    <sc-if value="{{ heroPhotoBg }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background-image:url(https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=1200&q=80);background-size:cover;background-position:center"></div>
+      <div style="position:absolute;inset:0;background:rgba(18,18,22,.74)"></div>
+    </sc-if>
+    <div aria-hidden="true" style="position:absolute;left:88%;top:6%;width:min(900px,143vw);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(255,255,255,.11);pointer-events:none"></div>
+    <div aria-hidden="true" style="position:absolute;left:88%;top:6%;width:min(620px,98vw);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(200,16,46,.30);pointer-events:none"></div>
+    <div aria-hidden="true" style="position:absolute;left:88%;top:6%;width:min(340px,54vw);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(255,255,255,.07);pointer-events:none"></div>
+    <div style="position:relative;max-width:1280px;margin:0 auto;display:grid;grid-template-columns:{{ heroCols }};min-height:min(84vh,740px)">
+      <div style="padding:clamp(48px,7vw,96px) clamp(16px,4vw,40px);display:flex;flex-direction:column;justify-content:center;animation:baluti-fade .7s ease both">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:26px">
+          <span style="width:34px;height:1px;background:#C8102E"></span>
+          <span style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#C8102E;font-weight:600">Baluti &amp; Co. Advocates</span>
+        </div>
+        <h1 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(2.6rem,5.4vw,4.6rem);line-height:1.04;margin:0 0 24px;letter-spacing:-.01em">Defending your rights.<br/>Protecting your <span style="font-style:italic;color:#C8102E;white-space:nowrap"><span ref="{{ futureRef }}">future</span><span ref="{{ caretRef }}" style="display:inline-block;width:2px;height:0.82em;margin-left:2px;background:#C8102E;vertical-align:baseline;opacity:0;animation:baluti-caret 0.9s steps(1) infinite"></span></span>.</h1>
+        <p style="font-size:clamp(1.02rem,1.4vw,1.2rem);color:rgba(255,255,255,.74);max-width:52ch;margin:0 0 38px">We respect our clients. We listen, engage, and care deeply — applying law to facts to deliver outcomes that stand.</p>
+        <div style="display:flex;gap:14px;flex-wrap:nowrap;align-items:stretch">
+          <a href="People.dc.html" style="flex:{{ ctaFlex }};text-align:center;white-space:nowrap;background:#C8102E;color:#ffffff;padding:15px {{ ctaPadX }};font-weight:600;font-size:15px;border-radius:2px;transition:transform .25s,background .25s" style-hover="{{ btnHover }}">{{ lawyersLabel }}</a>
+          <a href="PracticeAreas.dc.html" style="flex:{{ ctaFlex }};text-align:center;white-space:nowrap;border:1px solid rgba(255,255,255,.28);color:#fff;padding:15px {{ ctaPadX }};font-weight:600;font-size:15px;border-radius:2px;transition:border-color .25s" style-hover="{{ ghostHover }}">{{ areasLabel }}</a>
+        </div>
+        <div style="{{ heroChips }}">
+          <a href="PracticeAreas.dc.html" style="flex:0 0 auto;white-space:nowrap;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.82);padding:8px 15px;border-radius:100px;font-size:13.5px" style-hover="{{ chipHover }}">Business</a>
+          <a href="PracticeAreas.dc.html" style="flex:0 0 auto;white-space:nowrap;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.82);padding:8px 15px;border-radius:100px;font-size:13.5px" style-hover="{{ chipHover }}">{{ bankingLabel }}</a>
+          <a href="PracticeAreas.dc.html" style="flex:0 0 auto;white-space:nowrap;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.82);padding:8px 15px;border-radius:100px;font-size:13.5px" style-hover="{{ chipHover }}">Litigation</a>
+        </div>
+      </div>
+      <sc-if value="{{ desktop }}" hint-placeholder-val="{{ true }}">
+        <div style="position:relative;overflow:hidden;min-height:360px;margin-right:min(0px,calc(640px - 50vw));background-image:url(https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=1200&q=80);background-size:cover;background-position:center"></div>
+      </sc-if>
+    </div>
+  </section>
+
+  <!-- WHY HIRE US -->
+  <section style="background:#FAFAF9;padding:clamp(64px,8vw,110px) clamp(16px,4vw,40px)">
+    <div style="max-width:1280px;margin:0 auto">
+      <div style="margin-bottom:48px;max-width:60ch">
+        <div style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#C8102E;font-weight:600;margin-bottom:14px">Why hire us?</div>
+        <h2 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(1.9rem,3.4vw,2.9rem);margin:0;line-height:1.1">Our standard of excellence is fuelled by the desire to protect you</h2>
+      </div>
+      <div style="{{ outerWhyStyle }}">
+        <sc-for list="{{ whyRows }}" as="row" hint-placeholder-count="2">
+          <div style="{{ rowWhyStyle }}">
+            <sc-for list="{{ row }}" as="c" hint-placeholder-count="2">
+              <a href="{{ c.href }}" style="{{ cardWhyStyle }}" style-hover="{{ whyHover }}">
+                <span style="font-family:'Roboto Serif',Georgia,serif;font-size:22px;color:#C8102E;margin-bottom:auto">0{{ c.n }}</span>
+                <h3 style="font-family:'Roboto Serif',Georgia,serif;font-weight:600;font-size:1.4rem;margin:22px 0 12px">{{ c.title }}</h3>
+                <p style="color:#5A6570;font-size:15px;margin:0 0 16px">{{ c.body }}</p>
+                <span style="font-size:13px;font-weight:600;color:#000000;display:inline-flex;align-items:center;gap:6px">Learn more <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></span>
+              </a>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRACTICE AREAS PREVIEW -->
+  <section style="background:#F0EFEC;padding:clamp(64px,8vw,110px) clamp(16px,4vw,40px)">
+    <div style="max-width:1280px;margin:0 auto">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:48px">
+        <div>
+          <div style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#C8102E;font-weight:600;margin-bottom:14px">What we do</div>
+          <h2 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(1.9rem,3.4vw,2.9rem);margin:0">Legal practice areas</h2>
+        </div>
+        <a href="PracticeAreas.dc.html" style="font-weight:600;font-size:14px;color:#000000;border-bottom:2px solid #C8102E;padding-bottom:4px">View all areas</a>
+      </div>
+      <div style="display:flex;gap:26px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:clamp(16px,4vw,40px);padding-bottom:14px;margin:0 calc(-1 * clamp(16px,4vw,40px));padding-left:clamp(16px,4vw,40px);padding-right:clamp(16px,4vw,40px);scrollbar-width:thin">
+        <sc-for list="{{ featuredAreas }}" as="pa" hint-placeholder-count="6">
+          <a href="PracticeAreaDetail.dc.html?area={{ pa.slug }}" style="flex:0 0 auto;width:clamp(280px,80vw,320px);scroll-snap-align:start;display:flex;flex-direction:column;background:#fff;border:1px solid rgba(0,0,0,.09);overflow:hidden;transition:transform .35s,box-shadow .35s" style-hover="{{ cardHover }}">
+            <div style="position:relative;height:200px;background-color:#EAEAEA;background-image:url({{ pa.img }});background-size:cover;background-position:center">
+              <span style="position:absolute;top:14px;left:14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#fff;background:#C8102E;padding:6px 12px;border-radius:3px">{{ pa.tag }}</span>
+            </div>
+            <div style="padding:22px 24px 24px;display:flex;flex-direction:column;flex:1">
+              <h3 style="font-family:'Roboto Serif',Georgia,serif;font-weight:600;font-size:1.25rem;margin:0 0 10px;line-height:1.25">{{ pa.title }}</h3>
+              <p style="color:#5A6570;font-size:14px;margin:0 0 auto">{{ pa.body }}</p>
+              <span style="font-size:13px;font-weight:600;color:#C8102E;margin-top:16px;display:inline-flex;align-items:center;gap:6px">Learn more <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></span>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST BANNER -->
+  <section style="background:#000000;color:#fff;padding:clamp(56px,7vw,96px) clamp(16px,4vw,40px)">
+    <div style="max-width:1000px;margin:0 auto;text-align:center">
+      <h2 style="font-family:'Roboto Serif',Georgia,serif;font-weight:600;font-size:clamp(1.8rem,3.6vw,3rem);margin:0 0 30px;line-height:1.18">We build trust, understand needs and provide solutions</h2>
+      <a href="Contact.dc.html" style="{{ ctaContact }}" style-hover="{{ btnHover }}">Contact us</a>
+    </div>
+  </section>
+
+  <!-- VALUES PREVIEW -->
+  <section style="background:#FAFAF9;padding:clamp(64px,8vw,110px) clamp(16px,4vw,40px)">
+    <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:{{ splitCols }};gap:clamp(36px,5vw,72px);align-items:start">
+      <div>
+        <div style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#C8102E;font-weight:600;margin-bottom:14px">Our values</div>
+        <h2 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(1.9rem,3.2vw,2.7rem);margin:0 0 22px;line-height:1.12">Fundamental principles that define our practice</h2>
+        <p style="color:#5A6570;font-size:16px;margin:0 0 28px;max-width:44ch">The way we work is shaped by a simple commitment: to treat every client, colleague, and matter with the care it deserves.</p>
+        <a href="About.dc.html" style="{{ ctaLearn }}" style-hover="{{ ctaHover }}">Learn more about us</a>
+        <div style="margin-top:34px;height:280px;border:1px solid rgba(0,0,0,.12);position:relative;overflow:hidden;background:linear-gradient(165deg,#EAEAEA,#D8D8D8)">
+          <div style="position:absolute;left:50%;top:20%;width:22%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:#C6C6C6"></div>
+          <div style="position:absolute;left:50%;bottom:-14%;width:42%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:#C6C6C6"></div>
+          <span style="position:absolute;bottom:12px;right:14px;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.08em;color:#8A8A8A">team photo</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column">
+        <sc-for list="{{ values }}" as="v" hint-placeholder-count="4">
+          <div style="padding:30px 0;border-top:1px solid rgba(0,0,0,.14);display:grid;grid-template-columns:56px 1fr;gap:20px">
+            <span style="font-family:'Roboto Serif',Georgia,serif;font-size:1.6rem;color:#C8102E">0{{ v.n }}</span>
+            <div>
+              <h3 style="font-family:'Roboto Serif',Georgia,serif;font-weight:600;font-size:1.4rem;margin:0 0 10px">{{ v.title }}</h3>
+              <p style="color:#5A6570;font-size:15.5px;margin:0">{{ v.body }}</p>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATTORNEYS PREVIEW -->
+  <section style="background:#000000;color:#fff;padding:clamp(64px,8vw,110px) clamp(16px,4vw,40px)">
+    <div style="max-width:1280px;margin:0 auto">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:44px">
+        <div>
+          <div style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#C8102E;font-weight:600;margin-bottom:14px">Our team</div>
+          <h2 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(1.9rem,3.4vw,2.9rem);margin:0">Meet our attorneys</h2>
+        </div>
+        <a href="People.dc.html" style="font-weight:600;font-size:14px;color:#fff;border-bottom:2px solid #C8102E;padding-bottom:4px">View all people</a>
+      </div>
+      <div style="{{ swipeRow }}">
+        <sc-for list="{{ attorneys }}" as="a" hint-placeholder-count="4">
+          <div style="{{ attyItem }}">
+          <a href="AttorneyBio.dc.html" style="color:#fff;display:block;width:100%">
+            <div style="position:relative;height:320px;overflow:hidden;margin-bottom:18px;background:linear-gradient(165deg,#EAEAEA,#D8D8D8)">
+              <div style="position:absolute;left:50%;top:20%;width:35%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:#C6C6C6"></div>
+              <div style="position:absolute;left:50%;top:52%;width:80%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:#C6C6C6"></div>
+            </div>
+            <h3 style="font-family:'Roboto Serif',Georgia,serif;font-weight:600;font-size:1.3rem;margin:0 0 4px">{{ a.name }}</h3>
+            <span style="color:#C8102E;font-size:13px;letter-spacing:.08em;text-transform:uppercase;font-weight:600">{{ a.role }}</span>
+          </a>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section style="background:#F0EFEC;padding:clamp(56px,7vw,96px) clamp(16px,4vw,40px)">
+    <div style="max-width:1280px;margin:0 auto">
+      <div style="text-align:center;margin-bottom:52px">
+        <div style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#C8102E;font-weight:600;margin-bottom:14px">Track record</div>
+        <h2 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(1.8rem,3.2vw,2.6rem);margin:0">Results that speak for themselves</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:{{ gridStats }};gap:2px;background:rgba(0,0,0,.12);border:1px solid rgba(0,0,0,.12)">
+        <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+          <div style="background:#F0EFEC;padding:44px 26px;text-align:center">
+            <div style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(2rem,3.6vw,2.9rem);color:#000000;line-height:1;margin-bottom:12px">{{ s.value }}</div>
+            <div style="color:#5A6570;font-size:14.5px">{{ s.label }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- CASE STUDIES -->
+  <section style="background:#FAFAF9;padding:clamp(64px,8vw,110px) clamp(16px,4vw,40px)">
+    <div style="max-width:1280px;margin:0 auto">
+      <div style="max-width:640px;margin-bottom:44px">
+        <div style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#C8102E;font-weight:600;margin-bottom:14px">Client reviews</div>
+        <h2 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(1.9rem,3.4vw,2.9rem);margin:0;line-height:1.1">What our clients say about us</h2>
+      </div>
+      <div style="{{ swipeRow }}">
+        <sc-for list="{{ caseStudies }}" as="c" hint-placeholder-count="4">
+          <div style="{{ reviewItem }}">
+          <div style="background:#fff;border:1px solid rgba(0,0,0,.09);padding:32px 30px;display:flex;flex-direction:column;width:100%;height:100%">
+            <div style="display:flex;gap:3px;margin-bottom:18px;color:#C8102E"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
+            <p style="font-family:'Roboto Serif',Georgia,serif;font-style:italic;font-size:1.05rem;line-height:1.5;color:#000000;margin:0 0 24px;flex:1">“{{ c.quote }}”</p>
+            <div style="display:flex;align-items:center;gap:14px;padding-top:20px;border-top:1px solid rgba(0,0,0,.1)">
+              <span style="width:44px;height:44px;flex:0 0 auto;border-radius:50%;background:#C8102E;color:#ffffff;display:flex;align-items:center;justify-content:center;font-family:'Roboto Serif',Georgia,serif;font-size:1.1rem;font-weight:600">{{ c.initial }}</span>
+              <div>
+                <div style="font-weight:600;font-size:14.5px;color:#000000">{{ c.name }}</div>
+                <div style="color:#8A8A8A;font-size:13px">{{ c.location }}</div>
+              </div>
+            </div>
+          </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSIGHTS PREVIEW -->
+  <section style="background:#F0EFEC;padding:clamp(64px,8vw,110px) clamp(16px,4vw,40px)">
+    <div style="max-width:1280px;margin:0 auto">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:48px">
+        <div>
+          <div style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#C8102E;font-weight:600;margin-bottom:14px">Insights</div>
+          <h2 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(1.9rem,3.4vw,2.9rem);margin:0">Latest news &amp; insights</h2>
+        </div>
+        <a href="Insights.dc.html" style="font-weight:600;font-size:14px;color:#000000;border-bottom:2px solid #C8102E;padding-bottom:4px">View all</a>
+      </div>
+      <div style="{{ swipeRow }}">
+        <sc-for list="{{ insights }}" as="p" hint-placeholder-count="3">
+          <div style="{{ insightItem }}">
+          <a href="Article.dc.html" style="display:flex;flex-direction:column;background:#FAFAF9;border:1px solid rgba(0,0,0,.09);padding:30px;min-height:220px;width:100%;height:100%;transition:transform .3s,box-shadow .3s" style-hover="{{ cardHover }}">
+            <span style="align-self:flex-start;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:#C8102E;border:1px solid rgba(158,27,47,.4);padding:5px 11px;border-radius:100px;margin-bottom:20px">{{ p.cat }}</span>
+            <h3 style="font-family:'Roboto Serif',Georgia,serif;font-weight:600;font-size:1.22rem;line-height:1.3;margin:0 0 auto">{{ p.title }}</h3>
+            <span style="font-size:13px;font-weight:600;color:#000000;margin-top:22px;display:inline-flex;align-items:center;gap:6px">Read article <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></span>
+          </a>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section style="position:relative;overflow:hidden;background:#C8102E;color:#fff;padding:clamp(72px,9vw,124px) clamp(16px,4vw,40px)">
+    <div aria-hidden="true" style="position:absolute;left:86%;top:4%;width:min(820px,130vw);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(255,255,255,.22);pointer-events:none"></div>
+    <div aria-hidden="true" style="position:absolute;left:86%;top:4%;width:min(560px,89vw);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(255,255,255,.16);pointer-events:none"></div>
+    <div aria-hidden="true" style="position:absolute;left:86%;top:4%;width:min(300px,48vw);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(255,255,255,.10);pointer-events:none"></div>
+    <div style="position:relative;max-width:1000px;margin:0 auto">
+      <div style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.85);font-weight:600;margin-bottom:28px">Need help?</div>
+      <h2 style="font-family:'Roboto Serif',Georgia,serif;font-weight:700;font-size:clamp(2.4rem,6vw,4rem);margin:0 0 26px;line-height:1.05;max-width:16ch">Find your best fit out of top-notch lawyers.</h2>
+      <p style="color:rgba(255,255,255,.88);font-size:clamp(1rem,1.4vw,1.15rem);margin:0 0 42px;max-width:52ch">Contact us anytime for a consultation — available 24/7 online, and in person at our Ntinda chambers.</p>
+      <a href="Contact.dc.html" style="{{ ctaOutline }}" style-hover="{{ outlineHover }}">Request a consultation <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a>
+    </div>
+  </section>
+
+  <dc-import name="SiteFooter" hint-size="100%,440px"></dc-import>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { isMobile: false, narrow: false };
+    this._futureRef = React.createRef();
+    this._caretRef = React.createRef();
+    this._words = ['future', 'business', 'legacy', 'property', 'reputation', 'family', 'investments'];
+    this._wi = 0;
+    this._typing = null;
+    this._hold = null;
+  }
+  _typeWord() {
+    const el = this._futureRef.current, caret = this._caretRef.current;
+    if (!el) return;
+    clearInterval(this._typing);
+    clearTimeout(this._hold);
+    const word = this._words[this._wi % this._words.length];
+    el.textContent = '';
+    if (caret) caret.style.opacity = '1';
+    let i = 0;
+    this._typing = setInterval(() => {
+      i++;
+      el.textContent = word.slice(0, i);
+      if (i >= word.length) {
+        clearInterval(this._typing);
+        this._hold = setTimeout(() => this._eraseWord(), 2200);
+      }
+    }, 95);
+  }
+  _eraseWord() {
+    const el = this._futureRef.current;
+    if (!el) return;
+    clearInterval(this._typing);
+    let i = el.textContent.length;
+    this._typing = setInterval(() => {
+      i--;
+      el.textContent = el.textContent.slice(0, Math.max(0, i));
+      if (i <= 0) {
+        clearInterval(this._typing);
+        this._wi++;
+        this._hold = setTimeout(() => this._typeWord(), 380);
+      }
+    }, 45);
+  }
+  componentDidMount() {
+    this._onResize = () => {
+      const w = window.innerWidth;
+      const m = w < 900, nar = w < 640;
+      if (m !== this.state.isMobile || nar !== this.state.narrow) this.setState({ isMobile: m, narrow: nar });
+    };
+    this._onResize();
+    window.addEventListener('resize', this._onResize);
+
+    const target = this._futureRef.current;
+    if (target && 'IntersectionObserver' in window) {
+      this._wasOut = true; // let the first intersection start the cycle
+      this._io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            if (this._wasOut) { this._wasOut = false; this._typeWord(); }
+          } else {
+            this._wasOut = true;
+            clearInterval(this._typing);
+            clearTimeout(this._hold);
+            const el = this._futureRef.current, caret = this._caretRef.current;
+            if (el) el.textContent = '';
+            if (caret) caret.style.opacity = '1';
+          }
+        });
+      }, { threshold: 0.6 });
+      this._io.observe(target);
+    } else {
+      this._typeWord();
+    }
+    this._hold = setTimeout(() => { if (!this._typing) this._typeWord(); }, 500);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._onResize);
+    clearInterval(this._typing);
+    clearTimeout(this._hold);
+    if (this._io) this._io.disconnect();
+  }
+
+  renderVals() {
+    const IMG = 'https://baluti.machinenative.io/wp-content/uploads/2023/10/';
+    const isMobile = this.state.isMobile;
+    const whyUsData = [
+      { n: 1, title: 'Reviews', body: 'Clients consistently recommend us to anyone needing a trusted advocate.', href: 'People.dc.html' },
+      { n: 2, title: 'About', body: 'Our standard of excellence is fuelled by the desire to protect you.', href: 'About.dc.html' },
+      { n: 3, title: 'Careers', body: 'We hire people who believe in caring, dedicated representation.', href: 'People.dc.html' },
+      { n: 4, title: 'Contact', body: 'Connect with us in person, by phone, by email, or 24/7 online.', href: 'Contact.dc.html' }
+    ];
+    return {
+      isMobile, desktop: !isMobile,
+      heroPhotoBg: isMobile && !this.state.narrow,
+      ctaContact: (this.state.narrow
+        ? { display: 'block', width: '90%', margin: '0 auto', textAlign: 'center', background: '#C8102E', color: '#ffffff', padding: '15px 32px', fontWeight: 600, fontSize: '15px', borderRadius: '2px', transition: 'transform .25s' }
+        : { display: 'inline-block', background: '#C8102E', color: '#ffffff', padding: '15px 32px', minWidth: '280px', textAlign: 'center', fontWeight: 600, fontSize: '15px', borderRadius: '2px', transition: 'transform .25s' }),
+      ctaConsult: (this.state.narrow
+        ? { display: 'block', width: '90%', margin: '0 auto', textAlign: 'center', background: '#C8102E', color: '#ffffff', padding: '15px 32px', fontWeight: 600, fontSize: '15px', borderRadius: '2px', transition: 'transform .25s' }
+        : { display: 'inline-block', background: '#C8102E', color: '#ffffff', padding: '15px 32px', minWidth: '280px', textAlign: 'center', fontWeight: 600, fontSize: '15px', borderRadius: '2px', transition: 'transform .25s' }),
+      ctaLearn: (this.state.narrow
+        ? { display: 'block', width: '90%', margin: '0 auto', textAlign: 'center', background: '#000000', color: '#fff', padding: '15px 32px', fontWeight: 600, fontSize: '15px', borderRadius: '2px', transition: 'background .25s' }
+        : { display: 'inline-block', background: '#000000', color: '#fff', padding: '15px 32px', minWidth: '280px', textAlign: 'center', fontWeight: 600, fontSize: '15px', borderRadius: '2px', transition: 'background .25s' }),
+      ctaOutline: (this.state.narrow
+        ? { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', width: '100%', border: '1px solid rgba(255,255,255,.8)', color: '#fff', padding: '17px 26px', fontWeight: 600, fontSize: '13.5px', letterSpacing: '.12em', textTransform: 'uppercase', transition: 'background .25s,color .25s' }
+        : { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '12px', minWidth: '340px', border: '1px solid rgba(255,255,255,.8)', color: '#fff', padding: '18px 34px', fontWeight: 600, fontSize: '13.5px', letterSpacing: '.12em', textTransform: 'uppercase', transition: 'background .25s,color .25s' }),
+      outlineHover: { background: '#fff', color: '#C8102E' },
+      futureRef: this._futureRef,
+      caretRef: this._caretRef,
+      ctaFlex: isMobile ? '1 1 0' : '0 0 auto',
+      heroChips: (this.state.narrow
+        ? { display: 'flex', gap: '8px', flexWrap: 'nowrap', overflowX: 'auto', scrollbarWidth: 'none', marginTop: '40px', justifyContent: 'space-between', width: '100%' }
+        : { display: 'flex', gap: '8px', flexWrap: 'nowrap', overflowX: 'auto', scrollbarWidth: 'none', marginTop: '40px', justifyContent: 'flex-start' }),
+      ctaPadX: isMobile ? '18px' : '30px',
+      lawyersLabel: isMobile ? 'Our lawyers' : 'Meet our lawyers',
+      areasLabel: isMobile ? 'Practice areas' : 'Our practice areas',
+      bankingLabel: isMobile ? 'Banking' : 'Banking & Financial',
+      heroCols: isMobile ? '1fr' : '1.05fr 1fr',
+      splitCols: isMobile ? '1fr' : '1fr 1.15fr',
+      whyRows: [whyUsData.slice(0, 2), whyUsData.slice(2, 4)],
+      outerWhyStyle: isMobile
+        ? { display: 'flex', flexDirection: 'column', gap: '16px' }
+        : { display: 'flex', flexDirection: 'column', gap: '2px', background: 'rgba(0,0,0,.1)', border: '1px solid rgba(0,0,0,.1)' },
+      rowWhyStyle: isMobile
+        ? { display: 'flex', gap: '14px', overflowX: 'auto', scrollSnapType: 'x mandatory', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }
+        : { display: 'flex', gap: '2px' },
+      cardWhyStyle: isMobile
+        ? { background: '#FAFAF9', padding: '32px 26px 30px', display: 'flex', flexDirection: 'column', minHeight: '230px', flex: '0 0 82%', scrollSnapAlign: 'start', border: '1px solid rgba(0,0,0,.12)', transition: 'background .3s' }
+        : { background: '#FAFAF9', padding: '38px 32px 34px', display: 'flex', flexDirection: 'column', minHeight: '230px', flex: '1 1 0', transition: 'background .3s' },
+      gridStats: isMobile ? '1fr 1fr' : 'repeat(auto-fit,minmax(200px,1fr))',
+      swipeRow: isMobile
+        ? { display: 'flex', flexWrap: 'nowrap', gap: '16px', overflowX: 'auto', scrollSnapType: 'x mandatory', scrollPaddingLeft: '16px', marginLeft: '-16px', marginRight: '-16px', paddingLeft: '16px', paddingRight: '16px', paddingBottom: '12px' }
+        : { display: 'flex', flexWrap: 'wrap', gap: '24px' },
+      attyItem: isMobile ? { flex: '0 0 72%', scrollSnapAlign: 'start' } : { flex: '1 1 220px' },
+      reviewItem: isMobile ? { flex: '0 0 82%', scrollSnapAlign: 'start' } : { flex: '1 1 280px' },
+      insightItem: isMobile ? { flex: '0 0 84%', scrollSnapAlign: 'start' } : { flex: '1 1 300px' },
+      featuredAreas: [
+        { slug: 'banking', tag: 'Corporate & Commercial', img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80', title: 'Banking and Financial Services', body: 'Counsel on lending, regulation, and complex financial transactions.' },
+        { slug: 'litigation', tag: 'Disputes', img: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&q=80', title: 'Litigation and Dispute Resolution', body: 'Strategic advocacy in negotiation, arbitration, and the courtroom.' },
+        { slug: 'labour', tag: 'Workplace', img: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&q=80', title: 'Labour and Employment', body: 'Advising employers and employees across the full workplace lifecycle.' },
+        { slug: 'property', tag: 'Property', img: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80', title: 'Property', body: 'Real estate, development, leasing, and land transactions.' },
+        { slug: 'family', tag: 'People', img: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&q=80', title: 'Family', body: 'Sensitive guidance through separation, custody, and family matters.' },
+        { slug: 'ma', tag: 'Corporate & Commercial', img: 'https://images.unsplash.com/photo-1479142506502-19b3a3b7ff33?w=800&q=80', title: 'Mergers and Acquisitions', body: 'End-to-end deal support from due diligence to completion.' }
+      ],
+      values: [
+        { n: 1, title: 'Cultivating relationships', body: 'By truly understanding our clients and their needs, we forge partnerships that lead to mutual success.' },
+        { n: 2, title: 'Embodying respect', body: 'Everyone we engage with — client, colleague, or partner — is treated with respect and courtesy.' },
+        { n: 3, title: 'Delivering outcomes', body: 'We combine expertise, dedication, and effort to ensure every expectation is met and surpassed.' },
+        { n: 4, title: 'Achieving results', body: 'However intricate your situation, we work tirelessly to achieve outcomes for your circumstances.' }
+      ],
+      attorneys: [
+        { name: 'Emmanuel Baluti', role: 'Founder & Principal Attorney' },
+        { name: 'Name', role: 'Senior Associate' },
+        { name: 'Name', role: 'Associate' },
+        { name: 'Name', role: 'Associate' }
+      ],
+      stats: [
+        { value: '35+', label: 'Years of combined practice' },
+        { value: '18', label: 'Distinct practice areas' },
+        { value: '40+', label: 'Attorneys and staff' },
+        { value: '1,000+', label: 'Matters handled' }
+      ],
+      caseStudies: [
+        { name: 'Megan A.', initial: 'M', location: 'Kampala', quote: 'I was nervous when I first called, but they were genuinely friendly and put me at ease. They handled everything with real care.' },
+        { name: 'James O.', initial: 'J', location: 'Entebbe', quote: 'An amazing experience from start to finish. They kept me informed at every step, and I\u2019ll happily refer my family and friends.' },
+        { name: 'Jonathan K.', initial: 'J', location: 'Jinja', quote: 'Professional, responsive, and thorough. They explained my options in plain language and fought hard for the outcome I needed.' },
+        { name: 'Logan M.', initial: 'L', location: 'Kampala', quote: 'I was very happy with the communication between counsel and myself throughout. I always knew exactly where things stood.' }
+      ],
+      insights: [
+        { cat: 'Employment', title: 'The Employment (Amendment) Act, 2025: what employers must change now' },
+        { cat: 'Data Protection', title: 'Cross-border data transfers after the PDPO\u2019s orders against Google and Meta' },
+        { cat: 'Property', title: 'Joint tenancy vs tenancy in common: when registration overrides intention' }
+      ],
+      awards: [
+        IMG + 'Best_Lawyers_logo_bw.png',
+        IMG + 'top5prairielawfirm3-pms296.png',
+        IMG + 'Manitoba-Law-Firm-Seal_bw.png',
+        IMG + 'CLA20-Finalist__Prairies-Law-Firm-of-the-Year-1_bw-2.png',
+        IMG + 'Lexpert_bw.png'
+      ],
+      btnHover: { transform: 'translateY(-2px)', background: '#E11B3C' },
+      ghostHover: { borderColor: '#C8102E' },
+      chipHover: { borderColor: '#C8102E', color: '#fff' },
+      ctaHover: { background: '#C8102E' },
+      whyHover: { background: '#fff', boxShadow: 'inset 0 -3px 0 #C8102E' },
+      cardHover: { transform: 'translateY(-4px)', boxShadow: '0 24px 44px -24px rgba(20,20,24,.4)' },
+      awardHover: { opacity: 1 }
+    };
+  }
+}
+</script>
+</body>
+</html>
