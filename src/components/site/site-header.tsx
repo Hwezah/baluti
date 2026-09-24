@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowUpRight,
   ChevronDown,
@@ -26,9 +26,15 @@ function isCurrent(pathname: string, href: string) {
 function Burger({ wide = false }: { wide?: boolean }) {
   return (
     <>
-      <span className={cn("block h-0.5 bg-current", wide ? "w-[30px]" : "w-7")} />
-      <span className={cn("block h-0.5 bg-current", wide ? "w-[30px]" : "w-7")} />
-      <span className={cn("block h-0.5 bg-current", wide ? "w-[22px]" : "w-5")} />
+      <span
+        className={cn("block h-0.5 bg-current", wide ? "w-[30px]" : "w-7")}
+      />
+      <span
+        className={cn("block h-0.5 bg-current", wide ? "w-[30px]" : "w-7")}
+      />
+      <span
+        className={cn("block h-0.5 bg-current", wide ? "w-[22px]" : "w-5")}
+      />
     </>
   );
 }
@@ -38,6 +44,22 @@ export function SiteHeader() {
   const { panel, openPanel, closePanel } = useSiteUI();
   const [areasOpen, setAreasOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const barsRef = useRef<HTMLDivElement>(null);
+
+  // Publish the header's real height (the top bar can wrap) as --header-h,
+  // which sticky columns and anchor offsets use. The dropdown is excluded.
+  useEffect(() => {
+    const bars = barsRef.current;
+    if (!bars) return;
+    const observer = new ResizeObserver(() => {
+      document.documentElement.style.setProperty(
+        "--header-h",
+        `${Math.ceil(bars.getBoundingClientRect().height)}px`,
+      );
+    });
+    observer.observe(bars);
+    return () => observer.disconnect();
+  }, []);
 
   // A short delay lets the pointer travel from the trigger to the panel.
   const showAreas = () => {
@@ -52,101 +74,119 @@ export function SiteHeader() {
   return (
     <div className="sticky top-0 z-60">
       <header className="relative border-b border-black/10 bg-paper/92 backdrop-blur-md">
-        {/* Top bar (desktop only) */}
-        <div className="hidden bg-ink text-[13px] text-white/72 lg:block">
-          <div className="gutter flex flex-wrap items-center justify-between gap-5 py-[9px]">
-            <span className="tracking-[.02em]">
-              {site.hours.weekdays} · {site.address.short}
-            </span>
-            <div className="flex flex-wrap items-center gap-[22px]">
-              {site.emails.map((e) => (
-                <a key={e.href} href={e.href} className="text-white/72 hover:text-white">
-                  {e.label}
-                </a>
-              ))}
-              <span className="opacity-30">|</span>
-              {site.phones.map((p) => (
-                <a key={p.href} href={p.href} className="text-white/72 hover:text-white">
-                  {p.label}
-                </a>
-              ))}
+        <div ref={barsRef} id="site-header-bars">
+          {/* Top bar (desktop only) */}
+          <div className="hidden bg-ink text-[13px] text-white/72 lg:block">
+            <div className="gutter flex flex-wrap items-center justify-between gap-5 py-[9px]">
+              <span className="tracking-[.02em]">
+                {site.hours.weekdays} · {site.address.short}
+              </span>
+              <div className="flex flex-wrap items-center gap-[22px]">
+                {site.emails.map((e) => (
+                  <a
+                    key={e.href}
+                    href={e.href}
+                    className="text-white/72 hover:text-white"
+                  >
+                    {e.label}
+                  </a>
+                ))}
+                <span className="opacity-30">|</span>
+                {site.phones.map((p) => (
+                  <a
+                    key={p.href}
+                    href={p.href}
+                    className="text-white/72 hover:text-white"
+                  >
+                    {p.label}
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="gutter flex h-[74px] items-center justify-between gap-6">
-          <Link href="/" aria-label="Baluti & Co. Advocates — home" className="text-ink">
-            <Wordmark />
-          </Link>
+          <div className="gutter flex h-[74px] items-center justify-between gap-6">
+            <Link
+              href="/"
+              aria-label="Baluti & Co. Advocates — home"
+              className="text-ink"
+            >
+              <Wordmark />
+            </Link>
 
-          {/* Full navigation from 640px */}
-          <nav className="hidden flex-nowrap items-center gap-[18px] sm:flex lg:gap-8">
-            {navLinks.map((link) =>
-              link.href === "/practice-areas" ? (
-                <div
-                  key={link.href}
-                  className="relative flex items-center gap-1"
-                  onMouseEnter={showAreas}
-                  onMouseLeave={hideAreas}
-                >
+            {/* Full navigation from 640px */}
+            <nav className="hidden flex-nowrap items-center gap-[18px] sm:flex lg:gap-8">
+              {navLinks.map((link) =>
+                link.href === "/practice-areas" ? (
+                  <div
+                    key={link.href}
+                    className="relative flex items-center gap-1"
+                    onMouseEnter={showAreas}
+                    onMouseLeave={hideAreas}
+                  >
+                    <Link
+                      href={link.href}
+                      className={cn(
+                        "text-[15px] font-medium hover:text-crimson",
+                        isCurrent(pathname, link.href)
+                          ? "text-crimson"
+                          : "text-ink",
+                      )}
+                    >
+                      {link.label}
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setAreasOpen((open) => !open)}
+                      aria-label="Toggle practice areas menu"
+                      aria-expanded={areasOpen}
+                      className="flex cursor-pointer items-center p-1"
+                    >
+                      <ChevronDown
+                        size={15}
+                        strokeWidth={2.5}
+                        className={cn(
+                          "text-crimson transition-transform duration-250",
+                          areasOpen && "rotate-180",
+                        )}
+                      />
+                    </button>
+                  </div>
+                ) : (
                   <Link
+                    key={link.href}
                     href={link.href}
                     className={cn(
-                      "text-[15px] font-medium hover:text-crimson",
-                      isCurrent(pathname, link.href) ? "text-crimson" : "text-ink"
+                      "text-[15px] font-medium whitespace-nowrap hover:text-crimson",
+                      isCurrent(pathname, link.href)
+                        ? "text-crimson"
+                        : "text-ink",
                     )}
                   >
                     {link.label}
                   </Link>
-                  <button
-                    type="button"
-                    onClick={() => setAreasOpen((open) => !open)}
-                    aria-label="Toggle practice areas menu"
-                    aria-expanded={areasOpen}
-                    className="flex cursor-pointer items-center p-1"
-                  >
-                    <ChevronDown
-                      size={15}
-                      strokeWidth={2.5}
-                      className={cn(
-                        "text-crimson transition-transform duration-250",
-                        areasOpen && "rotate-180"
-                      )}
-                    />
-                  </button>
-                </div>
-              ) : (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    "text-[15px] font-medium whitespace-nowrap hover:text-crimson",
-                    isCurrent(pathname, link.href) ? "text-crimson" : "text-ink"
-                  )}
-                >
-                  {link.label}
-                </Link>
-              )
-            )}
+                ),
+              )}
+              <button
+                type="button"
+                onClick={() => openPanel("contact")}
+                aria-label="Open contact panel"
+                className="hidden cursor-pointer flex-col items-end gap-1.5 px-0.5 py-1.5 text-ink hover:text-crimson lg:flex"
+              >
+                <Burger wide />
+              </button>
+            </nav>
+
+            {/* Drawer trigger below 640px */}
             <button
               type="button"
-              onClick={() => openPanel("contact")}
-              aria-label="Open contact panel"
-              className="hidden cursor-pointer flex-col items-end gap-1.5 px-0.5 py-1.5 text-ink hover:text-crimson lg:flex"
+              onClick={() => openPanel("menu")}
+              aria-label="Menu"
+              className="flex cursor-pointer flex-col items-end gap-1.5 px-1 py-2 text-ink sm:hidden"
             >
-              <Burger wide />
+              <Burger />
             </button>
-          </nav>
-
-          {/* Drawer trigger below 640px */}
-          <button
-            type="button"
-            onClick={() => openPanel("menu")}
-            aria-label="Menu"
-            className="flex cursor-pointer flex-col items-end gap-1.5 px-1 py-2 text-ink sm:hidden"
-          >
-            <Burger />
-          </button>
+          </div>
         </div>
 
         {areasOpen && (
@@ -176,7 +216,9 @@ export function SiteHeader() {
         )}
       </header>
 
-      {panel === "menu" && <MobileMenu pathname={pathname} onClose={closePanel} />}
+      {panel === "menu" && (
+        <MobileMenu pathname={pathname} onClose={closePanel} />
+      )}
       {panel === "contact" && <ContactPanel onClose={closePanel} />}
     </div>
   );
@@ -205,7 +247,7 @@ function Overlay({
         onClick={(e) => e.stopPropagation()}
         className={cn(
           "absolute top-0 right-0 bottom-0 flex animate-sheet-in flex-col overflow-y-auto bg-ink shadow-[-30px_0_60px_-20px_rgba(0,0,0,.6)]",
-          className
+          className,
         )}
       >
         {children}
@@ -246,7 +288,7 @@ function MobileMenu({
             onClick={onClose}
             className={cn(
               "block py-2.5 text-left font-serif text-2xl font-semibold hover:text-crimson",
-              isCurrent(pathname, link.href) ? "text-crimson" : "text-white/92"
+              isCurrent(pathname, link.href) ? "text-crimson" : "text-white/92",
             )}
           >
             {link.label}
@@ -338,7 +380,9 @@ function ContactPanel({ onClose }: { onClose: () => void }) {
           <span className={tile}>
             <Clock size={19} />
           </span>
-          <span className="text-[14.5px] text-white/80">{site.hours.compact}</span>
+          <span className="text-[14.5px] text-white/80">
+            {site.hours.compact}
+          </span>
         </div>
       </div>
       <Link

@@ -15,6 +15,7 @@ import { RotatingWord } from "@/components/home/rotating-word";
 import { MaybeLink } from "@/components/site/maybe-link";
 import { Eyebrow, SectionHeader, Silhouette } from "@/components/site/primitives";
 import { Rings } from "@/components/site/rings";
+import { StickyColumn } from "@/components/site/sticky-column";
 
 const HERO_IMG =
   "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=1200&q=80";
@@ -260,7 +261,7 @@ export default function HomePage() {
       {/* VALUES PREVIEW */}
       <section className="gutter bg-paper py-section">
         <div className="site-container grid grid-cols-1 items-start gap-[clamp(36px,5vw,72px)] md:grid-cols-[1fr_1.15fr]">
-          <div>
+          <StickyColumn>
             <Eyebrow className="mb-3.5">Our values</Eyebrow>
             <h2 className="m-0 mb-[22px] font-serif text-[clamp(1.9rem,3.2vw,2.7rem)] leading-[1.12] font-bold">
               Fundamental principles that define our practice
@@ -278,7 +279,7 @@ export default function HomePage() {
               head={{ top: "20%", width: "22%" }}
               body={{ bottom: "-14%", width: "42%" }}
             />
-          </div>
+          </StickyColumn>
           <div className="flex flex-col">
             {values.map((v, i) => (
               <div
@@ -353,7 +354,7 @@ export default function HomePage() {
       </section>
 
       {/* CLIENT REVIEWS */}
-      <section id="reviews" className="gutter scroll-mt-24 bg-paper py-section">
+      <section id="reviews" className="gutter scroll-mt-header bg-paper py-section">
         <div className="site-container">
           <div className="mb-11 max-w-[640px]">
             <Eyebrow className="mb-3.5">Client reviews</Eyebrow>

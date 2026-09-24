@@ -7,6 +7,7 @@ import { ConsultationForm } from "@/components/contact/consultation-form";
 import { Faq } from "@/components/contact/faq";
 import { PageHero } from "@/components/site/page-hero";
 import { Eyebrow } from "@/components/site/primitives";
+import { StickyColumn } from "@/components/site/sticky-column";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -99,9 +100,9 @@ export default function ContactPage() {
             </div>
           </div>
 
-          <div className="border border-black/10 bg-white p-[clamp(16px,2vw,24px)]">
+          <StickyColumn className="border border-black/10 bg-white p-[clamp(16px,2vw,24px)]">
             <ConsultationForm />
-          </div>
+          </StickyColumn>
         </div>
       </section>
 

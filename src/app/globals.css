@@ -92,6 +92,8 @@
 }
 
 :root {
+  /* Height of the sticky site header (fallback; SiteHeader sets the measured value). */
+  --header-h: 75px;
   --radius: 0px;
   --background: #fafaf9;
   --foreground: #000000;
@@ -113,6 +115,12 @@
   --ring: #c8102e;
 }
 
+@media (width >= 64rem) {
+  :root {
+    --header-h: 114px;
+  }
+}
+
 /* ─── Reusable layout utilities ───────────────────────────────────────────── */
 @utility gutter {
   padding-inline: clamp(16px, 4vw, 40px);
@@ -126,6 +134,20 @@
 }
 @utility py-section-sm {
   padding-block: clamp(56px, 7vw, 96px);
+}
+/* Shorter column of a two-column section; see StickyColumn. */
+@utility sticky-col {
+  @media (width >= 56.25rem) {
+    align-self: start;
+    &[data-fits] {
+      position: sticky;
+      top: calc(var(--header-h) + 24px);
+    }
+  }
+}
+/* Anchor targets land below the sticky header. */
+@utility scroll-mt-header {
+  scroll-margin-top: calc(var(--header-h) + 24px);
 }
 @utility eyebrow {
   font-size: 12px;

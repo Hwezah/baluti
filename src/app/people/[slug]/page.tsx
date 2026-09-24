@@ -14,6 +14,7 @@ import {
   UnderlineLink,
 } from "@/components/site/primitives";
 import { Rings } from "@/components/site/rings";
+import { StickyColumn } from "@/components/site/sticky-column";
 
 export function generateStaticParams() {
   return attorneys.map((a) => ({ slug: a.slug }));
@@ -116,7 +117,7 @@ export default async function AttorneyPage({ params }: PageProps<"/people/[slug]
             </ul>
           </div>
 
-          <aside className="flex flex-col gap-6 md:sticky md:top-[100px]">
+          <StickyColumn as="aside" className="flex flex-col gap-6">
             <div className="border border-black/10 bg-white p-7">
               <h3 className="m-0 mb-4 font-serif text-[1.15rem] font-semibold">
                 Practice areas
@@ -150,7 +151,7 @@ export default async function AttorneyPage({ params }: PageProps<"/people/[slug]
               <h3 className="m-0 mb-2 font-serif text-[1.15rem] font-semibold">Languages</h3>
               <p className="m-0 text-[14.5px] text-white/72">{attorney.languages}</p>
             </div>
-          </aside>
+          </StickyColumn>
         </div>
       </section>
 

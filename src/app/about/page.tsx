@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { CtaBand, PageHero } from "@/components/site/page-hero";
 import { Eyebrow, Silhouette } from "@/components/site/primitives";
 import { StepsGrid } from "@/components/site/steps-grid";
+import { StickyColumn } from "@/components/site/sticky-column";
 
 export const metadata: Metadata = {
   title: "About",
@@ -51,8 +52,8 @@ export default function AboutPage() {
 
       {/* MISSION */}
       <section className="gutter bg-paper py-section">
-        <div className="site-container grid grid-cols-1 items-center gap-[clamp(36px,5vw,72px)] md:grid-cols-[1.1fr_1fr]">
-          <div>
+        <div className="site-container grid grid-cols-1 items-start gap-[clamp(36px,5vw,72px)] md:grid-cols-[1.1fr_1fr]">
+          <StickyColumn>
             <Eyebrow className="mb-3.5">Who we are</Eyebrow>
             <h2 className={`${h2} mb-[22px] leading-[1.14]`}>
               A firm built on trust, clarity, and results
@@ -80,13 +81,16 @@ export default function AboutPage() {
                 </div>
               ))}
             </div>
-          </div>
-          <Silhouette
-            label="team / office photo"
-            className="h-[clamp(320px,42vw,460px)] border border-black/12"
-            head={{ top: "22%", width: "20%" }}
-            body={{ bottom: "-12%", width: "40%" }}
-          />
+          </StickyColumn>
+          {/* Which column is shorter depends on the width, so both can stick. */}
+          <StickyColumn>
+            <Silhouette
+              label="team / office photo"
+              className="h-[clamp(320px,42vw,460px)] border border-black/12"
+              head={{ top: "22%", width: "20%" }}
+              body={{ bottom: "-12%", width: "40%" }}
+            />
+          </StickyColumn>
         </div>
       </section>
 

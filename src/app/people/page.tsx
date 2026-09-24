@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { MaybeLink } from "@/components/site/maybe-link";
 import { CtaBand, PageHero } from "@/components/site/page-hero";
 import { Eyebrow, Silhouette } from "@/components/site/primitives";
+import { StickyColumn } from "@/components/site/sticky-column";
 
 export const metadata: Metadata = {
   title: "Our People",
@@ -111,9 +112,9 @@ export default function PeoplePage() {
       </section>
 
       {/* CAREERS */}
-      <section id="careers" className="gutter scroll-mt-24 bg-ink py-section text-white">
-        <div className="site-container grid grid-cols-1 items-center gap-[clamp(36px,5vw,72px)] md:grid-cols-2">
-          <div>
+      <section id="careers" className="gutter scroll-mt-header bg-ink py-section text-white">
+        <div className="site-container grid grid-cols-1 items-start gap-[clamp(36px,5vw,72px)] md:grid-cols-2">
+          <StickyColumn>
             <Eyebrow className="mb-3.5">Careers</Eyebrow>
             <h2 className={`${h2} mb-5 leading-[1.12]`}>Build your practice with us</h2>
             <p className="m-0 mb-7 max-w-[48ch] text-base text-white/72">
@@ -124,7 +125,7 @@ export default function PeoplePage() {
             <Button asChild size="cta">
               <Link href="/contact">Explore opportunities</Link>
             </Button>
-          </div>
+          </StickyColumn>
           <div className="grid grid-cols-2 gap-0.5 border border-white/12 bg-white/12">
             {perks.map((perk) => (
               <div key={perk.title} data-tight-x className="bg-ink px-6 py-7">

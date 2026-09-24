@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { MaybeLink } from "@/components/site/maybe-link";
 import { CtaBand, PageHero } from "@/components/site/page-hero";
 import { Avatar, Eyebrow } from "@/components/site/primitives";
+import { StickyColumn } from "@/components/site/sticky-column";
 
 export function generateStaticParams() {
   return practiceAreas.map((area) => ({ slug: area.slug }));
@@ -113,7 +114,7 @@ export default async function PracticeAreaPage({
             </div>
           </div>
 
-          <aside className="flex flex-col gap-6 md:sticky md:top-[100px]">
+          <StickyColumn as="aside" className="flex flex-col gap-6">
             <div className="border border-black/10 bg-white p-7">
               <h3 className="m-0 mb-1.5 font-serif text-[1.2rem] font-semibold">
                 Speak to our team
@@ -151,7 +152,7 @@ export default async function PracticeAreaPage({
                 ))}
               </div>
             </div>
-          </aside>
+          </StickyColumn>
         </div>
       </section>
 
