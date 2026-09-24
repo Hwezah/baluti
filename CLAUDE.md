@@ -12,6 +12,7 @@ Every Next.js project uses this stack. Follow it rather than adding alternatives
   - Route protection lives in `src/proxy.ts` (Next 16 renamed `middleware.ts` to `proxy.ts`)
   - Use `<Show when="signed-in">` / `<Show when="signed-out">`. `SignedIn`/`SignedOut` were removed.
   - Server side: `auth()` / `currentUser()` from `@clerk/nextjs/server`
+  - Clerk is optional: `clerkEnabled` (`src/lib/clerk.ts`, server-only) gates `ClerkProvider`, the proxy and the auth pages, so the site runs with no env vars. Never make a page depend on Clerk without that check.
 
 # Commands
 

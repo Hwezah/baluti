@@ -1,6 +1,8 @@
+import { siteUrl } from "@/lib/site-url";
+
 export const site = {
   name: "Baluti & Co. Advocates",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://baluti.co.ug",
+  url: siteUrl.origin,
   address: {
     line1: "Plot 111 Semawata Road, Ntinda,",
     line2: "P.O Box 24787, Kampala – Uganda",

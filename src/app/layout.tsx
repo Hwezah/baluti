@@ -5,7 +5,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { SiteUIProvider } from "@/context/site-ui-context";
-import { site } from "@/content/site";
+import { clerkEnabled } from "@/lib/clerk";
+import { siteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const figtree = Figtree({
@@ -20,7 +21,7 @@ const robotoSerif = Roboto_Serif({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(site.url),
+  metadataBase: siteUrl,
   title: {
     default: "Baluti & Co. Advocates — Law firm in Kampala, Uganda",
     template: "%s | Baluti & Co. Advocates",
@@ -30,19 +31,20 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
-  return (
-    <ClerkProvider>
-      <html lang="en" className={`${figtree.variable} ${robotoSerif.variable}`}>
-        <body>
-          <SiteUIProvider>
-            <div className="overflow-x-clip">
-              <SiteHeader />
-              <main>{children}</main>
-              <SiteFooter />
-            </div>
-          </SiteUIProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+  const page = (
+    <html lang="en" className={`${figtree.variable} ${robotoSerif.variable}`}>
+      <body>
+        <SiteUIProvider>
+          <div className="overflow-x-clip">
+            <SiteHeader />
+            <main>{children}</main>
+            <SiteFooter />
+          </div>
+        </SiteUIProvider>
+      </body>
+    </html>
   );
+
+  // Clerk is optional: without valid keys the site renders without auth.
+  return clerkEnabled ? <ClerkProvider>{page}</ClerkProvider> : page;
 }

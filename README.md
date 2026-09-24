@@ -5,12 +5,18 @@ Marketing website for Baluti & Co. Advocates, Kampala. Built with Next.js (App R
 ## Getting started
 
 ```bash
-cp .env.example .env.local   # add your Clerk keys
 npm install
 npm run dev
 ```
 
-Open http://localhost:3000.
+Open http://localhost:3000. No environment variables are required.
+
+## Environment variables
+
+All optional; see `.env.example`.
+
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` + `CLERK_SECRET_KEY`: turn Clerk auth on. Both must be set and valid, otherwise auth stays off and the site still runs (`/sign-in` and `/sign-up` return 404). On Vercel, add them to every environment you deploy (Production **and** Preview) and redeploy, because `NEXT_PUBLIC_` values are baked in at build time.
+- `NEXT_PUBLIC_SITE_URL`: canonical URL for metadata and share links. Defaults to the Vercel production domain, then `https://baluti.co.ug`.
 
 ## Pages
 

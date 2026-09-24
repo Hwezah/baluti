@@ -1,8 +1,12 @@
+import { NextResponse } from "next/server";
 import { clerkMiddleware } from "@clerk/nextjs/server";
+
+import { clerkEnabled } from "@/lib/clerk";
 
 // Every marketing page is public. To protect a route later, match it with
 // createRouteMatcher and call `await auth.protect()` for it here.
-export default clerkMiddleware();
+// Without valid Clerk keys the site must still serve, so fall through.
+export default clerkEnabled ? clerkMiddleware() : () => NextResponse.next();
 
 export const config = {
   matcher: [
