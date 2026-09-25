@@ -78,7 +78,7 @@ export function RotatingWord() {
   }, []);
 
   return (
-    <span className="whitespace-nowrap text-white italic">
+    <span className="whitespace-nowrap text-crimson italic">
       <span className="sr-only">future</span>
       <span ref={ref} aria-hidden="true">
         {text}
