@@ -1,7 +1,6 @@
 type Ring = { px: number; vw: number; color: string };
 
 const WHITE = (a: number) => `rgba(255,255,255,${a})`;
-const CRIMSON = (a: number) => `rgba(200,16,46,${a})`;
 
 const presets = {
   /** Page heroes on black. */
@@ -9,17 +8,8 @@ const presets = {
     at: ["88%", "6%"],
     rings: [
       { px: 760, vw: 121, color: WHITE(0.1) },
-      { px: 520, vw: 83, color: CRIMSON(0.28) },
-      { px: 280, vw: 44, color: WHITE(0.07) },
-    ],
-  },
-  /** Page heroes on crimson. */
-  crimson: {
-    at: ["88%", "6%"],
-    rings: [
-      { px: 760, vw: 121, color: WHITE(0.22) },
       { px: 520, vw: 83, color: WHITE(0.16) },
-      { px: 280, vw: 44, color: WHITE(0.1) },
+      { px: 280, vw: 44, color: WHITE(0.07) },
     ],
   },
   /** Home hero. */
@@ -27,11 +17,11 @@ const presets = {
     at: ["88%", "6%"],
     rings: [
       { px: 900, vw: 143, color: WHITE(0.11) },
-      { px: 620, vw: 98, color: CRIMSON(0.3) },
+      { px: 620, vw: 98, color: WHITE(0.17) },
       { px: 340, vw: 54, color: WHITE(0.07) },
     ],
   },
-  /** Home "Need help?" crimson CTA. */
+  /** Home "Need help?" CTA. */
   cta: {
     at: ["86%", "4%"],
     rings: [

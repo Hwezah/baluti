@@ -88,8 +88,8 @@ export default async function PracticeAreaPage({
             <ul className="m-0 mb-11 grid list-none grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-0.5 border border-black/10 bg-black/10 p-0">
               {area.services.map((service) => (
                 <li key={service} className="flex items-center gap-3.5 bg-paper px-6 py-[22px]">
-                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[rgba(158,27,47,.09)]">
-                    <Check size={16} strokeWidth={2.6} className="text-crimson" />
+                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-black/6">
+                    <Check size={16} strokeWidth={2.6} className="text-ink" />
                   </span>
                   <span className="text-[15px] text-ink-body">{service}</span>
                 </li>
@@ -102,8 +102,8 @@ export default async function PracticeAreaPage({
               </h3>
               <ol className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-7 p-0">
                 {steps.map((step, i) => (
-                  <li key={step.title} className="border-t-2 border-crimson pt-4">
-                    <span className="font-serif text-[1.2rem] text-crimson">0{i + 1}</span>
+                  <li key={step.title} className="border-t border-white/25 pt-4">
+                    <span className="font-serif text-[1.2rem] text-white/45">0{i + 1}</span>
                     <h4 className="m-0 my-2 font-serif text-[1.1rem] font-semibold">
                       {step.title}
                     </h4>
@@ -147,7 +147,7 @@ export default async function PracticeAreaPage({
                     className="flex items-center justify-between border-b border-black/10 py-[11px] text-[14.5px] text-ink-body hover:text-crimson"
                   >
                     {r.title}
-                    <ArrowRight size={16} className="text-crimson" />
+                    <ArrowRight size={16} className="text-ink-faint" />
                   </Link>
                 ))}
               </div>
@@ -181,7 +181,7 @@ export default async function PracticeAreaPage({
                   <h3 className="m-0 mb-[3px] font-serif text-[1.15rem] font-semibold">
                     {person.name}
                   </h3>
-                  <div className="text-xs font-semibold tracking-[.06em] text-crimson uppercase">
+                  <div className="text-xs font-semibold tracking-[.06em] text-muted-foreground uppercase">
                     {person.role}
                   </div>
                 </div>
@@ -195,7 +195,7 @@ export default async function PracticeAreaPage({
         title="Facing a matter in this area?"
         body="Tell us what you’re dealing with and we’ll advise on the best way forward."
       >
-        <Button asChild variant="dark" size="cta">
+        <Button asChild size="cta">
           <Link href="/contact">Get in touch</Link>
         </Button>
       </CtaBand>

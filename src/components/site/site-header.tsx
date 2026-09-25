@@ -146,7 +146,7 @@ export function SiteHeader() {
                         size={15}
                         strokeWidth={2.5}
                         className={cn(
-                          "text-crimson transition-transform duration-250",
+                          "text-ink transition-transform duration-250",
                           areasOpen && "rotate-180",
                         )}
                       />
@@ -196,7 +196,7 @@ export function SiteHeader() {
             className="hidden border-t border-black/10 bg-paper shadow-[0_24px_48px_-24px_rgba(20,20,24,.35)] sm:block"
           >
             <div className="gutter pt-7 pb-9">
-              <div className="mb-4 text-xs font-semibold tracking-[.2em] text-crimson uppercase">
+              <div className="mb-4 text-xs font-semibold tracking-[.2em] text-muted-foreground uppercase">
                 Our Practice Areas
               </div>
               <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-x-[30px] gap-y-0.5">
@@ -299,7 +299,7 @@ function MobileMenu({
         <Link
           href="/contact"
           onClick={onClose}
-          className="flex items-center justify-center gap-2 rounded-[2px] bg-crimson p-[15px] text-center text-[15px] font-semibold text-white hover:bg-crimson-light hover:text-white"
+          className="flex items-center justify-center gap-2 rounded-[2px] bg-white p-[15px] text-center text-[15px] font-semibold text-ink hover:bg-crimson hover:text-white"
         >
           Free consultation
         </Link>
@@ -321,7 +321,7 @@ function MobileMenu({
 
 function ContactPanel({ onClose }: { onClose: () => void }) {
   const tile =
-    "flex size-10 shrink-0 items-center justify-center rounded-[2px] bg-crimson text-white";
+    "flex size-10 shrink-0 items-center justify-center rounded-[2px] bg-white/10 text-white";
   const link = "text-[14.5px] text-white/80 hover:text-crimson";
   return (
     <Overlay
@@ -388,7 +388,7 @@ function ContactPanel({ onClose }: { onClose: () => void }) {
       <Link
         href="/contact"
         onClick={onClose}
-        className="flex items-center justify-center gap-2.5 rounded-[2px] bg-crimson p-4 text-[15px] font-semibold text-white hover:bg-crimson-light hover:text-white"
+        className="flex items-center justify-center gap-2.5 rounded-[2px] bg-white p-4 text-[15px] font-semibold text-ink hover:bg-crimson hover:text-white"
       >
         Free consultation <ArrowUpRight size={17} />
       </Link>

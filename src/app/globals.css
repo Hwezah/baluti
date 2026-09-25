@@ -154,7 +154,8 @@
   letter-spacing: 0.24em;
   text-transform: uppercase;
   font-weight: 600;
-  color: var(--color-crimson);
+  /* Muted version of the surrounding text colour, on light or dark. */
+  color: color-mix(in srgb, currentColor 55%, transparent);
 }
 @utility no-scrollbar {
   scrollbar-width: none;
@@ -176,11 +177,8 @@
     line-height: 1.6;
   }
   a {
-    color: var(--color-crimson);
+    color: inherit;
     text-decoration: none;
-  }
-  a:hover {
-    color: var(--color-crimson-dark);
   }
   ::selection {
     background: var(--color-crimson);

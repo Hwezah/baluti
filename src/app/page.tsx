@@ -109,7 +109,7 @@ export default function HomePage() {
               applying law to facts to deliver outcomes that stand.
             </p>
             <div className="flex flex-nowrap items-stretch gap-3.5">
-              <Button asChild className="flex-[1_1_0] px-[18px] md:flex-none md:px-[30px]">
+              <Button asChild variant="light" className="flex-[1_1_0] px-[18px] md:flex-none md:px-[30px]">
                 <Link href="/people">
                   <span className="md:hidden">Our lawyers</span>
                   <span className="hidden md:inline">Meet our lawyers</span>
@@ -184,7 +184,7 @@ export default function HomePage() {
                     href={card.href}
                     className="flex min-h-[230px] flex-[0_0_82%] snap-start flex-col border border-black/12 bg-paper px-[26px] pt-8 pb-[30px] transition-[background-color,box-shadow] duration-300 hover:bg-white hover:shadow-[inset_0_-3px_0_#C8102E] md:flex-[1_1_0] md:border-0 md:px-8 md:pt-[38px] md:pb-[34px]"
                   >
-                    <span className="mb-auto font-serif text-[22px] text-crimson">
+                    <span className="mb-auto font-serif text-[22px] text-ink-faint">
                       0{r * 2 + i + 1}
                     </span>
                     <h3 className="m-0 mt-[22px] mb-3 font-serif text-[1.4rem] font-semibold">
@@ -224,7 +224,7 @@ export default function HomePage() {
                 >
                   <div className="relative h-[200px] bg-[#EAEAEA]">
                     <Image src={card.img} alt="" fill sizes="320px" className="object-cover" />
-                    <span className="absolute top-3.5 left-3.5 rounded-[3px] bg-crimson px-3 py-1.5 text-[11px] font-semibold tracking-[.1em] text-white uppercase">
+                    <span className="absolute top-3.5 left-3.5 rounded-[3px] bg-ink px-3 py-1.5 text-[11px] font-semibold tracking-[.1em] text-white uppercase">
                       {card.tag}
                     </span>
                   </div>
@@ -235,7 +235,7 @@ export default function HomePage() {
                     <p className="m-0 mb-auto text-sm text-muted-foreground">
                       {area.summary}
                     </p>
-                    <span className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-crimson">
+                    <span className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-ink">
                       Learn more <ArrowRight size={16} />
                     </span>
                   </div>
@@ -252,7 +252,7 @@ export default function HomePage() {
           <h2 className="m-0 mb-[30px] font-serif text-[clamp(1.8rem,3.6vw,3rem)] leading-[1.18] font-semibold">
             We build trust, understand needs and provide solutions
           </h2>
-          <Button asChild size="cta">
+          <Button asChild variant="light" size="cta">
             <Link href="/contact">Contact us</Link>
           </Button>
         </div>
@@ -270,7 +270,7 @@ export default function HomePage() {
               The way we work is shaped by a simple commitment: to treat every
               client, colleague, and matter with the care it deserves.
             </p>
-            <Button asChild variant="dark" size="cta">
+            <Button asChild size="cta">
               <Link href="/about">Learn more about us</Link>
             </Button>
             <Silhouette
@@ -286,7 +286,7 @@ export default function HomePage() {
                 key={v.title}
                 className="grid grid-cols-[56px_1fr] gap-5 border-t border-black/14 py-[30px]"
               >
-                <span className="font-serif text-[1.6rem] text-crimson">0{i + 1}</span>
+                <span className="font-serif text-[1.6rem] text-ink-faint">0{i + 1}</span>
                 <div>
                   <h3 className="m-0 mb-2.5 font-serif text-[1.4rem] font-semibold">
                     {v.title}
@@ -321,7 +321,7 @@ export default function HomePage() {
                   <h3 className="m-0 mb-1 font-serif text-[1.3rem] font-semibold">
                     {person.name}
                   </h3>
-                  <span className="text-[13px] font-semibold tracking-[.08em] text-crimson uppercase">
+                  <span className="text-[13px] font-semibold tracking-[.08em] text-white/55 uppercase">
                     {person.role}
                   </span>
                 </MaybeLink>
@@ -366,7 +366,7 @@ export default function HomePage() {
             {reviews.map((review) => (
               <div key={review.name} className="flex-[0_0_82%] snap-start md:flex-[1_1_280px]">
                 <figure className="m-0 flex size-full flex-col border border-black/9 bg-white px-[30px] py-8">
-                  <div className="mb-[18px] flex gap-[3px] text-crimson" aria-label="5 out of 5 stars">
+                  <div className="mb-[18px] flex gap-[3px] text-ink" aria-label="5 out of 5 stars">
                     {Array.from({ length: 5 }, (_, i) => (
                       <Star key={i} size={16} fill="currentColor" strokeWidth={1} aria-hidden="true" />
                     ))}
@@ -375,7 +375,7 @@ export default function HomePage() {
                     “{review.quote}”
                   </blockquote>
                   <figcaption className="flex items-center gap-3.5 border-t border-black/10 pt-5">
-                    <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-crimson font-serif text-[1.1rem] font-semibold text-white">
+                    <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-ink font-serif text-[1.1rem] font-semibold text-white">
                       {review.name[0]}
                     </span>
                     <div>
@@ -406,7 +406,7 @@ export default function HomePage() {
                   href={insightHref(post.slug)}
                   className={`flex size-full min-h-[220px] flex-col border border-black/9 bg-paper p-[30px] ${cardHover}`}
                 >
-                  <span className="mb-5 self-start rounded-full border border-[rgba(158,27,47,.4)] px-[11px] py-[5px] text-[11.5px] font-semibold tracking-[.12em] text-crimson uppercase">
+                  <span className="mb-5 self-start rounded-full border border-black/20 px-[11px] py-[5px] text-[11.5px] font-semibold tracking-[.12em] text-ink-soft uppercase">
                     {post.category}
                   </span>
                   <h3 className="m-0 mb-auto font-serif text-[1.22rem] leading-[1.3] font-semibold">
@@ -423,7 +423,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="gutter relative overflow-hidden bg-crimson py-[clamp(72px,9vw,124px)] text-white">
+      <section className="gutter relative overflow-hidden bg-ink py-[clamp(72px,9vw,124px)] text-white">
         <Rings preset="cta" />
         <div className="relative mx-auto max-w-[1000px]">
           <Eyebrow onCrimson className="mb-7">

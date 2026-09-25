@@ -26,7 +26,7 @@ function ContactItem({
 }) {
   return (
     <div className="grid grid-cols-[44px_1fr] items-center gap-4">
-      <span className="flex size-11 shrink-0 items-center justify-center rounded-[2px] bg-crimson text-white">
+      <span className="flex size-11 shrink-0 items-center justify-center rounded-[2px] bg-ink text-white">
         {icon}
       </span>
       <div>
@@ -43,7 +43,6 @@ export default function ContactPage() {
   return (
     <>
       <PageHero
-        crimson
         className="py-[clamp(56px,7vw,96px)]"
         crumbs={[{ label: "Home", href: "/" }, { label: "Contact" }]}
         eyebrow="Need help?"

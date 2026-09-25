@@ -28,6 +28,7 @@ Marketing site for a Kampala law firm, rebuilt from the Claude Design handoff in
 - **Design tokens** are in `src/app/globals.css`: brand colours (`crimson`, `paper`, `sand`, `field`, `ink-*`), fonts (`font-serif` = Roboto Serif, `font-sans` = Figtree) and utilities `gutter`, `site-container`, `py-section`, `py-section-sm`, `eyebrow`, `no-scrollbar`.
 - **Breakpoints** follow the handoff: `sm` = 640px, `md` = **900px** (overridden), `lg` = 1024px. Use CSS breakpoints, never JS width checks.
 - **Shared pieces** are in `src/components/site/`: `PageHero`, `CtaBand`, `Rings` (the concentric-ring motif), `Eyebrow`, `Breadcrumbs`, `Wordmark`, `Silhouette`/`Avatar` (photo placeholders), `MaybeLink`.
-- Buttons use the re-skinned shadcn `Button` (`primary`, `dark`, `ghost`, `ghostOnDark`, `outlineWhite`; size `cta` is the standalone CTA).
+- Buttons use the re-skinned shadcn `Button`: `primary` (black, for light backgrounds), `light` (white, for dark backgrounds), `ghost`, `ghostOnDark`, `outlineWhite`; size `cta` is the standalone CTA.
+- **Keep red minimal** (client request, overrides the handoff): crimson only for the wordmark, the active nav item, hover/focus states and thin accent rules (eyebrow rule, underline links, article quote/disclaimer edge, map pin). No red section backgrounds, buttons at rest, labels, numbers, tags or icons; use black/white/greys instead.
 - `SiteUIProvider` (`src/context/site-ui-context.tsx`) owns the mobile menu and contact slide-over state.
 - Photos are Unsplash placeholders; people named "Name" are placeholders awaiting real names.

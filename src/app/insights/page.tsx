@@ -43,7 +43,7 @@ export default function InsightsPage() {
               />
             </div>
             <div className="flex flex-col justify-center p-[clamp(28px,3.5vw,48px)]">
-              <span className="mb-5 self-start rounded-full border border-[rgba(158,27,47,.4)] px-[11px] py-[5px] text-[11.5px] font-semibold tracking-[.12em] text-crimson uppercase">
+              <span className="mb-5 self-start rounded-full border border-black/20 px-[11px] py-[5px] text-[11.5px] font-semibold tracking-[.12em] text-ink-soft uppercase">
                 Featured · {featured.category}
               </span>
               <h2 className="m-0 mb-4 font-serif text-[clamp(1.5rem,2.6vw,2.1rem)] leading-[1.2] font-bold">

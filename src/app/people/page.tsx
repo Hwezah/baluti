@@ -68,7 +68,7 @@ export default function PeoplePage() {
                   <h3 className="m-0 mb-1 font-serif text-[1.4rem] font-semibold">
                     {person.name}
                   </h3>
-                  <div className="mb-3.5 text-[13px] font-semibold tracking-[.08em] text-crimson uppercase">
+                  <div className="mb-3.5 text-[13px] font-semibold tracking-[.08em] text-muted-foreground uppercase">
                     {person.role}
                   </div>
                   <p className="m-0 text-[14.5px] text-muted-foreground">{person.bio}</p>
@@ -101,7 +101,7 @@ export default function PeoplePage() {
                 <h3 className="m-0 mb-[3px] font-serif text-[1.25rem] font-semibold">
                   {person.name}
                 </h3>
-                <div className="mb-1 text-[12.5px] font-semibold tracking-[.06em] text-crimson uppercase">
+                <div className="mb-1 text-[12.5px] font-semibold tracking-[.06em] text-muted-foreground uppercase">
                   {person.role}
                 </div>
                 <div className="text-sm text-muted-foreground">{person.area}</div>
@@ -122,7 +122,7 @@ export default function PeoplePage() {
               providing caring, dedicated representation. If that sounds like
               you, we’d love to hear from you.
             </p>
-            <Button asChild size="cta">
+            <Button asChild variant="light" size="cta">
               <Link href="/contact">Explore opportunities</Link>
             </Button>
           </StickyColumn>
@@ -143,7 +143,7 @@ export default function PeoplePage() {
         title="Speak with the right advocate"
         body="Tell us about your matter and we’ll connect you with the best person for it."
       >
-        <Button asChild variant="dark" size="cta">
+        <Button asChild size="cta">
           <Link href="/contact">Free consultation</Link>
         </Button>
       </CtaBand>

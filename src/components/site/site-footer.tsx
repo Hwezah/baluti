@@ -80,7 +80,7 @@ export function SiteFooter() {
             ))}
             <Link
               href="/practice-areas"
-              className="mt-1 inline-flex items-center gap-1.5 font-semibold text-crimson hover:text-crimson"
+              className="mt-1 inline-flex items-center gap-1.5 font-semibold text-white hover:text-crimson"
             >
               View all areas <ArrowRight size={16} />
             </Link>
@@ -125,7 +125,7 @@ function BookButton({ className }: { className: string }) {
     <Link
       href="/contact"
       className={cn(
-        "rounded-[2px] bg-crimson font-semibold text-white hover:bg-crimson-light hover:text-white",
+        "rounded-[2px] bg-white font-semibold text-ink hover:bg-crimson hover:text-white",
         className
       )}
     >

@@ -36,7 +36,7 @@ export function ConsultationForm() {
         role="status"
         className="flex min-h-[440px] flex-col items-center justify-center gap-4 text-center"
       >
-        <span className="flex size-16 items-center justify-center rounded-full bg-crimson text-white">
+        <span className="flex size-16 items-center justify-center rounded-full bg-ink text-white">
           <Check size={32} strokeWidth={2.5} />
         </span>
         <h3 className="m-0 font-serif text-[1.6rem]">Thank you</h3>
@@ -103,7 +103,7 @@ export function ConsultationForm() {
             size={18}
             strokeWidth={2.5}
             className={cn(
-              "text-crimson transition-transform duration-200",
+              "text-ink transition-transform duration-200",
               areaOpen && "rotate-180"
             )}
           />
@@ -128,11 +128,11 @@ export function ConsultationForm() {
                   }}
                   className={cn(
                     "flex w-full cursor-pointer items-center justify-between gap-2.5 rounded-md px-3 py-[11px] text-left text-[14.5px] transition-colors hover:bg-black/5",
-                    selected ? "bg-[rgba(158,27,47,.1)] text-crimson" : "text-[#3a3a3a]"
+                    selected ? "bg-black/6 font-medium text-ink" : "text-[#3a3a3a]"
                   )}
                 >
                   <span>{name}</span>
-                  {selected && <Check size={16} strokeWidth={3} className="text-crimson" />}
+                  {selected && <Check size={16} strokeWidth={3} className="text-ink" />}
                 </button>
               );
             })}

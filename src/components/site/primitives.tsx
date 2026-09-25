@@ -25,9 +25,14 @@ export function Eyebrow({
   return (
     <div className={cn("flex items-center gap-3", className)}>
       <span
-        className={cn("h-px w-[34px]", onCrimson ? "bg-white/70" : "bg-crimson")}
+        className={cn(
+          "h-px w-[34px]",
+          onCrimson ? "bg-white/70" : "bg-crimson",
+        )}
       />
-      <span className={cn("eyebrow", onCrimson && "text-white")}>{children}</span>
+      <span className={cn("eyebrow", onCrimson && "text-white")}>
+        {children}
+      </span>
     </div>
   );
 }
@@ -36,16 +41,17 @@ export type Crumb = { label: string; href?: string };
 
 export function Breadcrumbs({
   items,
-  onCrimson = false,
   className,
 }: {
   items: Crumb[];
-  onCrimson?: boolean;
   className?: string;
 }) {
-  const muted = onCrimson ? "text-white/72" : "text-white/55";
+  const muted = "text-white/55";
   return (
-    <nav aria-label="Breadcrumb" className={cn("text-[13px]", muted, className)}>
+    <nav
+      aria-label="Breadcrumb"
+      className={cn("text-[13px]", muted, className)}
+    >
       {items.map((item, i) => (
         <span key={item.label}>
           {i > 0 && <>&nbsp;/&nbsp; </>}
@@ -54,10 +60,7 @@ export function Breadcrumbs({
               {item.label}
             </Link>
           ) : (
-            <span
-              aria-current="page"
-              className={onCrimson ? "text-white" : "text-crimson"}
-            >
+            <span aria-current="page" className="text-white">
               {item.label}
             </span>
           )}
@@ -80,7 +83,7 @@ export function Wordmark({
       <span
         className={cn(
           "border-b-[1.5px] border-crimson pb-[3px] font-serif font-bold tracking-[.01em] text-crimson",
-          small ? "text-[19px]" : "text-[20px]"
+          small ? "text-[19px]" : "text-[20px]",
         )}
       >
         BALUTI &amp; Co.
@@ -90,7 +93,7 @@ export function Wordmark({
         className={cn(
           "mt-1 flex justify-between font-semibold",
           small ? "text-[9.5px]" : "text-[10.5px]",
-          subColor
+          subColor,
         )}
       >
         {"ADVOCATES".split("").map((letter, i) => (
@@ -131,20 +134,20 @@ export function Silhouette({
         avatar
           ? "rounded-full bg-[linear-gradient(165deg,#EAEAEA,#D0D0D0)]"
           : "bg-[linear-gradient(165deg,#EAEAEA,#D8D8D8)]",
-        className
+        className,
       )}
     >
       <div
         className={cn(
           "absolute left-1/2 aspect-square -translate-x-1/2 rounded-full",
-          blob
+          blob,
         )}
         style={head}
       />
       <div
         className={cn(
           "absolute left-1/2 aspect-square -translate-x-1/2 rounded-full",
-          blob
+          blob,
         )}
         style={body}
       />
@@ -194,7 +197,7 @@ export function SectionHeader({
     <div
       className={cn(
         "flex flex-wrap items-end justify-between gap-6",
-        className
+        className,
       )}
     >
       <div>
@@ -202,13 +205,17 @@ export function SectionHeader({
         <h2
           className={cn(
             "m-0 font-serif text-[clamp(1.9rem,3.4vw,2.9rem)] font-bold",
-            titleClassName
+            titleClassName,
           )}
         >
           {title}
         </h2>
       </div>
-      {link && <UnderlineLink href={link.href} onDark={onDark}>{link.label}</UnderlineLink>}
+      {link && (
+        <UnderlineLink href={link.href} onDark={onDark}>
+          {link.label}
+        </UnderlineLink>
+      )}
     </div>
   );
 }
@@ -227,7 +234,7 @@ export function UnderlineLink({
       href={href}
       className={cn(
         "border-b-2 border-crimson pb-1 text-sm font-semibold",
-        onDark ? "text-white" : "text-ink"
+        onDark ? "text-white" : "text-ink",
       )}
     >
       {children}

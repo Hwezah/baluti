@@ -69,6 +69,7 @@ export default async function AttorneyPage({ params }: PageProps<"/people/[slug]
               <div className="flex flex-nowrap gap-3">
                 <Button
                   asChild
+                  variant="light"
                   className="min-w-0 flex-[1_1_0] truncate px-[clamp(12px,3.5vw,26px)] py-[13px] text-[14.5px]"
                 >
                   <a href={`mailto:${attorney.email}`}>Email {attorney.first}</a>
@@ -108,7 +109,7 @@ export default async function AttorneyPage({ params }: PageProps<"/people/[slug]
                   key={matter}
                   className="grid grid-cols-[24px_1fr] gap-3.5 border-b border-black/14 py-[18px]"
                 >
-                  <span aria-hidden="true" className="mt-0.5 text-crimson">
+                  <span aria-hidden="true" className="mt-0.5 text-ink-faint">
                     ◈
                   </span>
                   <span className="text-[15.5px] text-ink-body">{matter}</span>
@@ -175,7 +176,7 @@ export default async function AttorneyPage({ params }: PageProps<"/people/[slug]
                 <h3 className="m-0 mb-[3px] font-serif text-[1.2rem] font-semibold">
                   {person.name}
                 </h3>
-                <div className="text-[12.5px] font-semibold tracking-[.06em] text-crimson uppercase">
+                <div className="text-[12.5px] font-semibold tracking-[.06em] text-muted-foreground uppercase">
                   {person.role}
                 </div>
               </MaybeLink>

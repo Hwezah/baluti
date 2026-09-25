@@ -44,7 +44,7 @@ export function Faq() {
               className="flex w-full cursor-pointer items-center justify-between gap-5 py-6 text-left"
             >
               <span className="font-serif text-[1.2rem] leading-[normal] font-semibold text-ink">{faq.q}</span>
-              <span className="flex shrink-0 items-center text-crimson">
+              <span className="flex shrink-0 items-center text-ink">
                 {isOpen ? <Minus size={24} /> : <Plus size={24} />}
               </span>
             </button>

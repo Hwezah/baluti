@@ -63,7 +63,7 @@ export default function PracticeAreasPage() {
         title="Not sure which area fits your situation?"
         body="Tell us what you’re facing and we’ll point you to the right advocate."
       >
-        <Button asChild variant="dark" size="cta">
+        <Button asChild size="cta">
           <Link href="/contact">Get in touch</Link>
         </Button>
       </CtaBand>

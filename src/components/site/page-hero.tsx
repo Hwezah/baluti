@@ -4,13 +4,12 @@ import { cn } from "@/lib/utils";
 import { Breadcrumbs, Eyebrow, type Crumb } from "@/components/site/primitives";
 import { Rings } from "@/components/site/rings";
 
-/** Black (or crimson) page hero with breadcrumbs, eyebrow, H1 and intro. */
+/** Black page hero with breadcrumbs, eyebrow, H1 and intro. */
 export function PageHero({
   crumbs,
   eyebrow,
   title,
   intro,
-  crimson = false,
   titleClassName = "max-w-[18ch]",
   className = "py-[clamp(56px,7vw,104px)]",
 }: {
@@ -18,36 +17,33 @@ export function PageHero({
   eyebrow: string;
   title: ReactNode;
   intro: ReactNode;
-  crimson?: boolean;
   titleClassName?: string;
   className?: string;
 }) {
   return (
     <section
       className={cn(
-        "gutter relative overflow-hidden text-white",
-        crimson ? "bg-crimson" : "bg-ink",
-        className
+        "gutter relative overflow-hidden bg-ink text-white",
+        className,
       )}
     >
-      <Rings preset={crimson ? "crimson" : "dark"} />
+      <Rings preset="dark" />
       <div className="site-container relative">
-        <Breadcrumbs items={crumbs} onCrimson={crimson} className="mb-[22px]" />
-        <Eyebrow rule onCrimson={crimson} className="mb-[22px]">
+        <Breadcrumbs items={crumbs} className="mb-[22px]" />
+        <Eyebrow rule className="mb-[22px]">
           {eyebrow}
         </Eyebrow>
         <h1
           className={cn(
             "m-0 mb-5 font-serif text-[clamp(2.4rem,5vw,4rem)] leading-[1.05] font-bold",
-            titleClassName
+            titleClassName,
           )}
         >
           {title}
         </h1>
         <p
           className={cn(
-            "m-0 max-w-[60ch] text-[clamp(1.05rem,1.5vw,1.25rem)]",
-            crimson ? "text-white/90" : "text-white/74"
+            "m-0 max-w-[60ch] text-[clamp(1.05rem,1.5vw,1.25rem)] text-white/74",
           )}
         >
           {intro}

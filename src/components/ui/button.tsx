@@ -5,26 +5,28 @@ import { Slot } from "radix-ui";
 import { cn } from "@/lib/utils";
 
 // shadcn/ui Button, re-skinned for the Baluti design: square corners
-// (2px), semibold 15px labels and .25s transitions.
+// (2px), semibold 15px labels and .25s transitions. Red is kept to hover
+// states so the brand colour stays minimal.
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[2px] text-center text-[15px] font-semibold transition-[transform,background-color,border-color,color] duration-250 outline-none focus-visible:ring-2 focus-visible:ring-crimson focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        /** Solid crimson; lifts and brightens on hover. */
+        /** Solid black (light backgrounds); turns crimson on hover. */
         primary:
-          "bg-crimson text-white hover:-translate-y-0.5 hover:bg-crimson-light hover:text-white",
-        /** Solid black; turns crimson on hover. */
-        dark: "bg-ink text-white hover:bg-crimson hover:text-white",
+          "bg-ink text-white hover:-translate-y-0.5 hover:bg-crimson hover:text-white",
+        /** Solid white (dark backgrounds); turns crimson on hover. */
+        light:
+          "bg-white text-ink hover:-translate-y-0.5 hover:bg-crimson hover:text-white",
         /** Outline on black backgrounds. */
         ghostOnDark:
           "border border-white/28 text-white hover:border-crimson hover:text-white",
         /** Outline on light backgrounds. */
         ghost:
           "border border-black/25 text-ink hover:border-crimson hover:text-ink",
-        /** Outline on crimson: fills white with crimson text on hover. */
+        /** Uppercase outline on black: fills white on hover. */
         outlineWhite:
-          "border border-white/80 text-[13.5px] tracking-[.12em] text-white uppercase hover:bg-white hover:text-crimson",
+          "border border-white/80 text-[13.5px] tracking-[.12em] text-white uppercase hover:bg-white hover:text-ink",
       },
       size: {
         default: "px-[30px] py-[15px]",
@@ -38,7 +40,7 @@ const buttonVariants = cva(
       variant: "primary",
       size: "default",
     },
-  }
+  },
 );
 
 function Button({

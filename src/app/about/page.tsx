@@ -104,7 +104,7 @@ export default function AboutPage() {
           <ol className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-0.5 border border-black/12 bg-black/12 p-0">
             {milestones.map((m) => (
               <li key={m.year} className="flex min-h-[210px] flex-col bg-sand px-[30px] py-[38px]">
-                <span className="mb-3.5 font-serif text-[1.6rem] font-bold text-crimson">
+                <span className="mb-3.5 font-serif text-[1.6rem] font-bold text-ink">
                   {m.year}
                 </span>
                 <h3 className="m-0 mb-2.5 font-serif text-[1.2rem] font-semibold">
@@ -130,7 +130,7 @@ export default function AboutPage() {
                 key={v.title}
                 className="flex min-h-[230px] flex-col border border-black/9 bg-white px-[30px] py-[34px]"
               >
-                <span className="mb-auto font-serif text-[1.6rem] text-crimson">0{i + 1}</span>
+                <span className="mb-auto font-serif text-[1.6rem] text-ink-faint">0{i + 1}</span>
                 <h3 className="m-0 mt-5 mb-2.5 font-serif text-[1.3rem] font-semibold">
                   {v.title}
                 </h3>
@@ -155,7 +155,7 @@ export default function AboutPage() {
       {/* LEADERSHIP QUOTE */}
       <section className="gutter bg-sand py-[clamp(64px,8vw,104px)]">
         <figure className="m-0 mx-auto max-w-[900px] text-center">
-          <div aria-hidden="true" className="mb-2.5 font-serif text-5xl leading-none text-crimson">
+          <div aria-hidden="true" className="mb-2.5 font-serif text-5xl leading-none text-ink-faint">
             “
           </div>
           <blockquote className="m-0 mb-[26px] font-serif text-[clamp(1.4rem,2.6vw,2rem)] leading-[1.4] italic">
@@ -176,7 +176,7 @@ export default function AboutPage() {
         body="Book a free consultation and speak with an advocate about your situation."
       >
         <div className="flex flex-nowrap justify-center gap-3">
-          <Button asChild variant="dark" className="shrink px-[clamp(14px,4vw,32px)]">
+          <Button asChild className="shrink px-[clamp(14px,4vw,32px)]">
             <Link href="/contact">Free consultation</Link>
           </Button>
           <Button asChild variant="ghost" className="shrink px-[clamp(14px,4vw,32px)]">

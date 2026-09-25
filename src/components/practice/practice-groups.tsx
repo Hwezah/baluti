@@ -36,7 +36,7 @@ export function PracticeGroups() {
                 <span className="font-serif text-[clamp(1.5rem,2.6vw,2.1rem)] font-bold">
                   {group.name}
                 </span>
-                <span className="font-mono text-xs text-crimson">
+                <span className="font-mono text-xs text-ink-faint">
                   {String(group.slugs.length).padStart(2, "0")}
                 </span>
               </span>
@@ -44,7 +44,7 @@ export function PracticeGroups() {
                 size={20}
                 strokeWidth={2.5}
                 className={cn(
-                  "text-crimson transition-transform duration-250 min-[780px]:hidden",
+                  "text-ink transition-transform duration-250 min-[780px]:hidden",
                   isOpen && "rotate-180"
                 )}
               />
@@ -70,7 +70,7 @@ export function PracticeGroups() {
                     <p className="m-0 mb-4 text-[14.5px] text-muted-foreground">
                       {area.summary}
                     </p>
-                    <span className="mt-auto inline-flex items-center gap-1.5 text-[13px] font-semibold text-crimson">
+                    <span className="mt-auto inline-flex items-center gap-1.5 text-[13px] font-semibold text-ink">
                       Learn more <ArrowRight size={16} />
                     </span>
                   </Link>

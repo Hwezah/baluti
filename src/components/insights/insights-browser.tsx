@@ -45,7 +45,7 @@ export function InsightsBrowser({ articles }: { articles: Insight[] }) {
           >
             <div className="relative h-[230px] bg-[#EAEAEA]">
               <Image src={post.img} alt="" fill sizes="(min-width: 900px) 33vw, 100vw" className="object-cover" />
-              <span className="absolute top-3.5 left-3.5 rounded-[3px] bg-crimson px-3 py-1.5 text-[11px] font-semibold tracking-[.1em] text-white uppercase">
+              <span className="absolute top-3.5 left-3.5 rounded-[3px] bg-ink px-3 py-1.5 text-[11px] font-semibold tracking-[.1em] text-white uppercase">
                 {post.category}
               </span>
             </div>

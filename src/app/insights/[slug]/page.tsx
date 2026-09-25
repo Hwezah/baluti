@@ -50,7 +50,7 @@ export default async function ArticlePage({ params }: PageProps<"/insights/[slug
               { label: "Article" },
             ]}
           />
-          <span className="mb-[22px] inline-block rounded-full border border-[rgba(158,27,47,.5)] px-3 py-[5px] text-[11.5px] font-semibold tracking-[.12em] text-crimson uppercase">
+          <span className="mb-[22px] inline-block rounded-full border border-white/30 px-3 py-[5px] text-[11.5px] font-semibold tracking-[.12em] text-white/80 uppercase">
             {post.category}
           </span>
           <h1 className="m-0 mb-6 font-serif text-[clamp(2rem,4vw,3.2rem)] leading-[1.1] font-bold">
@@ -176,7 +176,7 @@ export default async function ArticlePage({ params }: PageProps<"/insights/[slug
                   <Image src={p.img} alt="" fill sizes="(min-width: 900px) 33vw, 100vw" className="object-cover" />
                 </div>
                 <div className="flex flex-1 flex-col px-6 pt-6 pb-[26px]">
-                  <span className="mb-3 self-start text-[11px] font-semibold tracking-[.12em] text-crimson uppercase">
+                  <span className="mb-3 self-start text-[11px] font-semibold tracking-[.12em] text-muted-foreground uppercase">
                     {p.category}
                   </span>
                   <h3 className="m-0 mb-auto font-serif text-[1.15rem] leading-[1.3] font-semibold">
