@@ -547,11 +547,11 @@ export function AdminPanel({
             />
             Only show changed text ({changed.size})
           </label>
-          <div className="flex flex-wrap gap-2 max-sm:flex-col max-sm:items-center">
+          <div className="flex flex-wrap gap-2 max-sm:flex-col max-sm:items-stretch">
             <Button
               size="sm"
               variant="ghost"
-              className="cursor-pointer max-sm:w-[80vw]"
+              className="cursor-pointer max-sm:w-full"
               onClick={copySummary}
             >
               <ClipboardCopy size={15} /> Copy list of changes
@@ -559,7 +559,7 @@ export function AdminPanel({
             <Button
               size="sm"
               variant="ghost"
-              className="cursor-pointer max-sm:w-[80vw]"
+              className="cursor-pointer max-sm:w-full"
               onClick={download}
             >
               <Download size={15} /> Download a copy
@@ -822,7 +822,7 @@ function ResetAll({
 
   return (
     <aside className="mb-4 border border-black/12 bg-white p-3 text-[15px] text-ink sm:mb-8 sm:p-5">
-      <div className="flex flex-wrap items-center justify-between gap-3 max-sm:flex-col max-sm:items-center">
+      <div className="flex flex-wrap items-center justify-between gap-3 max-sm:flex-col max-sm:items-stretch">
         <div className="min-w-0 flex-1">
           <p className="m-0 mb-1 font-semibold">
             Start over: reset the whole site to the demo text
@@ -837,7 +837,7 @@ function ResetAll({
           <Button
             size="sm"
             variant="ghost"
-            className="cursor-pointer max-sm:w-[80vw]"
+            className="cursor-pointer max-sm:w-full"
             disabled={changedCount === 0}
             onClick={() => {
               setOpen(true);
@@ -898,11 +898,11 @@ function ResetAll({
               className="rounded-[2px] border border-black/15 bg-white p-3 text-[15px] font-normal focus:border-ink focus:outline-none"
             />
           </label>
-          <div className="flex flex-wrap gap-2 max-sm:flex-col max-sm:items-center">
+          <div className="flex flex-wrap gap-2 max-sm:flex-col max-sm:items-stretch">
             <Button
               type="submit"
               size="sm"
-              className="cursor-pointer max-sm:w-[80vw]"
+              className="cursor-pointer max-sm:w-full"
               disabled={!ready || busy}
             >
               {busy ? "Resetting…" : "Yes, delete my changes and reset"}
@@ -911,7 +911,7 @@ function ResetAll({
               type="button"
               size="sm"
               variant="ghost"
-              className="cursor-pointer max-sm:w-[80vw]"
+              className="cursor-pointer max-sm:w-full"
               onClick={() => {
                 setOpen(false);
                 setCode("");
@@ -955,7 +955,7 @@ function PasscodeForm({
         setError(await onSubmit(code));
         setBusy(false);
       }}
-      className="mb-4 flex flex-wrap items-end gap-3 border border-black/12 bg-white p-3 max-sm:flex-col max-sm:items-center sm:mb-8 sm:p-5"
+      className="mb-4 flex flex-wrap items-end gap-3 border border-black/12 bg-white p-3 max-sm:flex-col max-sm:items-stretch sm:mb-8 sm:p-5"
     >
       <LockKeyhole
         size={22}
@@ -975,7 +975,7 @@ function PasscodeForm({
       <Button
         type="submit"
         size="sm"
-        className="cursor-pointer max-sm:w-[80vw]"
+        className="cursor-pointer max-sm:w-full"
         disabled={!code || busy}
       >
         {busy ? "Checking…" : "Unlock"}
@@ -1309,14 +1309,14 @@ function HideToggle({
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center gap-3 max-sm:flex-col max-sm:items-center",
+        "flex flex-wrap items-center gap-3 max-sm:flex-col max-sm:items-stretch",
         className,
       )}
     >
       <Button
         size="sm"
         variant="ghost"
-        className="cursor-pointer max-sm:w-[80vw]"
+        className="cursor-pointer max-sm:w-full"
         disabled={!canSave || busy}
         onClick={async () => {
           setBusy(true);
@@ -1385,7 +1385,7 @@ function ItemCard({
         hidden ? "border-black/10 bg-paper" : "border-ink/70",
       )}
     >
-      <div className="flex flex-wrap items-center justify-between gap-3 px-2 max-sm:flex-col max-sm:items-center pt-3 sm:px-5 sm:pt-5 lg:px-8">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-2 max-sm:flex-col max-sm:items-stretch pt-3 sm:px-5 sm:pt-5 lg:px-8">
         <div className="flex items-center gap-2 max-sm:self-start">
           <span className="font-serif text-[1.15rem] font-semibold">
             {title}
@@ -1439,10 +1439,10 @@ function AddItem({
   return (
     <div className="bg-paper/60 px-2 py-3 sm:p-5 lg:p-8">
       {!open ? (
-        <div className="flex flex-wrap items-center gap-3 max-sm:flex-col max-sm:items-center">
+        <div className="flex flex-wrap items-center gap-3 max-sm:flex-col max-sm:items-stretch">
           <Button
             size="sm"
-            className="cursor-pointer max-sm:w-[80vw]"
+            className="cursor-pointer max-sm:w-full"
             disabled={!canSave}
             onClick={() => {
               setOpen(true);
@@ -1504,11 +1504,11 @@ function AddItem({
               />
             </label>
           ))}
-          <div className="flex flex-wrap items-center gap-2 max-sm:flex-col max-sm:items-center">
+          <div className="flex flex-wrap items-center gap-2 max-sm:flex-col max-sm:items-stretch">
             <Button
               type="submit"
               size="sm"
-              className="cursor-pointer max-sm:w-[80vw]"
+              className="cursor-pointer max-sm:w-full"
               disabled={!ready || busy}
             >
               {busy ? "Adding…" : "Add to site"}
@@ -1517,7 +1517,7 @@ function AddItem({
               type="button"
               size="sm"
               variant="ghost"
-              className="cursor-pointer max-sm:w-[80vw]"
+              className="cursor-pointer max-sm:w-full"
               onClick={() => {
                 setOpen(false);
                 setMessage(null);
@@ -1674,10 +1674,10 @@ function FieldEditor({
         className="mb-3 block w-full resize-y rounded-[2px] border border-black/15 bg-white p-2 text-[15px] leading-[1.5] sm:p-3 focus:border-ink focus:outline-none disabled:bg-paper"
       />
 
-      <div className="flex flex-wrap items-center gap-2 max-sm:flex-col max-sm:items-center">
+      <div className="flex flex-wrap items-center gap-2 max-sm:flex-col max-sm:items-stretch">
         <Button
           size="sm"
-          className="cursor-pointer disabled:opacity-100 max-sm:w-[80vw]"
+          className="cursor-pointer disabled:opacity-100 max-sm:w-full"
           disabled={
             !canSave || busy || !draft.trim() || draft.trim() === current
           }
@@ -1689,7 +1689,7 @@ function FieldEditor({
           <Button
             size="sm"
             variant="ghost"
-            className="cursor-pointer max-sm:w-[80vw]"
+            className="cursor-pointer max-sm:w-full"
             disabled={!canSave || busy}
             title={`Go back to: ${previous ?? field.text}`}
             onClick={() => run(previous ?? null, "Last save undone.")}
@@ -1701,7 +1701,7 @@ function FieldEditor({
           <Button
             size="sm"
             variant="ghost"
-            className="cursor-pointer max-sm:w-[80vw]"
+            className="cursor-pointer max-sm:w-full"
             disabled={!canSave || busy}
             onClick={() => run(null, "Back to the original demo text.")}
           >
@@ -1712,7 +1712,7 @@ function FieldEditor({
           <Button
             size="sm"
             variant="ghost"
-            className="cursor-pointer max-sm:w-[80vw]"
+            className="cursor-pointer max-sm:w-full"
             onClick={() => setDraft(current)}
           >
             Start from current text
@@ -1723,8 +1723,8 @@ function FieldEditor({
             role={message.ok ? "status" : "alert"}
             className={
               message.ok
-                ? "inline-flex items-center gap-1.5 text-sm font-medium text-ink max-sm:w-[80vw] max-sm:justify-center max-sm:text-center"
-                : "inline-flex items-center gap-1.5 text-sm font-medium text-[#9a1b1b] max-sm:w-[80vw] max-sm:justify-center max-sm:text-center"
+                ? "inline-flex items-center gap-1.5 text-sm font-medium text-ink max-sm:w-full max-sm:justify-center max-sm:text-center"
+                : "inline-flex items-center gap-1.5 text-sm font-medium text-[#9a1b1b] max-sm:w-full max-sm:justify-center max-sm:text-center"
             }
           >
             {message.ok ? <Check size={15} /> : <TriangleAlert size={15} />}{" "}
@@ -1742,7 +1742,7 @@ function FieldEditor({
             {earlier.map((entry) => (
               <li
                 key={entry.at}
-                className="flex flex-wrap items-start justify-between gap-3 border border-black/10 p-3 max-sm:flex-col max-sm:items-center max-sm:p-2"
+                className="flex flex-wrap items-start justify-between gap-3 border border-black/10 p-3 max-sm:flex-col max-sm:items-stretch max-sm:p-2"
               >
                 <div className="min-w-0 flex-1">
                   <div className="mb-1 text-xs text-ink-faint">
@@ -1755,7 +1755,7 @@ function FieldEditor({
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="cursor-pointer max-sm:w-[80vw]"
+                  className="cursor-pointer max-sm:w-full"
                   disabled={!canSave || busy}
                   onClick={() => run(entry.text, "Earlier version restored.")}
                 >
