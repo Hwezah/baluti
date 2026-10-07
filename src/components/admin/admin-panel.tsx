@@ -25,6 +25,7 @@ import {
   copyDefaults,
   adminGroups,
   adminSections,
+  fieldHint,
   isEssentialField,
   copySections,
   type CopyField,
@@ -1537,6 +1538,7 @@ function FieldEditor({
     null,
   );
   const added = (field as AdminField).added ?? false;
+  const hint = fieldHint(field.id);
   const lastChange = entries[entries.length - 1];
   // What this text was before the last save (null: the demo text). Added
   // items have no demo text, so their first save can't be undone.
@@ -1611,6 +1613,13 @@ function FieldEditor({
           )
         )}
       </div>
+
+      {hint && (
+        <p className="m-0 mb-2 flex items-start gap-1.5 text-[13.5px] leading-[1.5] text-ink-soft">
+          <Info size={14} className="mt-[3px] shrink-0" aria-hidden="true" />
+          {hint}
+        </p>
+      )}
 
       <div className="mb-3 border-l-[3px] border-ink/20 bg-paper px-4 py-3">
         <div className="mb-1 text-[11.5px] font-semibold tracking-[.12em] text-ink-faint uppercase">
