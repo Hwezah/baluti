@@ -1382,7 +1382,52 @@ const hintRules: [RegExp, string | ((m: RegExpMatchArray) => string)][] = [
   [/^(contact\.book\.body|form\.thanks\.body)$/, "How fast you reply."],
   [/^form\.privacy$/, "Privacy promise."],
   [/^article\.disclaimer\.text$/, "Legal disclaimer."],
+  // Fine-tuning
+  [/^footer\.blurb$/, "Short firm description."],
+  [/^home\.hero\.line1$/, "Main headline."],
+  [/^home\.hero\.words$/, "Words that rotate in the headline."],
+  [/^home\.hero\.body$/, "Line under the headline."],
+  [/^(about|practiceIndex)\.hero\.intro$/, "Page introduction."],
+  [/^about\.mission\.p[12]$/, "About the firm."],
+  [/^values\.[^.]+\.title$/, "Value name."],
+  [/^values\.[^.]+\.body$/, "What this value means."],
+  [/^values\.[^.]+\.short$/, "Short version, for Home."],
+  [
+    /^(about\.steps|practiceDetail\.steps|practice\.[^.]+\.steps)\.[^.]+\.title$/,
+    "Step name.",
+  ],
+  [
+    /^(about\.steps|practiceDetail\.steps|practice\.[^.]+\.steps)\.[^.]+\.body$/,
+    "What happens in this step.",
+  ],
+  [/^people\.careers\.body$/, "Why join the firm."],
+  [/^people\.perks\.[^.]+\.title$/, "Reason to join."],
+  [/^people\.perks\.[^.]+\.body$/, "Reason details."],
+  [/^practiceIndex\.group\./, "Name of a group of practice areas."],
+  [/^practice\.[^.]+\.intro$/, "Page introduction."],
+  [/^practice\.[^.]+\.overview\./, "How the firm helps."],
+  [/^insights\.featured\.teaser$/, "Featured article teaser."],
+  [/^insight\.[^.]+\.title$/, "Article title."],
+  [/^insight\.[^.]+\.shortTitle$/, "Shorter title, for cards."],
+  [/^insight\.[^.]+\.excerpt$/, "Article summary."],
+  [/^insight\.[^.]+\.date$/, "Publication date."],
+  [/^insight\.[^.]+\.lede$/, "Opening paragraph."],
+  [
+    /^insight\.([^.]+)\.blocks\.(\d+)$/,
+    (m) => {
+      const type = insights.find((p) => p.slug === m[1])?.blocks?.[Number(m[2])]
+        ?.type;
+      return type === "h2"
+        ? "Subheading."
+        : type === "quote"
+          ? "Highlighted quote."
+          : "Paragraph.";
+    },
+  ],
 ];
+
+/** Note for any text without a specific rule. */
+const fallbackHint = "Wording on the site.";
 
 /** What a text states, for the note above it in the admin panel. */
 export function fieldHint(id: string) {
@@ -1390,7 +1435,7 @@ export function fieldHint(id: string) {
     const match = id.match(pattern);
     if (match) return typeof hint === "string" ? hint : hint(match);
   }
-  return undefined;
+  return fallbackHint;
 }
 
 const groupNames: Record<string, string> = { "Site-wide": "Firm details" };
