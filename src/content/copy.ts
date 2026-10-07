@@ -1297,6 +1297,38 @@ export function isClientField(id: string) {
   return !developerManaged.some((pattern) => pattern.test(id));
 }
 
+// ─── What must be checked first ────────────────────────────────────────────
+// Demo text that states facts about the firm. If it is wrong, the site is
+// wrong (or misleading): contact details, which practice areas and
+// services the firm offers, who works there and their
+// credentials, figures, client reviews, the firm's history, quotes
+// attributed to people, the promises made to clients (free consultation,
+// response times, opening hours) and the legal disclaimer. Everything else
+// is wording the client can refine later.
+
+const mustCheck: RegExp[] = [
+  /^contact\.(address|phone|email|hours)\./,
+  /^person\./,
+  /^practice\.[^.]+\.(title|summary|services\.)/,
+  /^attorney\.emmanuel\./,
+  /^home\.stats\./,
+  /^about\.mission\.stat\./,
+  /^home\.reviews\./,
+  /^about\.story\./,
+  /^about\.quote$/,
+  /^practiceIndex\.hero\.title$/,
+  /^faq\./,
+  /^home\.cta\.body$/,
+  /^contact\.(hero\.intro|book\.body)$/,
+  /^form\.(privacy|thanks\.body)$/,
+  /^article\.disclaimer\.text$/,
+];
+
+/** Whether this text states facts the client must confirm before launch. */
+export function isEssentialField(id: string) {
+  return mustCheck.some((pattern) => pattern.test(id));
+}
+
 const groupNames: Record<string, string> = { "Site-wide": "Firm details" };
 
 /** The sections and fields the admin panel shows. */

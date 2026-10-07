@@ -25,6 +25,7 @@ import {
   copyDefaults,
   adminGroups,
   adminSections,
+  isEssentialField,
   copySections,
   type CopyField,
   type CopySection,
@@ -204,6 +205,7 @@ export function AdminPanel({
   const [loadError, setLoadError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [onlyChanged, setOnlyChanged] = useState(false);
+  const [tier, setTier] = useState<Tier>("essential");
   const [notice, setNotice] = useState<string | null>(null);
 
   const canSave = mode !== "off" && unlocked;
@@ -283,8 +285,17 @@ export function AdminPanel({
 
   const compiled = useMemo(() => compileQuery(query), [query]);
 
+  const tierCounts = useMemo(() => {
+    const all = sections.flatMap((s) => s.fields);
+    const essential = all.filter((f) => isEssentialField(f.id)).length;
+    return { essential, detail: all.length - essential };
+  }, [sections]);
+
   const visibleSections = useMemo(() => {
-    const allowed = (id: string) => !onlyChanged || changed.has(id);
+    // A search looks through both lists; otherwise show the chosen one.
+    const allowed = (id: string) =>
+      (!onlyChanged || changed.has(id)) &&
+      (compiled !== null || isEssentialField(id) === (tier === "essential"));
 
     if (!compiled) {
       return sections
@@ -332,7 +343,7 @@ export function AdminPanel({
       .filter(({ section }) => section.fields.length > 0)
       .sort((a, b) => b.best - a.best)
       .map(({ section }) => section);
-  }, [compiled, onlyChanged, changed, file, sections]);
+  }, [compiled, onlyChanged, changed, file, sections, tier]);
 
   const matchCount = visibleSections.reduce((n, s) => n + s.fields.length, 0);
 
@@ -488,6 +499,16 @@ export function AdminPanel({
           </p>
         )}
 
+        <TierTabs
+          tier={tier}
+          counts={tierCounts}
+          searching={compiled !== null}
+          onChange={(next) => {
+            setTier(next);
+            window.scrollTo({ top: 0 });
+          }}
+        />
+
         {/* Toolbar */}
         <div className="z-20 mb-4 flex flex-wrap items-center gap-2 border border-black/10 bg-white p-2 max-sm:flex-col max-sm:items-stretch sm:mb-8 sm:gap-3 sm:p-3 shadow-[0_12px_30px_-24px_rgba(0,0,0,.5)] lg:sticky lg:top-[calc(var(--header-h)+8px)]">
           <label className="relative min-w-[220px] flex-1 max-sm:min-w-0">
@@ -551,6 +572,7 @@ export function AdminPanel({
         <div className="grid grid-cols-1 items-start gap-4 sm:gap-8 lg:grid-cols-[240px_minmax(0,1fr)]">
           <SectionNav sections={visibleSections} changed={changed} />
           <div className="flex min-w-0 flex-col gap-4 sm:gap-8">
+            {compiled === null && <TierBanner tier={tier} />}
             {visibleSections.length === 0 && (
               <p className="m-0 border border-black/10 bg-white p-8 text-center text-muted-foreground">
                 Nothing matches. Try another word, or untick “Only show changed
@@ -573,6 +595,127 @@ export function AdminPanel({
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+type Tier = "essential" | "detail";
+
+const tiers: {
+  id: Tier;
+  step: string;
+  title: string;
+  text: string;
+  banner: string;
+}[] = [
+  {
+    id: "essential",
+    step: "1",
+    title: "Must check first",
+    text: "Facts about your firm: practice areas and services, attorney names and credentials, contact details, numbers, client reviews, history and the promises you make to clients.",
+    banner:
+      "This section covers the most crucial information on the site, from practice areas to attorney names. The demo text here is made up, so please confirm or correct every item before the site is shared.",
+  },
+  {
+    id: "detail",
+    step: "2",
+    title: "Fine-tuning",
+    text: "Descriptions and wording: introductions, practice area descriptions, values, careers and articles.",
+    banner:
+      "This section covers the finer details: descriptions and wording that already read well. Nothing here is urgent, so refine it whenever you have time, once everything in “Must check first” is right.",
+  },
+];
+
+function TierBanner({ tier }: { tier: Tier }) {
+  const t = tiers.find((x) => x.id === tier)!;
+  return (
+    <div
+      role="note"
+      className="flex gap-3 bg-crimson p-3 text-[15px] leading-[1.5] text-white sm:p-5"
+    >
+      <TriangleAlert size={20} className="mt-0.5 shrink-0" aria-hidden="true" />
+      <p className="m-0">
+        <strong className="font-semibold">
+          {t.step}. {t.title}:
+        </strong>{" "}
+        {t.banner}
+      </p>
+    </div>
+  );
+}
+
+function TierTabs({
+  tier,
+  counts,
+  searching,
+  onChange,
+}: {
+  tier: Tier;
+  counts: Record<Tier, number>;
+  searching: boolean;
+  onChange: (tier: Tier) => void;
+}) {
+  return (
+    <div className="mb-4 sm:mb-8">
+      <div
+        role="tablist"
+        aria-label="Which text to show"
+        className="grid gap-2 sm:grid-cols-2 sm:gap-3"
+      >
+        {tiers.map((t) => {
+          const active = !searching && tier === t.id;
+          return (
+            <button
+              key={t.id}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              onClick={() => onChange(t.id)}
+              className={cn(
+                "flex cursor-pointer gap-3 border p-3 text-left transition-colors sm:p-5",
+                active
+                  ? "border-ink bg-ink text-white"
+                  : "border-black/12 bg-white text-ink hover:border-ink",
+              )}
+            >
+              <span
+                className={cn(
+                  "flex size-8 shrink-0 items-center justify-center rounded-full font-serif text-[1.05rem] font-bold",
+                  active ? "bg-white text-ink" : "bg-ink text-white",
+                )}
+              >
+                {t.step}
+              </span>
+              <span className="min-w-0">
+                <span className="block font-serif text-[1.15rem] font-semibold">
+                  {t.title}{" "}
+                  <span
+                    className={cn(
+                      "font-sans text-sm font-medium",
+                      active ? "text-white/70" : "text-ink-faint",
+                    )}
+                  >
+                    ({counts[t.id]} texts)
+                  </span>
+                </span>
+                <span
+                  className={cn(
+                    "mt-1 block text-[14px] leading-[1.5]",
+                    active ? "text-white/80" : "text-ink-soft",
+                  )}
+                >
+                  {t.text}
+                </span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+      {searching && (
+        <p className="m-0 mt-2 text-sm text-ink-soft">
+          Searching both lists. Clear the search to go back to one list.
+        </p>
+      )}
     </div>
   );
 }
