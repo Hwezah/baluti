@@ -14,8 +14,9 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { navLinks, site } from "@/content/site";
-import { practiceAreaHref, practiceAreas } from "@/content/practice-areas";
+import { navLinks } from "@/content/site";
+import { practiceAreaHref } from "@/content/practice-areas";
+import { shownAreas, visibleKeys } from "@/content/lists";
 import { useSiteUI } from "@/context/site-ui-context";
 import { Copy as C, EmailLink, PhoneLink } from "@/components/site/copy";
 import { Wordmark } from "@/components/site/primitives";
@@ -84,18 +85,18 @@ export function SiteHeader() {
                 <C id="contact.address.short" />
               </span>
               <div className="flex flex-wrap items-center gap-[22px]">
-                {site.emails.map((_, i) => (
+                {visibleKeys("emails").map((k, i) => (
                   <EmailLink
                     key={i}
-                    id={`contact.email.${i}`}
+                    id={`contact.email.${k}`}
                     className="text-white/72 hover:text-white"
                   />
                 ))}
                 <span className="opacity-30">|</span>
-                {site.phones.map((_, i) => (
+                {visibleKeys("phones").map((k, i) => (
                   <PhoneLink
                     key={i}
-                    id={`contact.phone.${i}`}
+                    id={`contact.phone.${k}`}
                     className="text-white/72 hover:text-white"
                   />
                 ))}
@@ -198,14 +199,14 @@ export function SiteHeader() {
                 <C id="nav.areasHeading" />
               </div>
               <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-x-[30px] gap-y-0.5">
-                {practiceAreas.map((area) => (
+                {shownAreas().map((slug) => (
                   <Link
-                    key={area.slug}
-                    href={practiceAreaHref(area.slug)}
+                    key={slug}
+                    href={practiceAreaHref(slug)}
                     onClick={() => setAreasOpen(false)}
                     className="block border-b border-black/7 py-2.5 text-[15px] text-ink-body hover:text-crimson"
                   >
-                    <C id={`practice.${area.slug}.title`} />
+                    <C id={`practice.${slug}.title`} />
                   </Link>
                 ))}
               </div>
@@ -302,17 +303,17 @@ function MobileMenu({
           <C id="nav.menuCta" />
         </Link>
         <div className="mt-[22px] flex flex-col items-center gap-2.5 text-center text-sm">
-          {site.phones.map((_, i) => (
+          {visibleKeys("phones").map((k, i) => (
             <PhoneLink
               key={`p${i}`}
-              id={`contact.phone.${i}`}
+              id={`contact.phone.${k}`}
               className="whitespace-nowrap text-white/70 hover:text-crimson"
             />
           ))}
-          {site.emails.map((_, i) => (
+          {visibleKeys("emails").map((k, i) => (
             <EmailLink
               key={`e${i}`}
-              id={`contact.email.${i}`}
+              id={`contact.email.${k}`}
               className="whitespace-nowrap text-white/70 hover:text-crimson"
             />
           ))}
@@ -362,8 +363,8 @@ function ContactPanel({ onClose }: { onClose: () => void }) {
             <Phone size={19} />
           </span>
           <div className="flex flex-col gap-[3px]">
-            {site.phones.map((_, i) => (
-              <PhoneLink key={i} id={`contact.phone.${i}`} className={link} />
+            {visibleKeys("phones").map((k, i) => (
+              <PhoneLink key={i} id={`contact.phone.${k}`} className={link} />
             ))}
           </div>
         </div>
@@ -372,8 +373,8 @@ function ContactPanel({ onClose }: { onClose: () => void }) {
             <Mail size={19} />
           </span>
           <span className="flex flex-col">
-            {site.emails.map((_, i) => (
-              <EmailLink key={i} id={`contact.email.${i}`} className={link} />
+            {visibleKeys("emails").map((k, i) => (
+              <EmailLink key={i} id={`contact.email.${k}`} className={link} />
             ))}
           </span>
         </div>

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Check, ChevronDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { practiceAreas } from "@/content/practice-areas";
+import { shownAreas } from "@/content/lists";
 import { useCopy } from "@/context/copy-context";
 import { Button } from "@/components/ui/button";
 
@@ -19,8 +19,8 @@ export function ConsultationForm() {
   const [areaOpen, setAreaOpen] = useState(false);
   const areaRef = useRef<HTMLDivElement>(null);
   const { t } = useCopy();
-  const areaNames = practiceAreas
-    .map((a) => t(`practice.${a.slug}.title`))
+  const areaNames = shownAreas()
+    .map((slug) => t(`practice.${slug}.title`))
     .sort((x, y) => x.localeCompare(y));
 
   // Close the practice-area menu on an outside click.

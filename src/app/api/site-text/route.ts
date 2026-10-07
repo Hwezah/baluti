@@ -1,10 +1,17 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { copyDefaults, copySections, isCopyId } from "@/content/copy";
-import { ADDED_KEY, getList, isAddedItemId, itemId } from "@/content/lists";
+import {
+  ITEM_KEY,
+  addedItemOf,
+  getList,
+  itemId,
+  newItemKey,
+} from "@/content/lists";
 import {
   addItem,
   applyEdit,
+  listState,
   emptySiteText,
   setItemHidden,
 } from "@/lib/site-text";
@@ -66,11 +73,11 @@ export async function POST(request: NextRequest) {
 
   const id = typeof body?.id === "string" ? body.id : "";
   const raw = body?.text;
-  const added = isAddedItemId(id);
+  const added = isCopyId(id) ? null : addedItemOf(id);
   if (
-    !(isCopyId(id) || added) ||
+    !(isCopyId(id) || added !== null) ||
     !(raw === null || typeof raw === "string") ||
-    (added && raw === null)
+    (added !== null && raw === null)
   ) {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
@@ -86,7 +93,15 @@ export async function POST(request: NextRequest) {
 
   try {
     const file = await updateSiteText(
-      (current) => applyEdit(current, id, value),
+      (current) => {
+        if (
+          added &&
+          !listState(current, added.def.id).added.includes(added.key)
+        ) {
+          throw new StoreError("This item no longer exists.");
+        }
+        return applyEdit(current, id, value);
+      },
       `Site text: ${value === null ? "revert" : "update"} ${labels.get(id) ?? id}`,
     );
     return NextResponse.json(file);
@@ -116,8 +131,7 @@ async function listChange(body: {
       return invalid();
     }
     const values = body.values as Record<string, unknown>;
-    const key = `n${Date.now().toString(36)}`;
-    const texts: Record<string, string> = {};
+    const parts: Record<string, string> = {};
     for (const { part, label } of def.parts) {
       const value = values[part];
       const text = typeof value === "string" ? value.trim() : "";
@@ -129,13 +143,18 @@ async function listChange(body: {
           { status: 400 },
         );
       }
-      texts[itemId(def, key, part)] = text;
+      parts[part] = text;
     }
     try {
-      const file = await updateSiteText(
-        (current) => addItem(current, def.id, key, texts),
-        `Site text: add a ${def.noun}`,
-      );
+      const file = await updateSiteText((current) => {
+        // Practice areas get a page address made from their name.
+        const key = newItemKey(def, parts, current);
+        const texts: Record<string, string> = {};
+        for (const [part, text] of Object.entries(parts)) {
+          texts[itemId(def, key, part)] = text;
+        }
+        return addItem(current, def.id, key, texts);
+      }, `Site text: add a ${def.noun}`);
       return NextResponse.json(file);
     } catch (error) {
       return failure(error);
@@ -144,7 +163,7 @@ async function listChange(body: {
 
   const key = typeof body.key === "string" ? body.key : "";
   const hide = body.op === "hide";
-  if (!def.builtIn.includes(key) && !ADDED_KEY.test(key)) {
+  if (!def.builtIn.includes(key) && !ITEM_KEY.test(key)) {
     return invalid();
   }
   try {

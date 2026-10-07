@@ -8,7 +8,12 @@ import {
 } from "@/content/practice-areas";
 import { homeAttorneys, personHref } from "@/content/people";
 import { insightHref } from "@/content/insights";
-import { shownInsights, shownPeople, visibleKeys } from "@/content/lists";
+import {
+  isVisible,
+  shownInsights,
+  shownPeople,
+  visibleKeys,
+} from "@/content/lists";
 import { Button } from "@/components/ui/button";
 import { Copy as C } from "@/components/site/copy";
 import { ReviewInitial } from "@/components/home/review-initial";
@@ -102,26 +107,28 @@ export default function HomePage() {
                   wide: "home.hero.chip.banking",
                 },
                 { slug: "litigation", label: "home.hero.chip.litigation" },
-              ].map((chip) => (
-                <Link
-                  key={chip.slug}
-                  href={practiceAreaHref(chip.slug)}
-                  className="shrink-0 rounded-full border border-white/18 px-[15px] py-2 text-[13.5px] whitespace-nowrap text-white/82 hover:border-crimson hover:text-white"
-                >
-                  {chip.wide ? (
-                    <>
-                      <span className="md:hidden">
-                        <C id={chip.label} />
-                      </span>
-                      <span className="hidden md:inline">
-                        <C id={chip.wide} />
-                      </span>
-                    </>
-                  ) : (
-                    <C id={chip.label} />
-                  )}
-                </Link>
-              ))}
+              ]
+                .filter((chip) => isVisible("areas", chip.slug))
+                .map((chip) => (
+                  <Link
+                    key={chip.slug}
+                    href={practiceAreaHref(chip.slug)}
+                    className="shrink-0 rounded-full border border-white/18 px-[15px] py-2 text-[13.5px] whitespace-nowrap text-white/82 hover:border-crimson hover:text-white"
+                  >
+                    {chip.wide ? (
+                      <>
+                        <span className="md:hidden">
+                          <C id={chip.label} />
+                        </span>
+                        <span className="hidden md:inline">
+                          <C id={chip.wide} />
+                        </span>
+                      </>
+                    ) : (
+                      <C id={chip.label} />
+                    )}
+                  </Link>
+                ))}
             </div>
           </div>
           {/* ≥900px: photo column bleeding to the viewport edge. */}
@@ -197,39 +204,41 @@ export default function HomePage() {
             className="mb-12"
           />
           <div className="-mx-[clamp(16px,4vw,40px)] flex snap-x snap-mandatory scroll-pl-[clamp(16px,4vw,40px)] gap-[26px] overflow-x-auto px-[clamp(16px,4vw,40px)] pb-3.5 [scrollbar-width:thin]">
-            {featuredPracticeAreas.map((card) => {
-              return (
-                <Link
-                  key={card.slug}
-                  href={practiceAreaHref(card.slug)}
-                  className={`flex w-[clamp(280px,80vw,320px)] shrink-0 snap-start flex-col overflow-hidden border border-black/9 bg-white ${cardHover}`}
-                >
-                  <div className="relative h-[200px] bg-[#EAEAEA]">
-                    <Image
-                      src={card.img}
-                      alt=""
-                      fill
-                      sizes="320px"
-                      className="object-cover"
-                    />
-                    <span className="absolute top-3.5 left-3.5 rounded-[3px] bg-ink px-3 py-1.5 text-[11px] font-semibold tracking-[.1em] text-white uppercase">
-                      <C id={`home.practice.tag.${card.slug}`} />
-                    </span>
-                  </div>
-                  <div className="flex flex-1 flex-col px-6 pt-[22px] pb-6">
-                    <h3 className="m-0 mb-2.5 font-serif text-[1.25rem] leading-[1.25] font-semibold">
-                      <C id={`practice.${card.slug}.title`} />
-                    </h3>
-                    <p className="m-0 mb-auto text-sm text-muted-foreground">
-                      <C id={`practice.${card.slug}.summary`} />
-                    </p>
-                    <span className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-ink">
-                      <C id="common.learnMore" /> <ArrowRight size={16} />
-                    </span>
-                  </div>
-                </Link>
-              );
-            })}
+            {featuredPracticeAreas
+              .filter((card) => isVisible("areas", card.slug))
+              .map((card) => {
+                return (
+                  <Link
+                    key={card.slug}
+                    href={practiceAreaHref(card.slug)}
+                    className={`flex w-[clamp(280px,80vw,320px)] shrink-0 snap-start flex-col overflow-hidden border border-black/9 bg-white ${cardHover}`}
+                  >
+                    <div className="relative h-[200px] bg-[#EAEAEA]">
+                      <Image
+                        src={card.img}
+                        alt=""
+                        fill
+                        sizes="320px"
+                        className="object-cover"
+                      />
+                      <span className="absolute top-3.5 left-3.5 rounded-[3px] bg-ink px-3 py-1.5 text-[11px] font-semibold tracking-[.1em] text-white uppercase">
+                        <C id={`home.practice.tag.${card.slug}`} />
+                      </span>
+                    </div>
+                    <div className="flex flex-1 flex-col px-6 pt-[22px] pb-6">
+                      <h3 className="m-0 mb-2.5 font-serif text-[1.25rem] leading-[1.25] font-semibold">
+                        <C id={`practice.${card.slug}.title`} />
+                      </h3>
+                      <p className="m-0 mb-auto text-sm text-muted-foreground">
+                        <C id={`practice.${card.slug}.summary`} />
+                      </p>
+                      <span className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-ink">
+                        <C id="common.learnMore" /> <ArrowRight size={16} />
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
           </div>
         </div>
       </section>

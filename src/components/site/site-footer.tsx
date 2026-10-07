@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight, PenLine } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { site } from "@/content/site";
+import { isVisible, visibleKeys } from "@/content/lists";
 import {
   footerPracticeAreas,
   practiceAreaHref,
@@ -80,15 +80,17 @@ export function SiteFooter() {
             <C id="footer.areasHeading" />
           </h4>
           <div className={list}>
-            {footerPracticeAreas.map((a) => (
-              <Link
-                key={a.slug}
-                href={practiceAreaHref(a.slug)}
-                className={link}
-              >
-                <C id={`footer.area.${a.slug}`} />
-              </Link>
-            ))}
+            {footerPracticeAreas
+              .filter((a) => isVisible("areas", a.slug))
+              .map((a) => (
+                <Link
+                  key={a.slug}
+                  href={practiceAreaHref(a.slug)}
+                  className={link}
+                >
+                  <C id={`footer.area.${a.slug}`} />
+                </Link>
+              ))}
             <Link
               href="/practice-areas"
               className="mt-1 inline-flex items-center gap-1.5 font-semibold text-white hover:text-crimson"
@@ -103,17 +105,17 @@ export function SiteFooter() {
             <C id="footer.contactHeading" />
           </h4>
           <div className={list}>
-            {site.phones.map((_, i) => (
+            {visibleKeys("phones").map((k, i) => (
               <PhoneLink
                 key={`p${i}`}
-                id={`contact.phone.${i}`}
+                id={`contact.phone.${k}`}
                 className={link}
               />
             ))}
-            {site.emails.map((_, i) => (
+            {visibleKeys("emails").map((k, i) => (
               <EmailLink
                 key={`e${i}`}
-                id={`contact.email.${i}`}
+                id={`contact.email.${k}`}
                 className={link}
               />
             ))}

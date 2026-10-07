@@ -80,10 +80,10 @@ export default function ContactPage() {
                 icon={<Phone size={21} />}
                 title={<C id="contact.label.call" />}
               >
-                {site.phones.map((_, i) => (
+                {visibleKeys("phones").map((k, i) => (
                   <span key={i}>
                     {i > 0 && <br />}
-                    <PhoneLink id={`contact.phone.${i}`} className={detail} />
+                    <PhoneLink id={`contact.phone.${k}`} className={detail} />
                   </span>
                 ))}
               </ContactItem>
@@ -91,10 +91,10 @@ export default function ContactPage() {
                 icon={<Mail size={21} />}
                 title={<C id="contact.label.email" />}
               >
-                {site.emails.map((_, i) => (
+                {visibleKeys("emails").map((k, i) => (
                   <span key={i}>
                     {i > 0 && <br />}
-                    <EmailLink id={`contact.email.${i}`} className={detail} />
+                    <EmailLink id={`contact.email.${k}`} className={detail} />
                   </span>
                 ))}
               </ContactItem>

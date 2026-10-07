@@ -857,6 +857,11 @@ const practiceIndex: CopySection[] = [
         f(`practiceIndex.group.${i}`, `Group ${i + 1} name`, g.name),
       ),
       f(
+        "practiceIndex.group.more",
+        "Group name for practice areas you add",
+        "More practice areas",
+      ),
+      f(
         "practiceIndex.process.eyebrow",
         "Process — small label",
         "How we work",
@@ -1309,7 +1314,7 @@ export function isClientField(id: string) {
 const mustCheck: RegExp[] = [
   /^contact\.(address|phone|email|hours)\./,
   /^person\./,
-  /^practice\.[^.]+\.(title|summary|services\.)/,
+  /^practice\.[^.]+\.(title|summary|services)/,
   /^attorney\.emmanuel\./,
   /^home\.stats\./,
   /^about\.mission\.stat\./,
@@ -1339,6 +1344,7 @@ const hintRules: [RegExp, string | ((m: RegExpMatchArray) => string)][] = [
   [/^contact\.phone\./, "Phone number."],
   [/^contact\.email\.0$/, "Enquiries email."],
   [/^contact\.email\.1$/, "Emmanuel’s email."],
+  [/^contact\.email\./, "Email address."],
   [/^contact\.hours\.weekdays$/, "Weekday opening hours."],
   [/^contact\.hours\.saturday$/, "Saturday opening hours."],
   [/^contact\.hours\.compact$/, "Opening hours, short."],
@@ -1373,6 +1379,8 @@ const hintRules: [RegExp, string | ((m: RegExpMatchArray) => string)][] = [
   [/^practice\.[^.]+\.title$/, "Practice area name."],
   [/^practice\.[^.]+\.summary$/, "One-line description."],
   [/^practice\.[^.]+\.services\./, "A service offered."],
+  [/^practice\.[^.]+\.services$/, "Services offered, one per line."],
+  [/^practice\.[^.]+\.help$/, "How the firm helps."],
   [/^faq\.[^.]+\.q$/, "Question."],
   [/^faq\.[^.]+\.a$/, "Answer."],
   [

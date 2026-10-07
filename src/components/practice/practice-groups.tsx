@@ -6,6 +6,7 @@ import { ArrowRight, ChevronDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { practiceAreaHref, practiceGroups } from "@/content/practice-areas";
+import { isAddedArea, shownAreas } from "@/content/lists";
 import { Copy as C } from "@/components/site/copy";
 
 /**
@@ -14,14 +15,26 @@ import { Copy as C } from "@/components/site/copy";
  */
 export function PracticeGroups() {
   const [open, setOpen] = useState<Record<number, boolean>>({});
+  // Hidden areas drop out; areas the client added get a group of their own.
+  const shown = shownAreas();
+  const groups = [
+    ...practiceGroups.map((group, i) => ({
+      label: `practiceIndex.group.${i}`,
+      slugs: group.slugs.filter((slug) => shown.includes(slug)),
+    })),
+    {
+      label: "practiceIndex.group.more",
+      slugs: shown.filter((slug) => isAddedArea(slug)),
+    },
+  ].filter((group) => group.slugs.length > 0);
 
   return (
     <div className="site-container flex flex-col gap-[clamp(48px,6vw,80px)]">
-      {practiceGroups.map((group, i) => {
+      {groups.map((group, i) => {
         const isOpen = !!open[i];
         const panelId = `practice-group-${i}`;
         return (
-          <div key={group.name}>
+          <div key={group.label}>
             <button
               type="button"
               onClick={() => setOpen((s) => ({ ...s, [i]: !s[i] }))}
@@ -31,7 +44,7 @@ export function PracticeGroups() {
             >
               <span className="flex items-baseline gap-4">
                 <span className="font-serif text-[clamp(1.5rem,2.6vw,2.1rem)] font-bold">
-                  <C id={`practiceIndex.group.${i}`} />
+                  <C id={group.label} />
                 </span>
                 <span className="font-mono text-xs text-ink-faint">
                   {String(group.slugs.length).padStart(2, "0")}

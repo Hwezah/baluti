@@ -286,17 +286,29 @@ export function AdminPanel({
 
   const compiled = useMemo(() => compileQuery(query), [query]);
 
+  // Anything the client added is theirs to check, so it goes in list 1.
+  const essentialIds = useMemo(
+    () =>
+      new Set(
+        sections.flatMap((s) =>
+          s.fields
+            .filter((f) => (f as AdminField).added || isEssentialField(f.id))
+            .map((f) => f.id),
+        ),
+      ),
+    [sections],
+  );
+
   const tierCounts = useMemo(() => {
-    const all = sections.flatMap((s) => s.fields);
-    const essential = all.filter((f) => isEssentialField(f.id)).length;
-    return { essential, detail: all.length - essential };
-  }, [sections]);
+    const all = sections.flatMap((s) => s.fields).length;
+    return { essential: essentialIds.size, detail: all - essentialIds.size };
+  }, [sections, essentialIds]);
 
   const visibleSections = useMemo(() => {
     // A search looks through both lists; otherwise show the chosen one.
     const allowed = (id: string) =>
       (!onlyChanged || changed.has(id)) &&
-      (compiled !== null || isEssentialField(id) === (tier === "essential"));
+      (compiled !== null || essentialIds.has(id) === (tier === "essential"));
 
     if (!compiled) {
       return sections
@@ -344,7 +356,7 @@ export function AdminPanel({
       .filter(({ section }) => section.fields.length > 0)
       .sort((a, b) => b.best - a.best)
       .map(({ section }) => section);
-  }, [compiled, onlyChanged, changed, file, sections, tier]);
+  }, [compiled, onlyChanged, changed, file, sections, tier, essentialIds]);
 
   const matchCount = visibleSections.reduce((n, s) => n + s.fields.length, 0);
 
@@ -1149,6 +1161,8 @@ function SectionCard({
       if (b.kind === "item" && b.def === def) at = i;
     });
     if (at >= 0) blocks.splice(at + 1, 0, { kind: "add", def });
+    // Nothing added yet to a list kept in this section (practice areas).
+    else if (def.itemSection) blocks.push({ kind: "add", def });
   }
 
   const editor = (field: CopyField) => (
@@ -1241,10 +1255,15 @@ function SectionCard({
                 def={block.def}
                 itemKey={block.key}
                 title={
-                  block.def.id === "people"
-                    ? (block.fields[0]?.label.split(" — ")[0] ??
-                      `Person ${index + 1}`)
-                    : `${capitalise(block.def.noun)} ${index + 1}`
+                  // People and practice areas the client added go by name.
+                  item?.added && block.def.id === "people"
+                    ? savedValue(file, `person.${block.key}.name`)
+                    : item?.added && block.def.id === "areas"
+                      ? savedValue(file, `practice.${block.key}.title`)
+                      : block.def.id === "people"
+                        ? (block.fields[0]?.label.split(" — ")[0] ??
+                          `Person ${index + 1}`)
+                        : `${capitalise(block.def.noun)} ${index + 1}`
                 }
                 hidden={item?.hidden ?? false}
                 canSave={canSave}
@@ -1470,6 +1489,11 @@ function AddItem({
               className="flex flex-col gap-1.5 text-[14.5px] font-semibold"
             >
               {p.label}
+              {p.help && (
+                <span className="text-[13.5px] font-normal text-ink-soft">
+                  {p.help}
+                </span>
+              )}
               <textarea
                 rows={p.long ? 4 : 1}
                 value={values[p.part] ?? ""}

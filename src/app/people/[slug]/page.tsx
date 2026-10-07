@@ -145,15 +145,17 @@ export default async function AttorneyPage({
                 <C id="attorney.label.areas" />
               </h3>
               <div className="flex flex-wrap gap-2">
-                {attorney.areas.map((area) => (
-                  <Link
-                    key={area}
-                    href={practiceAreaHref(area)}
-                    className="rounded-full border border-black/18 px-3.5 py-[7px] text-[13px] text-ink-body hover:border-crimson hover:text-crimson"
-                  >
-                    <C id={`practice.${area}.title`} />
-                  </Link>
-                ))}
+                {attorney.areas
+                  .filter((area) => isVisible("areas", area))
+                  .map((area) => (
+                    <Link
+                      key={area}
+                      href={practiceAreaHref(area)}
+                      className="rounded-full border border-black/18 px-3.5 py-[7px] text-[13px] text-ink-body hover:border-crimson hover:text-crimson"
+                    >
+                      <C id={`practice.${area}.title`} />
+                    </Link>
+                  ))}
               </div>
             </div>
             <div className="border border-black/10 bg-sand p-7">

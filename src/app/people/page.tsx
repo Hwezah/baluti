@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { leaders, people, personHref, team } from "@/content/people";
-import { shownPeople, visibleKeys } from "@/content/lists";
+import { addedPeople, shownPeople, visibleKeys } from "@/content/lists";
 import { Button } from "@/components/ui/button";
 import { Copy as C } from "@/components/site/copy";
 import { MaybeLink } from "@/components/site/maybe-link";
@@ -106,6 +106,27 @@ export default function PeoplePage() {
                   </div>
                 )}
               </MaybeLink>
+            ))}
+            {addedPeople().map((key) => (
+              <div
+                key={key}
+                className="block text-ink max-sm:portrait:flex-[0_0_72%] max-sm:portrait:snap-start"
+              >
+                <Silhouette
+                  className="mb-[18px] h-[280px]"
+                  head={{ top: "20%", width: "36%" }}
+                  body={{ top: "52%", width: "82%" }}
+                />
+                <h3 className="m-0 mb-[3px] font-serif text-[1.25rem] font-semibold">
+                  <C id={`person.${key}.name`} />
+                </h3>
+                <div className="mb-1 text-[12.5px] font-semibold tracking-[.06em] text-muted-foreground uppercase">
+                  <C id={`person.${key}.role`} />
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  <C id={`person.${key}.area`} />
+                </div>
+              </div>
             ))}
           </div>
         </div>

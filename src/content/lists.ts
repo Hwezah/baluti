@@ -2,12 +2,15 @@
 // items to in the admin panel (reviews, FAQs, services…). Each item's text
 // lives in the copy registry under `${prefix}.${key}.${part}` (or
 // `${prefix}.${key}` for one-part items). Built-in items have the keys
-// below; items the client adds get keys like "n1a2b3c" and are recorded in
+// below; items the client adds get keys like "n1a2b3c" (or, for practice
+// areas, a slug made from the name, which becomes the page address) and are
+// recorded in
 // src/content/site-text.json, along with which items are hidden.
 
 import { emmanuel, personKeys } from "@/content/people";
 import { insights } from "@/content/insights";
-import { practiceAreas } from "@/content/practice-areas";
+import { getPracticeArea, practiceAreas } from "@/content/practice-areas";
+import { site } from "@/content/site";
 import { listState, publishedText, type SiteTextFile } from "@/lib/site-text";
 
 export type ListPart = {
@@ -16,6 +19,8 @@ export type ListPart = {
   label: string;
   /** Use a larger box when adding. */
   long?: boolean;
+  /** Help shown under the box when adding. */
+  help?: string;
 };
 
 export type ListDef = {
@@ -31,6 +36,8 @@ export type ListDef = {
   canAdd: boolean;
   /** Items are whole admin sections (articles), keyed by this section id. */
   itemSection?: (key: string) => string;
+  /** Make added items' keys from this part's text (a URL slug). */
+  keyFrom?: string;
 };
 
 const keys = (n: number) => Array.from({ length: n }, (_, i) => String(i));
@@ -67,9 +74,13 @@ export const listDefs: ListDef[] = [
     section: "team-members",
     noun: "person",
     prefix: "person",
-    parts: [],
+    parts: [
+      { part: "name", label: "Full name" },
+      { part: "role", label: "Job title" },
+      { part: "area", label: "Main area of practice" },
+    ],
     builtIn: [...personKeys],
-    canAdd: false,
+    canAdd: true,
   },
   {
     id: "perks",
@@ -103,6 +114,46 @@ export const listDefs: ListDef[] = [
     ],
     builtIn: keys(emmanuel.credentials.length),
     canAdd: true,
+  },
+  {
+    id: "phones",
+    section: "contact-details",
+    noun: "phone number",
+    prefix: "contact.phone",
+    parts: [{ part: "", label: "Phone number" }],
+    builtIn: keys(site.phones.length),
+    canAdd: true,
+  },
+  {
+    id: "emails",
+    section: "contact-details",
+    noun: "email address",
+    prefix: "contact.email",
+    parts: [{ part: "", label: "Email address" }],
+    builtIn: keys(site.emails.length),
+    canAdd: true,
+  },
+  {
+    id: "areas",
+    section: "practice-index",
+    noun: "practice area",
+    prefix: "practice",
+    parts: [
+      { part: "title", label: "Name of the area" },
+      { part: "summary", label: "One-line summary" },
+      { part: "intro", label: "Introduction", long: true },
+      { part: "help", label: "How the firm helps", long: true },
+      {
+        part: "services",
+        label: "Services",
+        long: true,
+        help: "One service per line.",
+      },
+    ],
+    builtIn: practiceAreas.map((area) => area.slug),
+    canAdd: true,
+    itemSection: (slug) => `practice-${slug}`,
+    keyFrom: "title",
   },
   ...practiceAreas.map(
     (area): ListDef => ({
@@ -177,23 +228,54 @@ export function isVisible(
   return !listState(file, id).hidden.includes(key);
 }
 
-export const ADDED_KEY = /^n[0-9a-z]{4,16}$/;
+/** Shape of a list item key (built-in or added). */
+export const ITEM_KEY = /^[a-z0-9][a-z0-9-]{0,60}$/;
 
-/** A text id belonging to an item the client added (shape only). */
-export function isAddedItemId(id: string) {
-  return listDefs.some(
-    (def) =>
-      def.canAdd &&
-      def.parts.some((p) => {
-        const head = `${def.prefix}.`;
-        if (!id.startsWith(head)) return false;
-        const rest = id.slice(head.length).split(".");
-        return (
-          ADDED_KEY.test(rest[0]) &&
-          (p.part ? rest.length === 2 && rest[1] === p.part : rest.length === 1)
-        );
-      }),
-  );
+/** The list and key an added item's text id belongs to (by shape only). */
+export function addedItemOf(id: string) {
+  for (const def of listDefs) {
+    if (!def.canAdd) continue;
+    const head = `${def.prefix}.`;
+    if (!id.startsWith(head)) continue;
+    const rest = id.slice(head.length).split(".");
+    if (!ITEM_KEY.test(rest[0]) || def.builtIn.includes(rest[0])) continue;
+    const fits = def.parts.some((p) =>
+      p.part ? rest.length === 2 && rest[1] === p.part : rest.length === 1,
+    );
+    if (fits) return { def, key: rest[0] };
+  }
+  return null;
+}
+
+/** Lower-case words joined by dashes, for page addresses. */
+export function slugify(text: string) {
+  return text
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 50)
+    .replace(/-+$/, "");
+}
+
+/** A key for a new item that no other item of the list uses. */
+export function newItemKey(
+  def: ListDef,
+  values: Record<string, string>,
+  file: SiteTextFile,
+) {
+  const taken = new Set([...def.builtIn, ...listState(file, def.id).added]);
+  const base = def.keyFrom ? slugify(values[def.keyFrom] ?? "") : "";
+  if (base && ITEM_KEY.test(base)) {
+    let key = base;
+    for (let n = 2; taken.has(key); n++) key = `${base}-${n}`;
+    return key;
+  }
+  let key = `n${Date.now().toString(36)}`;
+  while (taken.has(key)) key = `${key}x`;
+  return key;
 }
 
 /** People in `keys` who aren't hidden. */
@@ -204,4 +286,21 @@ export function shownPeople<K extends string>(keys: K[]) {
 /** Articles that aren't hidden, newest first. */
 export function shownInsights() {
   return insights.filter((post) => isVisible("articles", post.slug));
+}
+
+/** Practice areas the site shows: built-in ones first, then added ones. */
+export function shownAreas(file: SiteTextFile = publishedText) {
+  return visibleKeys("areas", file);
+}
+
+/** Whether a practice area was added by the client (no built-in page data). */
+export function isAddedArea(slug: string) {
+  return !getPracticeArea(slug);
+}
+
+/** People the client added, who aren't hidden. */
+export function addedPeople(file: SiteTextFile = publishedText) {
+  return listItems("people", file)
+    .filter((item) => item.added && !item.hidden)
+    .map((item) => item.key);
 }

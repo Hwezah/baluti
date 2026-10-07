@@ -1,16 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
-import { site } from "@/content/site";
-import {
-  getPracticeArea,
-  practiceAreaHref,
-  practiceAreas,
-} from "@/content/practice-areas";
+import { getPracticeArea, practiceAreaHref } from "@/content/practice-areas";
 import { personHref, practiceLeads } from "@/content/people";
-import { shownPeople, visibleKeys } from "@/content/lists";
+import { copyDefaults } from "@/content/copy";
+import {
+  isAddedArea,
+  shownAreas,
+  shownPeople,
+  visibleKeys,
+} from "@/content/lists";
+import { publishedText } from "@/lib/site-text";
+import { ServiceList } from "@/components/practice/service-list";
 import { Button } from "@/components/ui/button";
 import { Copy as C, PhoneLink } from "@/components/site/copy";
 import { MaybeLink } from "@/components/site/maybe-link";
@@ -19,27 +22,43 @@ import { Avatar, Eyebrow } from "@/components/site/primitives";
 import { StickyColumn } from "@/components/site/sticky-column";
 
 export function generateStaticParams() {
-  return practiceAreas.map((area) => ({ slug: area.slug }));
+  return shownAreas().map((slug) => ({ slug }));
+}
+
+/** A practice area the site shows: built in, or added by the client. */
+function findArea(slug: string) {
+  if (!shownAreas().includes(slug)) return null;
+  return { slug, area: getPracticeArea(slug), added: isAddedArea(slug) };
 }
 
 export async function generateMetadata({
   params,
 }: PageProps<"/practice-areas/[slug]">): Promise<Metadata> {
-  const area = getPracticeArea((await params).slug);
-  return area ? { title: area.title, description: area.intro } : {};
+  const slug = (await params).slug;
+  const found = findArea(slug);
+  if (!found) return {};
+  // Added areas: use the text the client wrote.
+  const text = (part: string) =>
+    publishedText.texts[`practice.${slug}.${part}`] ??
+    copyDefaults[`practice.${slug}.${part}`];
+  return { title: text("title"), description: text("intro") };
 }
 
 export default async function PracticeAreaPage({
   params,
 }: PageProps<"/practice-areas/[slug]">) {
-  const area = getPracticeArea((await params).slug);
-  if (!area) notFound();
+  const found = findArea((await params).slug);
+  if (!found) notFound();
+  const { slug, area, added } = found;
 
-  const p = (field: string) => `practice.${area.slug}.${field}`;
+  const p = (field: string) => `practice.${slug}.${field}`;
   // Areas with their own approach use it; the rest share the default steps.
   const stepId = (i: number, part: "title" | "body") =>
-    area.steps ? p(`steps.${i}.${part}`) : `practiceDetail.steps.${i}.${part}`;
-  const related = area.related.filter((slug) => getPracticeArea(slug));
+    area?.steps ? p(`steps.${i}.${part}`) : `practiceDetail.steps.${i}.${part}`;
+  const shown = shownAreas();
+  const related = area
+    ? area.related.filter((other) => shown.includes(other))
+    : shown.filter((other) => other !== slug).slice(0, 4);
 
   return (
     <>
@@ -50,7 +69,7 @@ export default async function PracticeAreaPage({
           { label: <C id="nav.practice" />, href: "/practice-areas" },
           { label: <C id={p("title")} /> },
         ]}
-        eyebrow={<C id={p("group")} />}
+        eyebrow={<C id={added ? "practiceIndex.group.more" : p("group")} />}
         title={<C id={p("title")} />}
         titleClassName="max-w-[20ch] text-[clamp(2.3rem,4.6vw,3.7rem)] leading-[1.06]"
         intro={<C id={p("intro")} />}
@@ -63,31 +82,33 @@ export default async function PracticeAreaPage({
             <h2 className="m-0 mb-[18px] font-serif text-[clamp(1.6rem,2.8vw,2.2rem)] font-bold">
               <C id="practiceDetail.help" />
             </h2>
-            <p className="m-0 mb-[18px] text-[16.5px] text-ink-soft">
-              <C id={p("overview.0")} />
-            </p>
-            <p className="m-0 mb-10 text-base text-muted-foreground">
-              <C id={p("overview.1")} />
-            </p>
+            {added ? (
+              <p className="m-0 mb-10 text-[16.5px] text-ink-soft">
+                <C id={p("help")} />
+              </p>
+            ) : (
+              <>
+                <p className="m-0 mb-[18px] text-[16.5px] text-ink-soft">
+                  <C id={p("overview.0")} />
+                </p>
+                <p className="m-0 mb-10 text-base text-muted-foreground">
+                  <C id={p("overview.1")} />
+                </p>
+              </>
+            )}
 
             <h3 className="m-0 mb-[22px] font-serif text-[1.4rem] font-semibold">
               <C id="practiceDetail.services" />
             </h3>
-            <ul className="m-0 mb-11 grid list-none grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-0.5 border border-black/10 bg-black/10 p-0">
-              {visibleKeys(`services-${area.slug}`).map((i) => (
-                <li
-                  key={i}
-                  className="flex items-center gap-3.5 bg-paper px-6 py-[22px]"
-                >
-                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-black/6">
-                    <Check size={16} strokeWidth={2.6} className="text-ink" />
-                  </span>
-                  <span className="text-[15px] text-ink-body">
-                    <C id={p(`services.${i}`)} />
-                  </span>
-                </li>
-              ))}
-            </ul>
+            {added ? (
+              <ServiceList linesId={p("services")} />
+            ) : (
+              <ServiceList
+                ids={visibleKeys(`services-${slug}`).map((k) =>
+                  p(`services.${k}`),
+                )}
+              />
+            )}
 
             <div className="bg-ink p-[clamp(28px,3.5vw,44px)] text-white">
               <h3 className="m-0 mb-[26px] font-serif text-[1.4rem] font-semibold">
@@ -124,10 +145,10 @@ export default async function PracticeAreaPage({
                   <C id="common.freeConsultation" />
                 </Link>
               </Button>
-              {site.phones.map((_, i) => (
+              {visibleKeys("phones").map((k, i) => (
                 <PhoneLink
                   key={i}
-                  id={`contact.phone.${i}`}
+                  id={`contact.phone.${k}`}
                   className={`block text-center text-[14.5px] font-semibold text-ink ${i === 0 ? "mt-3" : "mt-1.5"}`}
                 />
               ))}
