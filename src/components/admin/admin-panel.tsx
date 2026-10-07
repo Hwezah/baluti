@@ -29,12 +29,7 @@ import {
   type CopyField,
   type CopySection,
 } from "@/content/copy";
-import {
-  itemId,
-  listDefs,
-  listItems,
-  type ListDef,
-} from "@/content/lists";
+import { itemId, listDefs, listItems, type ListDef } from "@/content/lists";
 import { cn } from "@/lib/utils";
 import { publishedValue } from "@/context/copy-context";
 import { pendingEdits } from "@/lib/copy-storage";
@@ -440,9 +435,9 @@ export function AdminPanel({
   };
 
   return (
-    <div className="gutter bg-sand pt-[clamp(40px,5vw,64px)] pb-[clamp(64px,8vw,110px)]">
+    <div className="bg-sand px-2 pt-4 pb-12 sm:px-4 sm:pt-10 lg:px-10 lg:pt-16 lg:pb-[110px]">
       <div className="site-container">
-        <header className="mb-8 max-w-[70ch]">
+        <header className="mb-4 max-w-[70ch] max-sm:px-1 sm:mb-8">
           <div className="eyebrow mb-3">Admin panel</div>
           <h1 className="m-0 mb-4 font-serif text-[clamp(2rem,4vw,3rem)] leading-[1.08] font-bold">
             Edit the text on your website
@@ -494,8 +489,8 @@ export function AdminPanel({
         )}
 
         {/* Toolbar */}
-        <div className="z-20 mb-8 flex flex-wrap items-center gap-3 border border-black/10 bg-white p-3 shadow-[0_12px_30px_-24px_rgba(0,0,0,.5)] lg:sticky lg:top-[calc(var(--header-h)+8px)]">
-          <label className="relative min-w-[220px] flex-1">
+        <div className="z-20 mb-4 flex flex-wrap items-center gap-2 border border-black/10 bg-white p-2 max-sm:flex-col max-sm:items-stretch sm:mb-8 sm:gap-3 sm:p-3 shadow-[0_12px_30px_-24px_rgba(0,0,0,.5)] lg:sticky lg:top-[calc(var(--header-h)+8px)]">
+          <label className="relative min-w-[220px] flex-1 max-sm:min-w-0">
             <span className="sr-only">Search the text</span>
             <Search
               size={16}
@@ -509,7 +504,7 @@ export function AdminPanel({
               className="w-full rounded-[2px] border border-black/12 bg-field py-2.5 pr-3 pl-9 text-[15px] focus:border-ink focus:outline-none"
             />
           </label>
-          <label className="flex cursor-pointer items-center gap-2 text-sm font-medium">
+          <label className="flex cursor-pointer items-center gap-2 text-sm font-medium max-sm:justify-center max-sm:py-1">
             <input
               type="checkbox"
               checked={onlyChanged}
@@ -518,11 +513,11 @@ export function AdminPanel({
             />
             Only show changed text ({changed.size})
           </label>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 max-sm:flex-col max-sm:items-center">
             <Button
               size="sm"
               variant="ghost"
-              className="cursor-pointer"
+              className="cursor-pointer max-sm:w-[80vw]"
               onClick={copySummary}
             >
               <ClipboardCopy size={15} /> Copy list of changes
@@ -530,7 +525,7 @@ export function AdminPanel({
             <Button
               size="sm"
               variant="ghost"
-              className="cursor-pointer"
+              className="cursor-pointer max-sm:w-[80vw]"
               onClick={download}
             >
               <Download size={15} /> Download a copy
@@ -553,9 +548,9 @@ export function AdminPanel({
           )}
         </div>
 
-        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[240px_minmax(0,1fr)]">
+        <div className="grid grid-cols-1 items-start gap-4 sm:gap-8 lg:grid-cols-[240px_minmax(0,1fr)]">
           <SectionNav sections={visibleSections} changed={changed} />
-          <div className="flex min-w-0 flex-col gap-8">
+          <div className="flex min-w-0 flex-col gap-4 sm:gap-8">
             {visibleSections.length === 0 && (
               <p className="m-0 border border-black/10 bg-white p-8 text-center text-muted-foreground">
                 Nothing matches. Try another word, or untick “Only show changed
@@ -587,7 +582,7 @@ function HowItWorks({ mode, missing }: { mode: Mode; missing: string[] }) {
     return (
       <aside
         role="note"
-        className="mb-8 flex gap-4 border border-[#d9b44a] bg-[#fff8e1] p-5 text-[15px] text-ink"
+        className="mb-4 flex gap-3 border border-[#d9b44a] bg-[#fff8e1] p-3 text-[15px] text-ink sm:mb-8 sm:gap-4 sm:p-5"
       >
         <TriangleAlert
           size={22}
@@ -611,7 +606,7 @@ function HowItWorks({ mode, missing }: { mode: Mode; missing: string[] }) {
   return (
     <aside
       role="note"
-      className="mb-8 flex gap-4 border border-black/12 bg-white p-5 text-[15px] text-ink"
+      className="mb-4 flex gap-3 border border-black/12 bg-white p-3 text-[15px] text-ink sm:mb-8 sm:gap-4 sm:p-5"
     >
       <Info
         size={22}
@@ -670,8 +665,8 @@ function ResetAll({
   const ready = passcodeRequired ? code.length > 0 : code.trim() === "RESET";
 
   return (
-    <aside className="mb-8 border border-black/12 bg-white p-5 text-[15px] text-ink">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <aside className="mb-4 border border-black/12 bg-white p-3 text-[15px] text-ink sm:mb-8 sm:p-5">
+      <div className="flex flex-wrap items-center justify-between gap-3 max-sm:flex-col max-sm:items-center">
         <div className="min-w-0 flex-1">
           <p className="m-0 mb-1 font-semibold">
             Start over: reset the whole site to the demo text
@@ -686,7 +681,7 @@ function ResetAll({
           <Button
             size="sm"
             variant="ghost"
-            className="cursor-pointer"
+            className="cursor-pointer max-sm:w-[80vw]"
             disabled={changedCount === 0}
             onClick={() => {
               setOpen(true);
@@ -700,7 +695,7 @@ function ResetAll({
 
       {open && (
         <form
-          className="mt-4 border border-[#d9b44a] bg-[#fff8e1] p-4"
+          className="mt-3 border border-[#d9b44a] bg-[#fff8e1] p-3 sm:mt-4 sm:p-4"
           onSubmit={async (e) => {
             e.preventDefault();
             if (!ready) return;
@@ -747,11 +742,11 @@ function ResetAll({
               className="rounded-[2px] border border-black/15 bg-white p-3 text-[15px] font-normal focus:border-ink focus:outline-none"
             />
           </label>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 max-sm:flex-col max-sm:items-center">
             <Button
               type="submit"
               size="sm"
-              className="cursor-pointer"
+              className="cursor-pointer max-sm:w-[80vw]"
               disabled={!ready || busy}
             >
               {busy ? "Resetting…" : "Yes, delete my changes and reset"}
@@ -760,7 +755,7 @@ function ResetAll({
               type="button"
               size="sm"
               variant="ghost"
-              className="cursor-pointer"
+              className="cursor-pointer max-sm:w-[80vw]"
               onClick={() => {
                 setOpen(false);
                 setCode("");
@@ -804,14 +799,14 @@ function PasscodeForm({
         setError(await onSubmit(code));
         setBusy(false);
       }}
-      className="mb-8 flex flex-wrap items-end gap-3 border border-black/12 bg-white p-5"
+      className="mb-4 flex flex-wrap items-end gap-3 border border-black/12 bg-white p-3 max-sm:flex-col max-sm:items-center sm:mb-8 sm:p-5"
     >
       <LockKeyhole
         size={22}
         className="mb-2.5 shrink-0 text-ink-soft"
         aria-hidden="true"
       />
-      <label className="flex min-w-[220px] flex-1 flex-col gap-1.5 text-[15px] font-semibold">
+      <label className="flex min-w-[220px] flex-1 flex-col gap-1.5 text-[15px] font-semibold max-sm:w-full">
         Enter the admin passcode to make changes
         <input
           type="password"
@@ -824,7 +819,7 @@ function PasscodeForm({
       <Button
         type="submit"
         size="sm"
-        className="cursor-pointer"
+        className="cursor-pointer max-sm:w-[80vw]"
         disabled={!code || busy}
       >
         {busy ? "Checking…" : "Unlock"}
@@ -1031,7 +1026,7 @@ function SectionCard({
       id={sectionAnchor(section.id)}
       className="scroll-mt-[calc(var(--header-h)+100px)] border border-black/10 bg-white"
     >
-      <div className="border-b border-black/10 p-[clamp(20px,3vw,32px)]">
+      <div className="border-b border-black/10 p-3 sm:p-5 lg:p-8">
         <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
           <span className="text-xs font-semibold tracking-[.14em] text-ink-faint uppercase">
             {section.group}
@@ -1047,14 +1042,14 @@ function SectionCard({
         <h2 className="m-0 mb-4 font-serif text-[clamp(1.4rem,2.4vw,1.8rem)] leading-[1.2] font-bold">
           <Highlight text={section.title} query={query} />
         </h2>
-        <dl className="m-0 grid gap-3 text-[15px] md:grid-cols-2">
-          <div className="bg-paper p-4">
+        <dl className="m-0 grid gap-2 text-[15px] sm:gap-3 md:grid-cols-2">
+          <div className="bg-paper p-3 sm:p-4">
             <dt className="mb-1 text-xs font-semibold tracking-[.12em] text-ink-faint uppercase">
               What this section is for
             </dt>
             <dd className="m-0 text-ink-soft">{section.purpose}</dd>
           </div>
-          <div className="bg-paper p-4">
+          <div className="bg-paper p-3 sm:p-4">
             <dt className="mb-1 text-xs font-semibold tracking-[.12em] text-ink-faint uppercase">
               What it should cover
             </dt>
@@ -1074,7 +1069,7 @@ function SectionCard({
         )}
       </div>
       {sectionItem?.item.hidden ? (
-        <p className="m-0 p-[clamp(20px,3vw,32px)] text-[15px] text-ink-soft">
+        <p className="m-0 p-3 sm:p-5 lg:p-8 text-[15px] text-ink-soft">
           This {sectionItem.def.noun} is hidden from the site. Its text is kept,
           so you can show it again at any time.
         </p>
@@ -1149,11 +1144,16 @@ function HideToggle({
     null,
   );
   return (
-    <div className={cn("flex flex-wrap items-center gap-3", className)}>
+    <div
+      className={cn(
+        "flex flex-wrap items-center gap-3 max-sm:flex-col max-sm:items-center",
+        className,
+      )}
+    >
       <Button
         size="sm"
         variant="ghost"
-        className="cursor-pointer"
+        className="cursor-pointer max-sm:w-[80vw]"
         disabled={!canSave || busy}
         onClick={async () => {
           setBusy(true);
@@ -1222,8 +1222,8 @@ function ItemCard({
         hidden ? "border-black/10 bg-paper" : "border-ink/70",
       )}
     >
-      <div className="flex flex-wrap items-center justify-between gap-3 px-[clamp(20px,3vw,32px)] pt-5">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-3 max-sm:flex-col max-sm:items-center pt-3 sm:px-5 sm:pt-5 lg:px-8">
+        <div className="flex items-center gap-2 max-sm:self-start">
           <span className="font-serif text-[1.15rem] font-semibold">
             {title}
           </span>
@@ -1243,7 +1243,7 @@ function ItemCard({
         />
       </div>
       {hidden ? (
-        <p className="m-0 px-[clamp(20px,3vw,32px)] pt-2 pb-5 text-[14.5px] text-ink-soft">
+        <p className="m-0 px-3 pt-2 pb-3 sm:px-5 sm:pb-5 lg:px-8 text-[14.5px] text-ink-soft">
           Not shown on the site. Its text is kept, so you can show it again at
           any time.
         </p>
@@ -1274,12 +1274,12 @@ function AddItem({
   const ready = def.parts.every((p) => (values[p.part] ?? "").trim());
 
   return (
-    <div className="bg-paper/60 p-[clamp(20px,3vw,32px)]">
+    <div className="bg-paper/60 p-3 sm:p-5 lg:p-8">
       {!open ? (
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 max-sm:flex-col max-sm:items-center">
           <Button
             size="sm"
-            className="cursor-pointer"
+            className="cursor-pointer max-sm:w-[80vw]"
             disabled={!canSave}
             onClick={() => {
               setOpen(true);
@@ -1332,15 +1332,15 @@ function AddItem({
                 onChange={(e) =>
                   setValues((v) => ({ ...v, [p.part]: e.target.value }))
                 }
-                className="resize-y rounded-[2px] border border-black/15 bg-white p-3 text-[15px] leading-[1.5] font-normal focus:border-ink focus:outline-none"
+                className="resize-y rounded-[2px] border border-black/15 bg-white p-2 text-[15px] leading-[1.5] sm:p-3 font-normal focus:border-ink focus:outline-none"
               />
             </label>
           ))}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 max-sm:flex-col max-sm:items-center">
             <Button
               type="submit"
               size="sm"
-              className="cursor-pointer"
+              className="cursor-pointer max-sm:w-[80vw]"
               disabled={!ready || busy}
             >
               {busy ? "Adding…" : "Add to site"}
@@ -1349,7 +1349,7 @@ function AddItem({
               type="button"
               size="sm"
               variant="ghost"
-              className="cursor-pointer"
+              className="cursor-pointer max-sm:w-[80vw]"
               onClick={() => {
                 setOpen(false);
                 setMessage(null);
@@ -1445,7 +1445,7 @@ function FieldEditor({
   const inputId = `field-${field.id}`;
 
   return (
-    <div className="p-[clamp(20px,3vw,32px)]">
+    <div className="p-3 sm:p-5 lg:p-8">
       <div className="mb-2 flex flex-wrap items-center gap-2">
         <label htmlFor={inputId} className="text-[15px] font-semibold">
           <Highlight text={field.label} query={query} />
@@ -1495,13 +1495,13 @@ function FieldEditor({
             ? "Type the text you would like here instead…"
             : "Unlock the admin panel to make changes."
         }
-        className="mb-3 block w-full resize-y rounded-[2px] border border-black/15 bg-white p-3 text-[15px] leading-[1.5] focus:border-ink focus:outline-none disabled:bg-paper"
+        className="mb-3 block w-full resize-y rounded-[2px] border border-black/15 bg-white p-2 text-[15px] leading-[1.5] sm:p-3 focus:border-ink focus:outline-none disabled:bg-paper"
       />
 
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2 max-sm:flex-col max-sm:items-center">
         <Button
           size="sm"
-          className="cursor-pointer"
+          className="cursor-pointer max-sm:w-[80vw]"
           disabled={
             !canSave || busy || !draft.trim() || draft.trim() === current
           }
@@ -1513,7 +1513,7 @@ function FieldEditor({
           <Button
             size="sm"
             variant="ghost"
-            className="cursor-pointer"
+            className="cursor-pointer max-sm:w-[80vw]"
             disabled={!canSave || busy}
             title={`Go back to: ${previous ?? field.text}`}
             onClick={() => run(previous ?? null, "Last save undone.")}
@@ -1525,7 +1525,7 @@ function FieldEditor({
           <Button
             size="sm"
             variant="ghost"
-            className="cursor-pointer"
+            className="cursor-pointer max-sm:w-[80vw]"
             disabled={!canSave || busy}
             onClick={() => run(null, "Back to the original demo text.")}
           >
@@ -1536,7 +1536,7 @@ function FieldEditor({
           <Button
             size="sm"
             variant="ghost"
-            className="cursor-pointer"
+            className="cursor-pointer max-sm:w-[80vw]"
             onClick={() => setDraft(current)}
           >
             Start from current text
@@ -1547,8 +1547,8 @@ function FieldEditor({
             role={message.ok ? "status" : "alert"}
             className={
               message.ok
-                ? "inline-flex items-center gap-1.5 text-sm font-medium text-ink"
-                : "inline-flex items-center gap-1.5 text-sm font-medium text-[#9a1b1b]"
+                ? "inline-flex items-center gap-1.5 text-sm font-medium text-ink max-sm:w-[80vw] max-sm:justify-center max-sm:text-center"
+                : "inline-flex items-center gap-1.5 text-sm font-medium text-[#9a1b1b] max-sm:w-[80vw] max-sm:justify-center max-sm:text-center"
             }
           >
             {message.ok ? <Check size={15} /> : <TriangleAlert size={15} />}{" "}
@@ -1566,7 +1566,7 @@ function FieldEditor({
             {earlier.map((entry) => (
               <li
                 key={entry.at}
-                className="flex flex-wrap items-start justify-between gap-3 border border-black/10 p-3"
+                className="flex flex-wrap items-start justify-between gap-3 border border-black/10 p-3 max-sm:flex-col max-sm:items-center max-sm:p-2"
               >
                 <div className="min-w-0 flex-1">
                   <div className="mb-1 text-xs text-ink-faint">
@@ -1579,7 +1579,7 @@ function FieldEditor({
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="cursor-pointer"
+                  className="cursor-pointer max-sm:w-[80vw]"
                   disabled={!canSave || busy}
                   onClick={() => run(entry.text, "Earlier version restored.")}
                 >
