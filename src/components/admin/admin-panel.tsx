@@ -9,7 +9,10 @@ import {
   ClipboardCopy,
   Clock,
   Download,
+  EyeOff,
+  Eye,
   History,
+  Plus,
   Info,
   LockKeyhole,
   RotateCcw,
@@ -26,6 +29,12 @@ import {
   type CopyField,
   type CopySection,
 } from "@/content/copy";
+import {
+  itemId,
+  listDefs,
+  listItems,
+  type ListDef,
+} from "@/content/lists";
 import { cn } from "@/lib/utils";
 import { publishedValue } from "@/context/copy-context";
 import { pendingEdits } from "@/lib/copy-storage";
@@ -81,7 +90,66 @@ function Highlight({
 
 /** Text the latest saved version gives an id. */
 const savedValue = (file: SiteTextFile, id: string) =>
-  file.texts[id] ?? copyDefaults[id];
+  file.texts[id] ?? copyDefaults[id] ?? "";
+
+/** A field of an item the client added (it has no demo text). */
+type AdminField = CopyField & { added?: boolean };
+
+const capitalise = (text: string) => text[0].toUpperCase() + text.slice(1);
+
+/** "Review 5", "Review 5 — quote", "Question 6 — answer". */
+function itemLabel(def: ListDef, n: number, partLabel: string) {
+  const name = `${capitalise(def.noun)} ${n}`;
+  return partLabel.toLowerCase() === def.noun || !partLabel
+    ? name
+    : `${name} — ${partLabel.toLowerCase()}`;
+}
+
+/** Which list item (if any) a field belongs to. */
+function itemOf(field: CopyField, defs: ListDef[]) {
+  for (const def of defs) {
+    const head = `${def.prefix}.`;
+    if (field.id.startsWith(head)) {
+      return { def, key: field.id.slice(head.length).split(".")[0] };
+    }
+  }
+  return null;
+}
+
+/** Admin sections, with the fields of items the client added. */
+function withAddedItems(file: SiteTextFile): CopySection[] {
+  return adminSections.map((section) => {
+    const defs = listDefs.filter((d) => d.section === section.id && d.canAdd);
+    if (defs.length === 0) return section;
+    const fields: CopyField[] = [...section.fields];
+    for (const def of defs) {
+      const items = listItems(def.id, file);
+      const added = items.flatMap((item, i) =>
+        item.added
+          ? def.parts.map(
+              (p): AdminField => ({
+                id: itemId(def, item.key, p.part),
+                label: itemLabel(def, i + 1, p.label),
+                text: "",
+                added: true,
+              }),
+            )
+          : [],
+      );
+      if (added.length === 0) continue;
+      // After the list's built-in items.
+      let at = fields.length;
+      for (let i = fields.length - 1; i >= 0; i--) {
+        if (fields[i].id.startsWith(`${def.prefix}.`)) {
+          at = i + 1;
+          break;
+        }
+      }
+      fields.splice(at, 0, ...added);
+    }
+    return { ...section, fields };
+  });
+}
 
 function buildSummary(file: SiteTextFile) {
   const lines = [
@@ -92,7 +160,7 @@ function buildSummary(file: SiteTextFile) {
   for (const section of copySections) {
     for (const field of section.fields) {
       const now = file.texts[field.id];
-      if (now === undefined) continue;
+      if (now === undefined || !(field.id in copyDefaults)) continue;
       lines.push(
         `[${section.group} › ${section.title}] ${field.label}`,
         `Was: ${field.text}`,
@@ -100,6 +168,19 @@ function buildSummary(file: SiteTextFile) {
         "",
       );
     }
+  }
+  for (const def of listDefs) {
+    listItems(def.id, file).forEach((item, i) => {
+      if (item.hidden) {
+        lines.push(
+          `Hidden from the site: ${capitalise(def.noun)} ${i + 1}`,
+          "",
+        );
+      }
+      if (item.added) {
+        lines.push(`Added: ${capitalise(def.noun)} ${i + 1}`, "");
+      }
+    });
   }
   if (lines.length === 3) lines.push("No changes yet.");
   return lines.join("\n");
@@ -193,14 +274,16 @@ export function AdminPanel({
     );
   }, []);
 
+  const sections = useMemo(() => withAddedItems(file), [file]);
+
   const changed = useMemo(
     () =>
       new Set(
-        adminSections.flatMap((s) =>
+        sections.flatMap((s) =>
           s.fields.filter((f) => f.id in file.texts).map((f) => f.id),
         ),
       ),
-    [file],
+    [sections, file.texts],
   );
 
   const compiled = useMemo(() => compileQuery(query), [query]);
@@ -209,7 +292,7 @@ export function AdminPanel({
     const allowed = (id: string) => !onlyChanged || changed.has(id);
 
     if (!compiled) {
-      return adminSections
+      return sections
         .map((section) => ({
           ...section,
           fields: section.fields.filter((f) => allowed(f.id)),
@@ -218,7 +301,7 @@ export function AdminPanel({
     }
 
     // Smart search: score every text, keep the good ones, best first.
-    const scored = adminSections.map((section) => {
+    const scored = sections.map((section) => {
       const context = `${section.group} ${section.title}`;
       const about = `${section.purpose} ${section.covers}`;
       const fields = section.fields
@@ -254,7 +337,7 @@ export function AdminPanel({
       .filter(({ section }) => section.fields.length > 0)
       .sort((a, b) => b.best - a.best)
       .map(({ section }) => section);
-  }, [compiled, onlyChanged, changed, file]);
+  }, [compiled, onlyChanged, changed, file, sections]);
 
   const matchCount = visibleSections.reduce((n, s) => n + s.fields.length, 0);
 
@@ -280,9 +363,34 @@ export function AdminPanel({
       if (res.status === 401) setUnlocked(false);
       return body?.error ?? "Saving failed. Please try again.";
     }
-    setFile({ texts: body.texts, history: body.history });
+    setFile({ texts: body.texts, history: body.history, lists: body.lists });
     // Show it in this browser now; everyone else sees it after the redeploy.
     pendingEdits.set(id, body.texts[id] ?? null);
+    return null;
+  };
+
+  /** Hide, show or add a list item. Returns an error message or null. */
+  const changeList = async (body: Record<string, unknown>) => {
+    const res = await fetch("/api/site-text", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-passcode": passcode ?? "",
+      },
+      body: JSON.stringify(body),
+    });
+    const result = (await res.json().catch(() => null)) as
+      | (SiteTextFile & { error?: string })
+      | null;
+    if (!res.ok || !result) {
+      if (res.status === 401) setUnlocked(false);
+      return result?.error ?? "Saving failed. Please try again.";
+    }
+    setFile({
+      texts: result.texts,
+      history: result.history,
+      lists: result.lists,
+    });
     return null;
   };
 
@@ -303,7 +411,7 @@ export function AdminPanel({
     if (!res.ok || !body)
       return body?.error ?? "Resetting failed. Please try again.";
     const ids = Object.keys(file.texts);
-    setFile({ texts: body.texts, history: body.history });
+    setFile({ texts: body.texts, history: body.history, lists: body.lists });
     ids.forEach((id) => pendingEdits.set(id, null));
     return null;
   };
@@ -463,6 +571,7 @@ export function AdminPanel({
                 canSave={canSave}
                 mode={mode}
                 onSave={save}
+                onListChange={changeList}
                 query={compiled}
               />
             ))}
@@ -845,6 +954,7 @@ function SectionCard({
   canSave,
   mode,
   onSave,
+  onListChange,
   query,
 }: {
   section: CopySection;
@@ -853,8 +963,69 @@ function SectionCard({
   canSave: boolean;
   mode: Mode;
   onSave: (id: string, text: string | null) => Promise<string | null>;
+  onListChange: (body: Record<string, unknown>) => Promise<string | null>;
   query: CompiledQuery | null;
 }) {
+  const defs = listDefs.filter((d) => d.section === section.id);
+  // A whole section that is one item (an article).
+  const sectionItem = listDefs
+    .filter((d) => d.itemSection)
+    .map((def) => {
+      const item = listItems(def.id, file).find(
+        (it) => def.itemSection!(it.key) === section.id,
+      );
+      return item && { def, item };
+    })
+    .find(Boolean);
+
+  // Group the fields of each list item, and put "Add another" after a list.
+  type Block =
+    | { kind: "field"; field: CopyField }
+    | { kind: "item"; def: ListDef; key: string; fields: CopyField[] }
+    | { kind: "add"; def: ListDef };
+  const blocks: Block[] = [];
+  for (const field of section.fields) {
+    const owner = itemOf(field, defs);
+    const last = blocks[blocks.length - 1];
+    if (!owner) {
+      blocks.push({ kind: "field", field });
+    } else if (
+      last?.kind === "item" &&
+      last.def === owner.def &&
+      last.key === owner.key
+    ) {
+      last.fields.push(field);
+    } else {
+      blocks.push({
+        kind: "item",
+        def: owner.def,
+        key: owner.key,
+        fields: [field],
+      });
+    }
+  }
+  for (const def of defs.filter((d) => d.canAdd)) {
+    let at = -1;
+    blocks.forEach((b, i) => {
+      if (b.kind === "item" && b.def === def) at = i;
+    });
+    if (at >= 0) blocks.splice(at + 1, 0, { kind: "add", def });
+  }
+
+  const editor = (field: CopyField) => (
+    <FieldEditor
+      key={field.id}
+      field={field}
+      current={savedValue(file, field.id)}
+      entries={file.history[field.id] ?? []}
+      isChanged={changed.has(field.id)}
+      canSave={canSave}
+      mode={mode}
+      onSave={onSave}
+      query={query}
+    />
+  );
+
   return (
     <section
       id={sectionAnchor(section.id)}
@@ -890,23 +1061,311 @@ function SectionCard({
             <dd className="m-0 text-ink-soft">{section.covers}</dd>
           </div>
         </dl>
-      </div>
-      <div className="divide-y divide-black/8">
-        {section.fields.map((field) => (
-          <FieldEditor
-            key={field.id}
-            field={field}
-            current={savedValue(file, field.id)}
-            entries={file.history[field.id] ?? []}
-            isChanged={changed.has(field.id)}
+        {sectionItem && (
+          <HideToggle
+            def={sectionItem.def}
+            itemKey={sectionItem.item.key}
+            hidden={sectionItem.item.hidden}
             canSave={canSave}
             mode={mode}
-            onSave={onSave}
-            query={query}
+            onListChange={onListChange}
+            className="mt-4"
           />
-        ))}
+        )}
       </div>
+      {sectionItem?.item.hidden ? (
+        <p className="m-0 p-[clamp(20px,3vw,32px)] text-[15px] text-ink-soft">
+          This {sectionItem.def.noun} is hidden from the site. Its text is kept,
+          so you can show it again at any time.
+        </p>
+      ) : (
+        <div className="divide-y divide-black/8">
+          {blocks.map((block) => {
+            if (block.kind === "field") return editor(block.field);
+            if (block.kind === "add") {
+              return (
+                <AddItem
+                  key={`add-${block.def.id}`}
+                  def={block.def}
+                  canSave={canSave}
+                  mode={mode}
+                  onListChange={onListChange}
+                />
+              );
+            }
+            const items = listItems(block.def.id, file);
+            const index = items.findIndex((it) => it.key === block.key);
+            const item = items[index];
+            return (
+              <ItemCard
+                key={`${block.def.id}-${block.key}`}
+                def={block.def}
+                itemKey={block.key}
+                title={
+                  block.def.id === "people"
+                    ? (block.fields[0]?.label.split(" — ")[0] ??
+                      `Person ${index + 1}`)
+                    : `${capitalise(block.def.noun)} ${index + 1}`
+                }
+                hidden={item?.hidden ?? false}
+                canSave={canSave}
+                mode={mode}
+                onListChange={onListChange}
+              >
+                {block.fields.map(editor)}
+              </ItemCard>
+            );
+          })}
+        </div>
+      )}
     </section>
+  );
+}
+
+const structureNote = (mode: Mode) =>
+  mode === "github"
+    ? "The site will update in about 1–2 minutes."
+    : "The site has been updated.";
+
+function HideToggle({
+  def,
+  itemKey,
+  hidden,
+  canSave,
+  mode,
+  onListChange,
+  className,
+}: {
+  def: ListDef;
+  itemKey: string;
+  hidden: boolean;
+  canSave: boolean;
+  mode: Mode;
+  onListChange: (body: Record<string, unknown>) => Promise<string | null>;
+  className?: string;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(
+    null,
+  );
+  return (
+    <div className={cn("flex flex-wrap items-center gap-3", className)}>
+      <Button
+        size="sm"
+        variant="ghost"
+        className="cursor-pointer"
+        disabled={!canSave || busy}
+        onClick={async () => {
+          setBusy(true);
+          setMessage(null);
+          const error = await onListChange({
+            op: hidden ? "show" : "hide",
+            list: def.id,
+            key: itemKey,
+          });
+          setBusy(false);
+          setMessage(
+            error
+              ? { ok: false, text: error }
+              : {
+                  ok: true,
+                  text: `${hidden ? "Shown again" : "Hidden"}. ${structureNote(mode)}`,
+                },
+          );
+        }}
+      >
+        {hidden ? <Eye size={14} /> : <EyeOff size={14} />}
+        {busy
+          ? "Saving…"
+          : hidden
+            ? "Show on site again"
+            : `Hide this ${def.noun} from the site`}
+      </Button>
+      {message && (
+        <span
+          role={message.ok ? "status" : "alert"}
+          className={cn(
+            "text-sm font-medium",
+            message.ok ? "text-ink" : "text-[#9a1b1b]",
+          )}
+        >
+          {message.text}
+        </span>
+      )}
+    </div>
+  );
+}
+
+function ItemCard({
+  def,
+  itemKey,
+  title,
+  hidden,
+  canSave,
+  mode,
+  onListChange,
+  children,
+}: {
+  def: ListDef;
+  itemKey: string;
+  title: string;
+  hidden: boolean;
+  canSave: boolean;
+  mode: Mode;
+  onListChange: (body: Record<string, unknown>) => Promise<string | null>;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className={cn(
+        "border-l-4",
+        hidden ? "border-black/10 bg-paper" : "border-ink/70",
+      )}
+    >
+      <div className="flex flex-wrap items-center justify-between gap-3 px-[clamp(20px,3vw,32px)] pt-5">
+        <div className="flex items-center gap-2">
+          <span className="font-serif text-[1.15rem] font-semibold">
+            {title}
+          </span>
+          {hidden && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-black/15 px-2 py-0.5 text-[11px] font-semibold tracking-[.06em] text-ink-soft uppercase">
+              <EyeOff size={12} /> Hidden
+            </span>
+          )}
+        </div>
+        <HideToggle
+          def={def}
+          itemKey={itemKey}
+          hidden={hidden}
+          canSave={canSave}
+          mode={mode}
+          onListChange={onListChange}
+        />
+      </div>
+      {hidden ? (
+        <p className="m-0 px-[clamp(20px,3vw,32px)] pt-2 pb-5 text-[14.5px] text-ink-soft">
+          Not shown on the site. Its text is kept, so you can show it again at
+          any time.
+        </p>
+      ) : (
+        <div className="divide-y divide-black/8">{children}</div>
+      )}
+    </div>
+  );
+}
+
+function AddItem({
+  def,
+  canSave,
+  mode,
+  onListChange,
+}: {
+  def: ListDef;
+  canSave: boolean;
+  mode: Mode;
+  onListChange: (body: Record<string, unknown>) => Promise<string | null>;
+}) {
+  const [open, setOpen] = useState(false);
+  const [values, setValues] = useState<Record<string, string>>({});
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(
+    null,
+  );
+  const ready = def.parts.every((p) => (values[p.part] ?? "").trim());
+
+  return (
+    <div className="bg-paper/60 p-[clamp(20px,3vw,32px)]">
+      {!open ? (
+        <div className="flex flex-wrap items-center gap-3">
+          <Button
+            size="sm"
+            className="cursor-pointer"
+            disabled={!canSave}
+            onClick={() => {
+              setOpen(true);
+              setMessage(null);
+            }}
+          >
+            <Plus size={15} /> Add another {def.noun}
+          </Button>
+          {message && (
+            <span role="status" className="text-sm font-medium text-ink">
+              {message.text}
+            </span>
+          )}
+        </div>
+      ) : (
+        <form
+          className="flex flex-col gap-3"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            if (!ready) return;
+            setBusy(true);
+            const error = await onListChange({
+              op: "add",
+              list: def.id,
+              values,
+            });
+            setBusy(false);
+            if (error) {
+              setMessage({ ok: false, text: error });
+            } else {
+              setOpen(false);
+              setValues({});
+              setMessage({
+                ok: true,
+                text: `Added. ${structureNote(mode)}`,
+              });
+            }
+          }}
+        >
+          <p className="m-0 font-semibold">New {def.noun}</p>
+          {def.parts.map((p) => (
+            <label
+              key={p.part || "text"}
+              className="flex flex-col gap-1.5 text-[14.5px] font-semibold"
+            >
+              {p.label}
+              <textarea
+                rows={p.long ? 4 : 1}
+                value={values[p.part] ?? ""}
+                onChange={(e) =>
+                  setValues((v) => ({ ...v, [p.part]: e.target.value }))
+                }
+                className="resize-y rounded-[2px] border border-black/15 bg-white p-3 text-[15px] leading-[1.5] font-normal focus:border-ink focus:outline-none"
+              />
+            </label>
+          ))}
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              type="submit"
+              size="sm"
+              className="cursor-pointer"
+              disabled={!ready || busy}
+            >
+              {busy ? "Adding…" : "Add to site"}
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              className="cursor-pointer"
+              onClick={() => {
+                setOpen(false);
+                setMessage(null);
+              }}
+            >
+              Cancel
+            </Button>
+            {message && !message.ok && (
+              <span role="alert" className="text-sm font-medium text-[#9a1b1b]">
+                {message.text}
+              </span>
+            )}
+          </div>
+        </form>
+      )}
+    </div>
   );
 }
 
@@ -934,10 +1393,13 @@ function FieldEditor({
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(
     null,
   );
+  const added = (field as AdminField).added ?? false;
   const lastChange = entries[entries.length - 1];
-  // What this text was before the last save (null: the demo text).
-  const previous =
-    entries.length > 0
+  // What this text was before the last save (null: the demo text). Added
+  // items have no demo text, so their first save can't be undone.
+  const previous = added
+    ? (entries[entries.length - 2]?.text ?? undefined)
+    : entries.length > 0
       ? (entries[entries.length - 2]?.text ?? null)
       : undefined;
   const canUndo =
@@ -990,7 +1452,8 @@ function FieldEditor({
         </label>
         {isChanged && (
           <span className="rounded-full bg-ink px-2 py-0.5 text-[11px] font-semibold tracking-[.06em] text-white uppercase">
-            Changed {lastChange && `· ${formatDate(lastChange.at)}`}
+            {added ? "Added" : "Changed"}{" "}
+            {lastChange && `· ${formatDate(lastChange.at)}`}
           </span>
         )}
         {goingLive ? (
@@ -1013,7 +1476,7 @@ function FieldEditor({
         <p className="m-0 text-[15px] whitespace-pre-line text-ink">
           <Highlight text={current} query={query} />
         </p>
-        {isChanged && (
+        {isChanged && !added && (
           <p className="m-0 mt-2 text-[13.5px] text-muted-foreground">
             <span className="font-semibold">Original demo text:</span>{" "}
             <Highlight text={field.text} query={query} />
@@ -1058,7 +1521,7 @@ function FieldEditor({
             <Undo2 size={14} /> Undo last save
           </Button>
         )}
-        {isChanged && (
+        {isChanged && !added && (
           <Button
             size="sm"
             variant="ghost"

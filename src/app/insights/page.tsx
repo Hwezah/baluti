@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
-import { featuredInsight, insightHref, insights } from "@/content/insights";
+import { featuredInsight, insightHref } from "@/content/insights";
+import { shownInsights } from "@/content/lists";
 import { InsightsBrowser } from "@/components/insights/insights-browser";
 import { NewsletterForm } from "@/components/insights/newsletter-form";
 import { Copy as C } from "@/components/site/copy";
@@ -16,7 +17,8 @@ export const metadata: Metadata = {
 };
 
 export default function InsightsPage() {
-  const featured = featuredInsight;
+  const articles = shownInsights();
+  const featured = articles[0] ?? featuredInsight;
   return (
     <>
       <PageHero
@@ -76,7 +78,7 @@ export default function InsightsPage() {
       {/* FILTER + GRID */}
       <section className="gutter bg-paper pt-[clamp(24px,3vw,40px)] pb-[clamp(64px,8vw,110px)]">
         <div className="site-container">
-          <InsightsBrowser articles={insights} />
+          <InsightsBrowser articles={articles} />
         </div>
       </section>
 

@@ -10,6 +10,7 @@ import {
   practiceAreas,
 } from "@/content/practice-areas";
 import { personHref, practiceLeads } from "@/content/people";
+import { shownPeople, visibleKeys } from "@/content/lists";
 import { Button } from "@/components/ui/button";
 import { Copy as C, PhoneLink } from "@/components/site/copy";
 import { MaybeLink } from "@/components/site/maybe-link";
@@ -73,7 +74,7 @@ export default async function PracticeAreaPage({
               <C id="practiceDetail.services" />
             </h3>
             <ul className="m-0 mb-11 grid list-none grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-0.5 border border-black/10 bg-black/10 p-0">
-              {area.services.map((_, i) => (
+              {visibleKeys(`services-${area.slug}`).map((i) => (
                 <li
                   key={i}
                   className="flex items-center gap-3.5 bg-paper px-6 py-[22px]"
@@ -164,7 +165,7 @@ export default async function PracticeAreaPage({
             </h2>
           </div>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-[26px]">
-            {practiceLeads.map((key) => (
+            {shownPeople(practiceLeads).map((key) => (
               <MaybeLink
                 key={key}
                 href={personHref(key)}

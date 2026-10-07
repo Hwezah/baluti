@@ -7,6 +7,7 @@ import { CtaBand, PageHero } from "@/components/site/page-hero";
 import { Eyebrow, Silhouette } from "@/components/site/primitives";
 import { StepsGrid } from "@/components/site/steps-grid";
 import { StickyColumn } from "@/components/site/sticky-column";
+import { visibleKeys } from "@/content/lists";
 
 export const metadata: Metadata = {
   title: "About",
@@ -84,7 +85,7 @@ export default function AboutPage() {
             </h2>
           </div>
           <ol className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-0.5 border border-black/12 bg-black/12 p-0">
-            {four.map((i) => (
+            {visibleKeys("story").map((i) => (
               <li
                 key={i}
                 className="flex min-h-[210px] flex-col bg-sand px-[30px] py-[38px]"

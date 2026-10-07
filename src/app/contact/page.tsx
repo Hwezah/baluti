@@ -6,6 +6,7 @@ import { site } from "@/content/site";
 import { ConsultationForm } from "@/components/contact/consultation-form";
 import { Copy as C, EmailLink, PhoneLink } from "@/components/site/copy";
 import { Faq } from "@/components/contact/faq";
+import { visibleKeys } from "@/content/lists";
 import { PageHero } from "@/components/site/page-hero";
 import { Eyebrow } from "@/components/site/primitives";
 import { StickyColumn } from "@/components/site/sticky-column";
@@ -148,7 +149,7 @@ export default function ContactPage() {
               <C id="faq.title" />
             </h2>
           </div>
-          <Faq />
+          <Faq items={visibleKeys("faq")} />
         </div>
       </section>
     </>

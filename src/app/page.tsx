@@ -7,7 +7,8 @@ import {
   practiceAreaHref,
 } from "@/content/practice-areas";
 import { homeAttorneys, personHref } from "@/content/people";
-import { insightHref, insights } from "@/content/insights";
+import { insightHref } from "@/content/insights";
+import { shownInsights, shownPeople, visibleKeys } from "@/content/lists";
 import { Button } from "@/components/ui/button";
 import { Copy as C } from "@/components/site/copy";
 import { ReviewInitial } from "@/components/home/review-initial";
@@ -306,7 +307,7 @@ export default function HomePage() {
             className="mb-11"
           />
           <div className={swipeRow}>
-            {homeAttorneys.map((key) => (
+            {shownPeople(homeAttorneys).map((key) => (
               <div
                 key={key}
                 className="flex-[0_0_72%] snap-start md:flex-[1_1_220px]"
@@ -374,7 +375,7 @@ export default function HomePage() {
             </h2>
           </div>
           <div className={swipeRow}>
-            {[0, 1, 2, 3].map((i) => (
+            {visibleKeys("reviews").map((i) => (
               <div
                 key={i}
                 className="flex-[0_0_82%] snap-start md:flex-[1_1_280px]"
@@ -427,29 +428,31 @@ export default function HomePage() {
             className="mb-12"
           />
           <div className={swipeRow}>
-            {insights.slice(0, 3).map((post) => (
-              <div
-                key={post.slug}
-                className="flex-[0_0_84%] snap-start md:flex-[1_1_300px]"
-              >
-                <Link
-                  href={insightHref(post.slug)}
-                  className={`flex size-full min-h-[220px] flex-col border border-black/9 bg-paper p-[30px] ${cardHover}`}
+            {shownInsights()
+              .slice(0, 3)
+              .map((post) => (
+                <div
+                  key={post.slug}
+                  className="flex-[0_0_84%] snap-start md:flex-[1_1_300px]"
                 >
-                  <span className="mb-5 self-start rounded-full border border-black/20 px-[11px] py-[5px] text-[11.5px] font-semibold tracking-[.12em] text-ink-soft uppercase">
-                    {post.category}
-                  </span>
-                  <h3 className="m-0 mb-auto font-serif text-[1.22rem] leading-[1.3] font-semibold">
-                    <C
-                      id={`insight.${post.slug}.${post.shortTitle ? "shortTitle" : "title"}`}
-                    />
-                  </h3>
-                  <span className="mt-[22px] inline-flex items-center gap-1.5 text-[13px] font-semibold text-ink">
-                    <C id="common.readArticle" /> <ArrowRight size={16} />
-                  </span>
-                </Link>
-              </div>
-            ))}
+                  <Link
+                    href={insightHref(post.slug)}
+                    className={`flex size-full min-h-[220px] flex-col border border-black/9 bg-paper p-[30px] ${cardHover}`}
+                  >
+                    <span className="mb-5 self-start rounded-full border border-black/20 px-[11px] py-[5px] text-[11.5px] font-semibold tracking-[.12em] text-ink-soft uppercase">
+                      {post.category}
+                    </span>
+                    <h3 className="m-0 mb-auto font-serif text-[1.22rem] leading-[1.3] font-semibold">
+                      <C
+                        id={`insight.${post.slug}.${post.shortTitle ? "shortTitle" : "title"}`}
+                      />
+                    </h3>
+                    <span className="mt-[22px] inline-flex items-center gap-1.5 text-[13px] font-semibold text-ink">
+                      <C id="common.readArticle" /> <ArrowRight size={16} />
+                    </span>
+                  </Link>
+                </div>
+              ))}
           </div>
         </div>
       </section>

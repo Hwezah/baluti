@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { leaders, people, personHref, team } from "@/content/people";
+import { shownPeople, visibleKeys } from "@/content/lists";
 import { Button } from "@/components/ui/button";
 import { Copy as C } from "@/components/site/copy";
 import { MaybeLink } from "@/components/site/maybe-link";
@@ -42,7 +43,7 @@ export default function PeoplePage() {
             </h2>
           </div>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-7">
-            {leaders.map((key) => (
+            {shownPeople(leaders).map((key) => (
               <MaybeLink
                 key={key}
                 href={personHref(key)}
@@ -82,7 +83,7 @@ export default function PeoplePage() {
             </h2>
           </div>
           <div className="grid grid-cols-2 gap-[26px] md:grid-cols-[repeat(auto-fit,minmax(220px,1fr))] max-sm:portrait:no-scrollbar max-sm:portrait:flex max-sm:portrait:snap-x max-sm:portrait:snap-mandatory max-sm:portrait:flex-nowrap max-sm:portrait:gap-4 max-sm:portrait:overflow-x-auto max-sm:portrait:pb-3">
-            {team.map((key) => (
+            {shownPeople(team).map((key) => (
               <MaybeLink
                 key={key}
                 href={personHref(key)}
@@ -133,7 +134,7 @@ export default function PeoplePage() {
             </Button>
           </StickyColumn>
           <div className="grid grid-cols-2 gap-0.5 border border-white/12 bg-white/12">
-            {[0, 1, 2, 3].map((i) => (
+            {visibleKeys("perks").map((i) => (
               <div key={i} data-tight-x className="bg-ink px-6 py-7">
                 <h3 className="m-0 mb-2 font-serif text-[1.15rem] font-semibold">
                   <C id={`people.perks.${i}.title`} />

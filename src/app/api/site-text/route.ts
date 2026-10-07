@@ -1,7 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { copyDefaults, copySections, isCopyId } from "@/content/copy";
-import { applyEdit, emptySiteText } from "@/lib/site-text";
+import { ADDED_KEY, getList, isAddedItemId, itemId } from "@/content/lists";
+import {
+  addItem,
+  applyEdit,
+  emptySiteText,
+  setItemHidden,
+} from "@/lib/site-text";
 import {
   StoreError,
   checkPasscode,
@@ -47,12 +53,25 @@ export async function POST(request: NextRequest) {
     return unauthorized();
 
   const body = (await request.json().catch(() => null)) as {
+    op?: unknown;
     id?: unknown;
     text?: unknown;
+    list?: unknown;
+    key?: unknown;
+    values?: unknown;
   } | null;
+  if (body?.op === "hide" || body?.op === "show" || body?.op === "add") {
+    return listChange(body);
+  }
+
   const id = typeof body?.id === "string" ? body.id : "";
   const raw = body?.text;
-  if (!isCopyId(id) || !(raw === null || typeof raw === "string")) {
+  const added = isAddedItemId(id);
+  if (
+    !(isCopyId(id) || added) ||
+    !(raw === null || typeof raw === "string") ||
+    (added && raw === null)
+  ) {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
   const text = raw === null ? null : raw.trim();
@@ -69,6 +88,69 @@ export async function POST(request: NextRequest) {
     const file = await updateSiteText(
       (current) => applyEdit(current, id, value),
       `Site text: ${value === null ? "revert" : "update"} ${labels.get(id) ?? id}`,
+    );
+    return NextResponse.json(file);
+  } catch (error) {
+    return failure(error);
+  }
+}
+
+const invalid = () =>
+  NextResponse.json({ error: "Invalid request." }, { status: 400 });
+
+/**
+ * Hide or show an item: `{ op: "hide" | "show", list, key }`.
+ * Add an item: `{ op: "add", list, values: { [part]: text } }`.
+ */
+async function listChange(body: {
+  op?: unknown;
+  list?: unknown;
+  key?: unknown;
+  values?: unknown;
+}) {
+  const def = typeof body.list === "string" ? getList(body.list) : undefined;
+  if (!def) return invalid();
+
+  if (body.op === "add") {
+    if (!def.canAdd || !body.values || typeof body.values !== "object") {
+      return invalid();
+    }
+    const values = body.values as Record<string, unknown>;
+    const key = `n${Date.now().toString(36)}`;
+    const texts: Record<string, string> = {};
+    for (const { part, label } of def.parts) {
+      const value = values[part];
+      const text = typeof value === "string" ? value.trim() : "";
+      if (text.length === 0 || text.length > MAX_LENGTH) {
+        return NextResponse.json(
+          {
+            error: `${label}: please write between 1 and ${MAX_LENGTH} characters.`,
+          },
+          { status: 400 },
+        );
+      }
+      texts[itemId(def, key, part)] = text;
+    }
+    try {
+      const file = await updateSiteText(
+        (current) => addItem(current, def.id, key, texts),
+        `Site text: add a ${def.noun}`,
+      );
+      return NextResponse.json(file);
+    } catch (error) {
+      return failure(error);
+    }
+  }
+
+  const key = typeof body.key === "string" ? body.key : "";
+  const hide = body.op === "hide";
+  if (!def.builtIn.includes(key) && !ADDED_KEY.test(key)) {
+    return invalid();
+  }
+  try {
+    const file = await updateSiteText(
+      (current) => setItemHidden(current, def.id, key, hide),
+      `Site text: ${hide ? "hide" : "show"} ${def.noun} ${key}`,
     );
     return NextResponse.json(file);
   } catch (error) {

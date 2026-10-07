@@ -10,6 +10,7 @@ import {
   personHref,
 } from "@/content/people";
 import { practiceAreaHref } from "@/content/practice-areas";
+import { isVisible, shownPeople, visibleKeys } from "@/content/lists";
 import { Button } from "@/components/ui/button";
 import { Copy as C, EmailLink, PhoneLink } from "@/components/site/copy";
 import { MaybeLink } from "@/components/site/maybe-link";
@@ -23,7 +24,9 @@ import { Rings } from "@/components/site/rings";
 import { StickyColumn } from "@/components/site/sticky-column";
 
 export function generateStaticParams() {
-  return attorneys.map((a) => ({ slug: a.slug }));
+  return attorneys
+    .filter((a) => isVisible("people", attorneyKeys[a.slug]))
+    .map((a) => ({ slug: a.slug }));
 }
 
 export async function generateMetadata({
@@ -46,6 +49,7 @@ export default async function AttorneyPage({
   if (!attorney) notFound();
 
   const key = attorneyKeys[slug];
+  if (!isVisible("people", key)) notFound();
   const a = (field: string) => `attorney.${key}.${field}`;
 
   return (
@@ -119,7 +123,7 @@ export default async function AttorneyPage({
               <C id="attorney.label.work" />
             </h3>
             <ul className="m-0 flex list-none flex-col border-t border-black/14 p-0">
-              {attorney.matters.map((_, i) => (
+              {visibleKeys("matters").map((i) => (
                 <li
                   key={i}
                   className="grid grid-cols-[24px_1fr] gap-3.5 border-b border-black/14 py-[18px]"
@@ -157,7 +161,7 @@ export default async function AttorneyPage({
                 <C id="attorney.label.credentials" />
               </h3>
               <div className="flex flex-col gap-3.5">
-                {attorney.credentials.map((_, i) => (
+                {visibleKeys("credentials").map((i) => (
                   <div key={i}>
                     <div className="text-[14.5px] font-semibold">
                       <C id={a(`credentials.${i}.title`)} />
@@ -193,7 +197,7 @@ export default async function AttorneyPage({
             </UnderlineLink>
           </div>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-[26px]">
-            {bioOtherPeople.map((other) => (
+            {shownPeople(bioOtherPeople).map((other) => (
               <MaybeLink
                 key={other}
                 href={personHref(other)}

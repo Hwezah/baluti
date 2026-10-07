@@ -4,7 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { site } from "@/content/site";
-import { getInsight, insightHref, insights } from "@/content/insights";
+import { getInsight, insightHref } from "@/content/insights";
+import { isVisible, shownInsights } from "@/content/lists";
 import { Copy as C } from "@/components/site/copy";
 import {
   Avatar,
@@ -14,7 +15,7 @@ import {
 import { Rings } from "@/components/site/rings";
 
 export function generateStaticParams() {
-  return insights.map((post) => ({ slug: post.slug }));
+  return shownInsights().map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({
@@ -50,9 +51,11 @@ export default async function ArticlePage({
   params,
 }: PageProps<"/insights/[slug]">) {
   const post = getInsight((await params).slug);
-  if (!post) notFound();
+  if (!post || !isVisible("articles", post.slug)) notFound();
 
-  const related = insights.filter((p) => p.slug !== post.slug).slice(0, 3);
+  const related = shownInsights()
+    .filter((p) => p.slug !== post.slug)
+    .slice(0, 3);
   const i = (field: string) => `insight.${post.slug}.${field}`;
   const author = `person.${post.author}`;
   const shares = shareLinks(`${site.url}${insightHref(post.slug)}`, post.title);

@@ -12,11 +12,21 @@ export type TextEntry = {
   at: string;
 };
 
+/** Changes to a list of items (reviews, FAQs, services…). */
+export type ListState = {
+  /** Keys of items the client added, in order. */
+  added: string[];
+  /** Keys of items hidden from the site. */
+  hidden: string[];
+};
+
 export type SiteTextFile = {
   /** id → text currently in effect (only ids that differ from the demo text). */
   texts: Record<string, string>;
   /** id → every change, oldest first, for revert / earlier versions. */
   history: Record<string, TextEntry[]>;
+  /** list id → added and hidden items. */
+  lists?: Record<string, ListState>;
 };
 
 /** Repository path of the file, relative to the project root. */
@@ -45,7 +55,46 @@ export function applyEdit(
   const texts = { ...file.texts };
   if (text === null) delete texts[id];
   else texts[id] = text;
-  return { texts, history };
+  return { ...file, texts, history };
+}
+
+export function listState(file: SiteTextFile, list: string): ListState {
+  return file.lists?.[list] ?? { added: [], hidden: [] };
+}
+
+function withList(file: SiteTextFile, list: string, state: ListState) {
+  return { ...file, lists: { ...file.lists, [list]: state } };
+}
+
+/** Hide an item from the site, or (hidden: false) show it again. */
+export function setItemHidden(
+  file: SiteTextFile,
+  list: string,
+  key: string,
+  hidden: boolean,
+): SiteTextFile {
+  const state = listState(file, list);
+  const rest = state.hidden.filter((k) => k !== key);
+  return withList(file, list, {
+    ...state,
+    hidden: hidden ? [...rest, key] : rest,
+  });
+}
+
+/** Add an item: `texts` maps each of its text ids to the client's text. */
+export function addItem(
+  file: SiteTextFile,
+  list: string,
+  key: string,
+  texts: Record<string, string>,
+  at = new Date().toISOString(),
+): SiteTextFile {
+  let next = file;
+  for (const [id, text] of Object.entries(texts)) {
+    next = applyEdit(next, id, text, at);
+  }
+  const state = listState(next, list);
+  return withList(next, list, { ...state, added: [...state.added, key] });
 }
 
 export function isSiteTextFile(value: unknown): value is SiteTextFile {
