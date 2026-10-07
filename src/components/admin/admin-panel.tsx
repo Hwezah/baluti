@@ -15,9 +15,7 @@ import {
   RotateCcw,
   Undo2,
   Search,
-  Sparkles,
   TriangleAlert,
-  X,
 } from "lucide-react";
 
 import {
@@ -59,9 +57,6 @@ function formatDate(iso: string) {
 }
 
 const sectionAnchor = (id: string) => `section-${id}`;
-
-type AiMatch = { id: string; reason: string };
-type AiResults = { question: string; matches: AiMatch[] };
 
 /** Matching words in `text` are marked. */
 function Highlight({
@@ -121,12 +116,10 @@ export function AdminPanel({
   mode,
   passcodeRequired,
   missing,
-  aiSearch,
 }: {
   mode: Mode;
   passcodeRequired: boolean;
   missing: string[];
-  aiSearch: boolean;
 }) {
   const [passcode, setPasscode] = useState<string | null>(null);
   const [unlocked, setUnlocked] = useState(!passcodeRequired && mode !== "off");
@@ -135,9 +128,6 @@ export function AdminPanel({
   const [query, setQuery] = useState("");
   const [onlyChanged, setOnlyChanged] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
-  const [ai, setAi] = useState<AiResults | null>(null);
-  const [aiBusy, setAiBusy] = useState(false);
-  const [aiError, setAiError] = useState<string | null>(null);
 
   const canSave = mode !== "off" && unlocked;
 
@@ -212,36 +202,10 @@ export function AdminPanel({
     [file],
   );
 
-  const compiled = useMemo(
-    () => (ai ? null : compileQuery(query)),
-    [query, ai],
-  );
-
-  const reasons = useMemo(
-    () => new Map(ai?.matches.map((m) => [m.id, m.reason])),
-    [ai],
-  );
+  const compiled = useMemo(() => compileQuery(query), [query]);
 
   const visibleSections = useMemo(() => {
     const allowed = (id: string) => !onlyChanged || changed.has(id);
-
-    // "Ask in your own words": Claude's picks, best first.
-    if (ai) {
-      const rank = new Map(ai.matches.map((m, i) => [m.id, i]));
-      return copySections
-        .map((section) => {
-          const fields = section.fields
-            .filter((f) => rank.has(f.id) && allowed(f.id))
-            .sort((a, b) => rank.get(a.id)! - rank.get(b.id)!);
-          return {
-            section: { ...section, fields },
-            best: rank.get(fields[0]?.id) ?? 0,
-          };
-        })
-        .filter(({ section }) => section.fields.length > 0)
-        .sort((a, b) => a.best - b.best)
-        .map(({ section }) => section);
-    }
 
     if (!compiled) {
       return copySections
@@ -289,38 +253,9 @@ export function AdminPanel({
       .filter(({ section }) => section.fields.length > 0)
       .sort((a, b) => b.best - a.best)
       .map(({ section }) => section);
-  }, [compiled, ai, onlyChanged, changed, file]);
+  }, [compiled, onlyChanged, changed, file]);
 
   const matchCount = visibleSections.reduce((n, s) => n + s.fields.length, 0);
-
-  const askAi = async () => {
-    const question = query.trim();
-    if (!question) return;
-    setAiBusy(true);
-    setAiError(null);
-    try {
-      const res = await fetch("/api/site-text/search", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-admin-passcode": passcode ?? "",
-        },
-        body: JSON.stringify({ question }),
-      });
-      const body = (await res.json().catch(() => null)) as {
-        matches?: AiMatch[];
-        error?: string;
-      } | null;
-      if (!res.ok || !body?.matches) {
-        setAiError(body?.error ?? "The AI search isn’t available right now.");
-      } else {
-        setAi({ question, matches: body.matches });
-      }
-    } catch {
-      setAiError("The AI search isn’t available right now.");
-    }
-    setAiBusy(false);
-  };
 
   const flash = (message: string) => {
     setNotice(message);
@@ -449,49 +384,20 @@ export function AdminPanel({
 
         {/* Toolbar */}
         <div className="z-20 mb-8 flex flex-wrap items-center gap-3 border border-black/10 bg-white p-3 shadow-[0_12px_30px_-24px_rgba(0,0,0,.5)] lg:sticky lg:top-[calc(var(--header-h)+8px)]">
-          <form
-            role="search"
-            className="flex min-w-[220px] flex-1 flex-wrap gap-2"
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (aiSearch && canSave) askAi();
-            }}
-          >
-            <label className="relative min-w-[200px] flex-1">
-              <span className="sr-only">Search the text</span>
-              <Search
-                size={16}
-                className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-ink-faint"
-              />
-              <input
-                type="search"
-                value={query}
-                onChange={(e) => {
-                  setQuery(e.target.value);
-                  setAi(null);
-                  setAiError(null);
-                }}
-                placeholder={
-                  aiSearch && canSave
-                    ? "Search, or describe what you’re looking for…"
-                    : "Search for a word or phrase…"
-                }
-                className="w-full rounded-[2px] border border-black/12 bg-field py-2.5 pr-3 pl-9 text-[15px] focus:border-ink focus:outline-none"
-              />
-            </label>
-            {aiSearch && canSave && (
-              <Button
-                type="submit"
-                size="sm"
-                variant="ghost"
-                className="cursor-pointer self-stretch"
-                disabled={!query.trim() || aiBusy}
-              >
-                <Sparkles size={15} />
-                {aiBusy ? "Thinking…" : "Ask in your own words"}
-              </Button>
-            )}
-          </form>
+          <label className="relative min-w-[220px] flex-1">
+            <span className="sr-only">Search the text</span>
+            <Search
+              size={16}
+              className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-ink-faint"
+            />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search for a word or phrase…"
+              className="w-full rounded-[2px] border border-black/12 bg-field py-2.5 pr-3 pl-9 text-[15px] focus:border-ink focus:outline-none"
+            />
+          </label>
           <label className="flex cursor-pointer items-center gap-2 text-sm font-medium">
             <input
               type="checkbox"
@@ -519,43 +425,11 @@ export function AdminPanel({
               <Download size={15} /> Download a copy
             </Button>
           </div>
-          {(compiled || ai) && (
-            <p
-              role="status"
-              className="m-0 flex w-full flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-soft"
-            >
-              {ai ? (
-                <>
-                  <span>
-                    <strong className="text-ink">{matchCount}</strong>{" "}
-                    {matchCount === 1 ? "text" : "texts"} related to “
-                    {ai.question}”
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setAi(null)}
-                    className="inline-flex cursor-pointer items-center gap-1 font-semibold text-ink underline-offset-4 hover:underline"
-                  >
-                    <X size={14} /> Back to normal search
-                  </button>
-                </>
-              ) : (
-                <span>
-                  <strong className="text-ink">{matchCount}</strong>{" "}
-                  {matchCount === 1 ? "match" : "matches"}, best first
-                  {aiSearch && canSave
-                    ? ". Not what you meant? Press “Ask in your own words”."
-                    : ". Related words and small typos are included."}
-                </span>
-              )}
-            </p>
-          )}
-          {aiError && (
-            <p
-              role="alert"
-              className="m-0 w-full text-sm font-medium text-[#9a1b1b]"
-            >
-              {aiError}
+          {compiled && (
+            <p role="status" className="m-0 w-full text-sm text-ink-soft">
+              <strong className="text-ink">{matchCount}</strong>{" "}
+              {matchCount === 1 ? "match" : "matches"}, best first. Related
+              words and small typos are included.
             </p>
           )}
           {notice && (
@@ -573,9 +447,8 @@ export function AdminPanel({
           <div className="flex min-w-0 flex-col gap-8">
             {visibleSections.length === 0 && (
               <p className="m-0 border border-black/10 bg-white p-8 text-center text-muted-foreground">
-                {ai
-                  ? "The AI search found nothing related. Try describing it another way."
-                  : "Nothing matches. Try another word, or untick “Only show changed text”."}
+                Nothing matches. Try another word, or untick “Only show changed
+                text”.
               </p>
             )}
             {visibleSections.map((section) => (
@@ -588,7 +461,6 @@ export function AdminPanel({
                 mode={mode}
                 onSave={save}
                 query={compiled}
-                reasons={reasons}
               />
             ))}
           </div>
@@ -971,7 +843,6 @@ function SectionCard({
   mode,
   onSave,
   query,
-  reasons,
 }: {
   section: CopySection;
   file: SiteTextFile;
@@ -980,7 +851,6 @@ function SectionCard({
   mode: Mode;
   onSave: (id: string, text: string | null) => Promise<string | null>;
   query: CompiledQuery | null;
-  reasons: Map<string, string>;
 }) {
   return (
     <section
@@ -1030,7 +900,6 @@ function SectionCard({
             mode={mode}
             onSave={onSave}
             query={query}
-            reason={reasons.get(field.id)}
           />
         ))}
       </div>
@@ -1047,7 +916,6 @@ function FieldEditor({
   mode,
   onSave,
   query,
-  reason,
 }: {
   field: CopyField;
   current: string;
@@ -1057,7 +925,6 @@ function FieldEditor({
   mode: Mode;
   onSave: (id: string, text: string | null) => Promise<string | null>;
   query: CompiledQuery | null;
-  reason?: string;
 }) {
   const [draft, setDraft] = useState("");
   const [busy, setBusy] = useState(false);
@@ -1135,13 +1002,6 @@ function FieldEditor({
           )
         )}
       </div>
-
-      {reason && (
-        <p className="m-0 mb-2 inline-flex items-start gap-1.5 text-[13.5px] text-ink-soft">
-          <Sparkles size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
-          {reason}
-        </p>
-      )}
 
       <div className="mb-3 border-l-[3px] border-ink/20 bg-paper px-4 py-3">
         <div className="mb-1 text-[11.5px] font-semibold tracking-[.12em] text-ink-faint uppercase">
