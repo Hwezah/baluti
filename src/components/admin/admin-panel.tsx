@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowUpRight,
   Check,
@@ -24,6 +24,7 @@ import {
   type CopyField,
   type CopySection,
 } from "@/content/copy";
+import { cn } from "@/lib/utils";
 import { publishedValue } from "@/context/copy-context";
 import { pendingEdits } from "@/lib/copy-storage";
 import {
@@ -493,8 +494,51 @@ function SectionNav({
   sections: CopySection[];
   changed: Set<string>;
 }) {
+  const [active, setActive] = useState<string | null>(null);
+  const navRef = useRef<HTMLElement>(null);
+
+  // Highlight the section currently at the top of the screen.
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const header =
+        document.getElementById("site-header-bars")?.getBoundingClientRect()
+          .height ?? 0;
+      const line = header + 140;
+      let current: string | null = null;
+      for (const s of sections) {
+        const el = document.getElementById(sectionAnchor(s.id));
+        if (!el) continue;
+        if (el.getBoundingClientRect().top <= line) current = s.id;
+        else break;
+      }
+      setActive(current ?? sections[0]?.id ?? null);
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    frame = requestAnimationFrame(update);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [sections]);
+
+  // Keep the highlighted item visible inside the panel.
+  useEffect(() => {
+    if (!active) return;
+    navRef.current
+      ?.querySelector(`[data-section="${active}"]`)
+      ?.scrollIntoView({ block: "nearest" });
+  }, [active]);
+
   return (
     <nav
+      ref={navRef}
       aria-label="Sections"
       className="hidden max-h-[calc(100vh-var(--header-h)-120px)] overflow-y-auto border border-black/10 bg-white p-4 lg:sticky lg:top-[calc(var(--header-h)+100px)] lg:block"
     >
@@ -509,15 +553,31 @@ function SectionNav({
             <ul className="m-0 list-none p-0">
               {inGroup.map((s) => {
                 const count = s.fields.filter((f) => changed.has(f.id)).length;
+                const isActive = s.id === active;
                 return (
                   <li key={s.id}>
                     <a
                       href={`#${sectionAnchor(s.id)}`}
-                      className="flex items-center justify-between gap-2 py-1 text-[13.5px] text-ink-body hover:text-crimson"
+                      data-section={s.id}
+                      aria-current={isActive ? "location" : undefined}
+                      onClick={() => setActive(s.id)}
+                      className={cn(
+                        "-mx-2 flex items-center justify-between gap-2 rounded-[2px] px-2 py-1 text-[13.5px] transition-colors",
+                        isActive
+                          ? "bg-crimson font-semibold text-white hover:text-white"
+                          : "text-ink-body hover:text-crimson",
+                      )}
                     >
                       <span className="truncate">{s.title}</span>
                       {count > 0 && (
-                        <span className="shrink-0 rounded-full bg-ink px-1.5 text-[11px] font-semibold text-white">
+                        <span
+                          className={cn(
+                            "shrink-0 rounded-full px-1.5 text-[11px] font-semibold",
+                            isActive
+                              ? "bg-white text-crimson"
+                              : "bg-ink text-white",
+                          )}
+                        >
                           {count}
                         </span>
                       )}
