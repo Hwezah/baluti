@@ -33,9 +33,19 @@ Content (practice areas, people, articles, contact details) lives in `src/conten
 
 ## Admin panel (editing the site text)
 
-The coloured **Admin panel** pill in the footer opens `/admin`, which lists every piece of text on the site, grouped into sections that explain what each part is for and what it should cover. Under each text there is a box to type a replacement and a **Save to site** button; the site updates immediately. Every field keeps its history, so the client can **revert to the demo text** or restore any earlier version.
+The coloured **Admin panel** pill in the footer opens `/admin`, which lists every piece of text on the site in sections that explain what each part is for and what it should cover. The client types a replacement under any text and presses **Save to site**. Every field keeps its history, so they can **revert to the demo text** or restore any earlier version.
 
-There is no database: edits are saved in the browser that made them (localStorage). Other people and devices still see the demo text, and clearing browser data removes the edits — the admin page says this up front. The client can **Download changes** (a `.json` file) or **Copy changes** (a readable list) and send them to you; a downloaded file can be loaded back with **Restore from file**. To make wording permanent, copy it into `src/content/copy.ts` (or the data files it reads from).
+**Saving writes into the site's own code.** Each save is committed to `src/content/site-text.json` in this repository, and Vercel rebuilds the site (live for everyone in about 1–2 minutes; the client sees it immediately). There is no database: the text lives in the repo, so moving the code moves the text.
+
+Setup (Vercel → Settings → Environment Variables, then redeploy):
+
+| Variable | Value |
+| --- | --- |
+| `GITHUB_TOKEN` | A GitHub token with write access to this repo's contents |
+| `ADMIN_PASSCODE` | The passcode the client types to unlock the admin panel |
+| `GITHUB_REPO`, `GITHUB_BRANCH` | Optional; Vercel provides the repo and branch automatically |
+
+Until these are set, the admin panel is read-only. In `npm run dev` it saves straight to the file on disk.
 
 ## Still to do
 

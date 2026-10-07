@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 
 import { AdminPanel } from "@/components/admin/admin-panel";
+import {
+  missingSettings,
+  passcodeRequired,
+  publishingMode,
+} from "@/lib/site-text-store";
 
 export const metadata: Metadata = {
   title: "Admin panel — edit site text",
@@ -8,5 +13,11 @@ export const metadata: Metadata = {
 };
 
 export default function AdminPage() {
-  return <AdminPanel />;
+  return (
+    <AdminPanel
+      mode={publishingMode()}
+      passcodeRequired={passcodeRequired()}
+      missing={missingSettings()}
+    />
+  );
 }

@@ -1,36 +1,41 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ArrowUpRight,
   Check,
+  CircleCheck,
   ClipboardCopy,
+  Clock,
   Download,
   History,
+  Info,
+  LockKeyhole,
   RotateCcw,
   Search,
   TriangleAlert,
-  Upload,
 } from "lucide-react";
 
-import { cn } from "@/lib/utils";
 import {
+  copyDefaults,
   copyGroups,
   copySections,
   type CopyField,
   type CopySection,
 } from "@/content/copy";
-import { useCopy } from "@/context/copy-context";
+import { publishedValue } from "@/context/copy-context";
+import { pendingEdits } from "@/lib/copy-storage";
 import {
-  copyStorage,
-  currentText,
-  type CopyEntry,
-  type CopyHistory,
-} from "@/lib/copy-storage";
+  publishedText,
+  type SiteTextFile,
+  type TextEntry,
+} from "@/lib/site-text";
 import { Button } from "@/components/ui/button";
 
-const noopSubscribe = () => () => {};
+type Mode = "github" | "local" | "off";
+
+const PASSCODE_KEY = "baluti-admin-passcode";
 
 function formatDate(iso: string) {
   try {
@@ -45,16 +50,11 @@ function formatDate(iso: string) {
 
 const sectionAnchor = (id: string) => `section-${id}`;
 
-/** Every text id whose current text differs from the demo text. */
-function changedIds(history: CopyHistory) {
-  return copySections.flatMap((s) =>
-    s.fields
-      .filter((f) => currentText(history, f.id) !== undefined)
-      .map((f) => f.id),
-  );
-}
+/** Text the latest saved version gives an id. */
+const savedValue = (file: SiteTextFile, id: string) =>
+  file.texts[id] ?? copyDefaults[id];
 
-function buildSummary(history: CopyHistory) {
+function buildSummary(file: SiteTextFile) {
   const lines = [
     "Baluti & Co. Advocates website — text changes",
     `Exported ${formatDate(new Date().toISOString())}`,
@@ -62,7 +62,7 @@ function buildSummary(history: CopyHistory) {
   ];
   for (const section of copySections) {
     for (const field of section.fields) {
-      const now = currentText(history, field.id);
+      const now = file.texts[field.id];
       if (now === undefined) continue;
       lines.push(
         `[${section.group} › ${section.title}] ${field.label}`,
@@ -76,19 +76,103 @@ function buildSummary(history: CopyHistory) {
   return lines.join("\n");
 }
 
-export function AdminPanel() {
-  const { history } = useCopy();
-  const storageOk = useSyncExternalStore(
-    noopSubscribe,
-    () => copyStorage.isAvailable(),
-    () => true,
-  );
+function readStoredPasscode() {
+  try {
+    return window.sessionStorage.getItem(PASSCODE_KEY) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+export function AdminPanel({
+  mode,
+  passcodeRequired,
+  missing,
+}: {
+  mode: Mode;
+  passcodeRequired: boolean;
+  missing: string[];
+}) {
+  const [passcode, setPasscode] = useState<string | null>(null);
+  const [unlocked, setUnlocked] = useState(!passcodeRequired && mode !== "off");
+  const [file, setFile] = useState<SiteTextFile>(publishedText);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [onlyChanged, setOnlyChanged] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
-  const fileInput = useRef<HTMLInputElement>(null);
 
-  const changed = useMemo(() => new Set(changedIds(history)), [history]);
+  const canSave = mode !== "off" && unlocked;
+
+  const load = useCallback(async (code: string) => {
+    const res = await fetch("/api/site-text", {
+      headers: { "x-admin-passcode": code },
+      cache: "no-store",
+    });
+    if (res.status === 401) return "wrong";
+    if (!res.ok) {
+      const body = (await res.json().catch(() => null)) as {
+        error?: string;
+      } | null;
+      setLoadError(body?.error ?? "The saved text couldn’t be loaded.");
+      return "error";
+    }
+    setFile((await res.json()) as SiteTextFile);
+    setLoadError(null);
+    return "ok";
+  }, []);
+
+  // Reuse a passcode entered earlier in this browser tab.
+  useEffect(() => {
+    if (mode === "off") return;
+    const code = passcodeRequired ? readStoredPasscode() : "";
+    if (passcodeRequired && !code) return;
+    let cancelled = false;
+    (async () => {
+      const res = await fetch("/api/site-text", {
+        headers: { "x-admin-passcode": code },
+        cache: "no-store",
+      });
+      if (cancelled) return;
+      if (res.status === 401) {
+        try {
+          window.sessionStorage.removeItem(PASSCODE_KEY);
+        } catch {}
+        return;
+      }
+      if (!res.ok) {
+        const body = (await res.json().catch(() => null)) as {
+          error?: string;
+        } | null;
+        setLoadError(body?.error ?? "The saved text couldn’t be loaded.");
+        return;
+      }
+      const latest = (await res.json()) as SiteTextFile;
+      if (cancelled) return;
+      setFile(latest);
+      setPasscode(code);
+      setUnlocked(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [mode, passcodeRequired]);
+
+  // Forget instant previews the published site has caught up with.
+  useEffect(() => {
+    pendingEdits.prune(
+      (id, text) => publishedValue(id) === (text ?? copyDefaults[id]),
+    );
+  }, []);
+
+  const changed = useMemo(
+    () =>
+      new Set(
+        copySections.flatMap((s) =>
+          s.fields.filter((f) => f.id in file.texts).map((f) => f.id),
+        ),
+      ),
+    [file],
+  );
 
   const visibleSections = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -99,7 +183,7 @@ export function AdminPanel() {
         const fields = section.fields.filter((field) => {
           if (onlyChanged && !changed.has(field.id)) return false;
           if (!q || sectionHit) return true;
-          const now = currentText(history, field.id) ?? field.text;
+          const now = savedValue(file, field.id);
           return `${field.label} ${field.text} ${now}`
             .toLowerCase()
             .includes(q);
@@ -107,75 +191,57 @@ export function AdminPanel() {
         return { ...section, fields };
       })
       .filter((s) => s.fields.length > 0);
-  }, [query, onlyChanged, changed, history]);
+  }, [query, onlyChanged, changed, file]);
 
   const flash = (message: string) => {
     setNotice(message);
     window.setTimeout(() => setNotice((m) => (m === message ? null : m)), 4000);
   };
 
+  /** Save (or with null, revert) one text. Returns an error message or null. */
+  const save = async (id: string, text: string | null) => {
+    const res = await fetch("/api/site-text", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-passcode": passcode ?? "",
+      },
+      body: JSON.stringify({ id, text }),
+    });
+    const body = (await res.json().catch(() => null)) as
+      | (SiteTextFile & { error?: string })
+      | null;
+    if (!res.ok || !body) {
+      if (res.status === 401) setUnlocked(false);
+      return body?.error ?? "Saving failed. Please try again.";
+    }
+    setFile({ texts: body.texts, history: body.history });
+    // Show it in this browser now; everyone else sees it after the redeploy.
+    pendingEdits.set(id, body.texts[id] ?? null);
+    return null;
+  };
+
   const copySummary = async () => {
     try {
-      await navigator.clipboard.writeText(buildSummary(history));
-      flash(
-        "A list of your changes was copied. Paste it into an email or message.",
-      );
+      await navigator.clipboard.writeText(buildSummary(file));
+      flash("A list of all changes was copied.");
     } catch {
       flash(
-        "Copying isn’t allowed in this browser. Use “Download changes” instead.",
+        "Copying isn’t allowed in this browser. Use “Download a copy” instead.",
       );
     }
   };
 
   const download = () => {
-    const blob = new Blob(
-      [
-        JSON.stringify(
-          { version: 1, exportedAt: new Date().toISOString(), history },
-          null,
-          2,
-        ),
-      ],
-      { type: "application/json" },
-    );
+    const blob = new Blob([JSON.stringify(file, null, 2)], {
+      type: "application/json",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = `baluti-site-text-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
-  };
-
-  const importFile = async (file: File) => {
-    try {
-      const data = JSON.parse(await file.text()) as { history?: CopyHistory };
-      if (!data.history || typeof data.history !== "object") throw new Error();
-      if (
-        changed.size > 0 &&
-        !window.confirm(
-          "Replace the changes saved in this browser with the ones in this file?",
-        )
-      ) {
-        return;
-      }
-      copyStorage.replaceAll(data.history);
-      flash("Changes restored from the file.");
-    } catch {
-      flash(
-        "That file couldn’t be read. Choose a file made with “Download changes”.",
-      );
-    }
-  };
-
-  const resetAll = () => {
-    if (
-      window.confirm(
-        "Put every piece of text back to the original demo text? Download your changes first if you might want them again.",
-      )
-    ) {
-      copyStorage.replaceAll({});
-      flash("All text is back to the original demo text.");
-    }
   };
 
   return (
@@ -187,18 +253,42 @@ export function AdminPanel() {
             Edit the text on your website
           </h1>
           <p className="m-0 text-base text-ink-soft">
-            Every piece of text on the demo site is listed below, grouped by
-            page and section. Under each one, type the text you would like
-            instead and press <strong>Save to site</strong> — the website
-            updates straight away. You can always go back to the original demo
-            text or to any earlier version you saved.
+            Every piece of text on the site is listed below, grouped by page and
+            section. Under each one, type the text you would like instead and
+            press <strong>Save to site</strong>. You can always go back to the
+            original demo text or to any earlier version.
           </p>
         </header>
 
-        <Disclaimer storageOk={storageOk} />
+        <HowItWorks mode={mode} missing={missing} />
+
+        {mode !== "off" && !unlocked && (
+          <PasscodeForm
+            onSubmit={async (code) => {
+              const result = await load(code);
+              if (result === "wrong") return "That passcode isn’t right.";
+              if (result === "error") return null;
+              try {
+                window.sessionStorage.setItem(PASSCODE_KEY, code);
+              } catch {}
+              setPasscode(code);
+              setUnlocked(true);
+              return null;
+            }}
+          />
+        )}
+
+        {loadError && (
+          <p
+            role="alert"
+            className="m-0 mb-6 border border-[#e3a3a3] bg-[#fdeeee] p-4 text-[15px] text-ink"
+          >
+            {loadError}
+          </p>
+        )}
 
         {/* Toolbar */}
-        <div className="z-20 lg:sticky lg:top-[calc(var(--header-h)+8px)] mb-8 flex flex-wrap items-center gap-3 border border-black/10 bg-white p-3 shadow-[0_12px_30px_-24px_rgba(0,0,0,.5)]">
+        <div className="z-20 mb-8 flex flex-wrap items-center gap-3 border border-black/10 bg-white p-3 shadow-[0_12px_30px_-24px_rgba(0,0,0,.5)] lg:sticky lg:top-[calc(var(--header-h)+8px)]">
           <label className="relative min-w-[220px] flex-1">
             <span className="sr-only">Search the text</span>
             <Search
@@ -229,7 +319,7 @@ export function AdminPanel() {
               className="cursor-pointer"
               onClick={copySummary}
             >
-              <ClipboardCopy size={15} /> Copy changes
+              <ClipboardCopy size={15} /> Copy list of changes
             </Button>
             <Button
               size="sm"
@@ -237,37 +327,8 @@ export function AdminPanel() {
               className="cursor-pointer"
               onClick={download}
             >
-              <Download size={15} /> Download changes
+              <Download size={15} /> Download a copy
             </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="cursor-pointer"
-              onClick={() => fileInput.current?.click()}
-            >
-              <Upload size={15} /> Restore from file
-            </Button>
-            <input
-              ref={fileInput}
-              type="file"
-              accept="application/json,.json"
-              hidden
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) importFile(file);
-                e.target.value = "";
-              }}
-            />
-            {changed.size > 0 && (
-              <Button
-                size="sm"
-                variant="ghost"
-                className="cursor-pointer"
-                onClick={resetAll}
-              >
-                <RotateCcw size={15} /> Reset everything
-              </Button>
-            )}
           </div>
           {notice && (
             <p
@@ -292,8 +353,11 @@ export function AdminPanel() {
               <SectionCard
                 key={section.id}
                 section={section}
-                history={history}
+                file={file}
                 changed={changed}
+                canSave={canSave}
+                mode={mode}
+                onSave={save}
               />
             ))}
           </div>
@@ -303,50 +367,122 @@ export function AdminPanel() {
   );
 }
 
-function Disclaimer({ storageOk }: { storageOk: boolean }) {
+function HowItWorks({ mode, missing }: { mode: Mode; missing: string[] }) {
+  if (mode === "off") {
+    return (
+      <aside
+        role="note"
+        className="mb-8 flex gap-4 border border-[#d9b44a] bg-[#fff8e1] p-5 text-[15px] text-ink"
+      >
+        <TriangleAlert
+          size={22}
+          className="mt-0.5 shrink-0 text-[#9a6b00]"
+          aria-hidden="true"
+        />
+        <div>
+          <p className="m-0 mb-2 font-semibold">
+            Saving is not switched on yet
+          </p>
+          <p className="m-0 text-ink-soft">
+            You can read through all the text below, but changes can’t be saved
+            until the website is connected to its code storage. For the
+            developer: add {missing.join(", ")} in the hosting settings and
+            redeploy.
+          </p>
+        </div>
+      </aside>
+    );
+  }
   return (
     <aside
       role="note"
-      className="mb-8 flex gap-4 border border-[#d9b44a] bg-[#fff8e1] p-5 text-[15px] text-ink"
+      className="mb-8 flex gap-4 border border-black/12 bg-white p-5 text-[15px] text-ink"
     >
-      <TriangleAlert
+      <Info
         size={22}
-        className="mt-0.5 shrink-0 text-[#9a6b00]"
+        className="mt-0.5 shrink-0 text-ink-soft"
         aria-hidden="true"
       />
       <div>
-        <p className="m-0 mb-2 font-semibold">
-          Please read: your changes are saved in this browser only
-        </p>
+        <p className="m-0 mb-2 font-semibold">How saving works</p>
         <ul className="m-0 flex list-disc flex-col gap-1 pl-5 text-ink-soft">
           <li>
-            Text you save here is stored on{" "}
-            <strong>this device, in this browser</strong>. You will see it on
-            the website here, but other people, devices and browsers still see
-            the original demo text.
+            When you press <strong>Save to site</strong>, your text is written
+            into the website itself. It is permanent and everyone will see it.
           </li>
+          {mode === "github" ? (
+            <li>
+              The website then rebuilds itself, which takes{" "}
+              <strong>about 1–2 minutes</strong>. You will see your change
+              straight away on this device; other visitors see it once the
+              rebuild finishes.
+            </li>
+          ) : (
+            <li>
+              This is a development copy of the site: changes are saved to the
+              files on this computer and show immediately.
+            </li>
+          )}
           <li>
-            Your changes are <strong>lost</strong> if this browser’s history or
-            site data is cleared, and they are not kept in private or incognito
-            windows.
-          </li>
-          <li>
-            Use <strong>Download changes</strong> (or{" "}
-            <strong>Copy changes</strong>) regularly and send the result to your
-            web developer, so your wording can be added to the live site
-            permanently. A downloaded file can be loaded back with{" "}
-            <strong>Restore from file</strong>.
+            Every change is recorded. Use <strong>Revert to demo text</strong>{" "}
+            or <strong>Earlier versions</strong> on any item to undo it.
           </li>
         </ul>
-        {!storageOk && (
-          <p className="m-0 mt-3 font-semibold text-[#9a1b1b]">
-            This browser is blocking storage (for example a private window), so
-            your changes will disappear when you close this tab. Download them
-            before you leave.
-          </p>
-        )}
       </div>
     </aside>
+  );
+}
+
+function PasscodeForm({
+  onSubmit,
+}: {
+  onSubmit: (code: string) => Promise<string | null>;
+}) {
+  const [code, setCode] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  return (
+    <form
+      onSubmit={async (e) => {
+        e.preventDefault();
+        setBusy(true);
+        setError(await onSubmit(code));
+        setBusy(false);
+      }}
+      className="mb-8 flex flex-wrap items-end gap-3 border border-black/12 bg-white p-5"
+    >
+      <LockKeyhole
+        size={22}
+        className="mb-2.5 shrink-0 text-ink-soft"
+        aria-hidden="true"
+      />
+      <label className="flex min-w-[220px] flex-1 flex-col gap-1.5 text-[15px] font-semibold">
+        Enter the admin passcode to make changes
+        <input
+          type="password"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          autoComplete="current-password"
+          className="rounded-[2px] border border-black/15 bg-field p-3 text-[15px] font-normal focus:border-ink focus:outline-none"
+        />
+      </label>
+      <Button
+        type="submit"
+        size="sm"
+        className="cursor-pointer"
+        disabled={!code || busy}
+      >
+        {busy ? "Checking…" : "Unlock"}
+      </Button>
+      {error && (
+        <p
+          role="alert"
+          className="m-0 w-full text-sm font-medium text-[#9a1b1b]"
+        >
+          {error}
+        </p>
+      )}
+    </form>
   );
 }
 
@@ -399,12 +535,18 @@ function SectionNav({
 
 function SectionCard({
   section,
-  history,
+  file,
   changed,
+  canSave,
+  mode,
+  onSave,
 }: {
   section: CopySection;
-  history: CopyHistory;
+  file: SiteTextFile;
   changed: Set<string>;
+  canSave: boolean;
+  mode: Mode;
+  onSave: (id: string, text: string | null) => Promise<string | null>;
 }) {
   return (
     <section
@@ -447,8 +589,12 @@ function SectionCard({
           <FieldEditor
             key={field.id}
             field={field}
-            entries={history[field.id] ?? []}
+            current={savedValue(file, field.id)}
+            entries={file.history[field.id] ?? []}
             isChanged={changed.has(field.id)}
+            canSave={canSave}
+            mode={mode}
+            onSave={onSave}
           />
         ))}
       </div>
@@ -458,24 +604,34 @@ function SectionCard({
 
 function FieldEditor({
   field,
+  current,
   entries,
   isChanged,
+  canSave,
+  mode,
+  onSave,
 }: {
   field: CopyField;
-  entries: CopyEntry[];
+  current: string;
+  entries: TextEntry[];
   isChanged: boolean;
+  canSave: boolean;
+  mode: Mode;
+  onSave: (id: string, text: string | null) => Promise<string | null>;
 }) {
   const [draft, setDraft] = useState("");
-  const [saved, setSaved] = useState<string | null>(null);
-  const current = isChanged
-    ? (entries[entries.length - 1].text ?? field.text)
-    : field.text;
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(
+    null,
+  );
   const lastChange = entries[entries.length - 1];
+  // Saved, but this build of the site doesn't have it yet.
+  const goingLive = mode === "github" && publishedValue(field.id) !== current;
 
   // Earlier saved wordings, newest first, without duplicates or the current one.
   const earlier = useMemo(() => {
     const seen = new Set<string>([current]);
-    const list: CopyEntry[] = [];
+    const list: TextEntry[] = [];
     for (const entry of [...entries].reverse()) {
       if (entry.text === null || seen.has(entry.text)) continue;
       seen.add(entry.text);
@@ -484,18 +640,27 @@ function FieldEditor({
     return list;
   }, [entries, current]);
 
-  const confirm = (message: string) => {
-    setSaved(message);
-    window.setTimeout(() => setSaved((m) => (m === message ? null : m)), 3000);
+  const run = async (text: string | null, success: string) => {
+    setBusy(true);
+    setMessage(null);
+    const error = await onSave(field.id, text);
+    setBusy(false);
+    if (error) {
+      setMessage({ ok: false, text: error });
+    } else {
+      if (text !== null && text === draft.trim()) setDraft("");
+      setMessage({ ok: true, text: success });
+      window.setTimeout(
+        () => setMessage((m) => (m?.text === success ? null : m)),
+        5000,
+      );
+    }
   };
 
-  const save = () => {
-    const text = draft.trim();
-    if (!text || text === current) return;
-    copyStorage.push(field.id, text);
-    setDraft("");
-    confirm("Saved — now showing on the site.");
-  };
+  const saved =
+    mode === "github"
+      ? "Saved — live for everyone in about 1–2 minutes."
+      : "Saved — now showing on the site.";
 
   const rows = Math.min(8, Math.max(2, Math.ceil(field.text.length / 70)));
   const inputId = `field-${field.id}`;
@@ -511,11 +676,22 @@ function FieldEditor({
             Changed {lastChange && `· ${formatDate(lastChange.at)}`}
           </span>
         )}
+        {goingLive ? (
+          <span className="inline-flex items-center gap-1 rounded-full border border-black/15 px-2 py-0.5 text-[11px] font-semibold tracking-[.06em] text-ink-soft uppercase">
+            <Clock size={12} /> Going live
+          </span>
+        ) : (
+          isChanged && (
+            <span className="inline-flex items-center gap-1 text-[11px] font-semibold tracking-[.06em] text-ink-soft uppercase">
+              <CircleCheck size={12} /> Live
+            </span>
+          )
+        )}
       </div>
 
       <div className="mb-3 border-l-[3px] border-ink/20 bg-paper px-4 py-3">
         <div className="mb-1 text-[11.5px] font-semibold tracking-[.12em] text-ink-faint uppercase">
-          On the site now
+          Current text
         </div>
         <p className="m-0 text-[15px] whitespace-pre-line text-ink">
           {current}
@@ -533,33 +709,38 @@ function FieldEditor({
         value={draft}
         onChange={(e) => setDraft(e.target.value)}
         rows={rows}
-        placeholder="Type the text you would like here instead…"
-        className="mb-3 block w-full resize-y rounded-[2px] border border-black/15 bg-white p-3 text-[15px] leading-[1.5] focus:border-ink focus:outline-none"
+        disabled={!canSave}
+        placeholder={
+          canSave
+            ? "Type the text you would like here instead…"
+            : "Unlock the admin panel to make changes."
+        }
+        className="mb-3 block w-full resize-y rounded-[2px] border border-black/15 bg-white p-3 text-[15px] leading-[1.5] focus:border-ink focus:outline-none disabled:bg-paper"
       />
 
       <div className="flex flex-wrap items-center gap-2">
         <Button
           size="sm"
           className="cursor-pointer"
-          disabled={!draft.trim() || draft.trim() === current}
-          onClick={save}
+          disabled={
+            !canSave || busy || !draft.trim() || draft.trim() === current
+          }
+          onClick={() => run(draft.trim(), saved)}
         >
-          Save to site
+          {busy ? "Saving…" : "Save to site"}
         </Button>
         {isChanged && (
           <Button
             size="sm"
             variant="ghost"
             className="cursor-pointer"
-            onClick={() => {
-              copyStorage.push(field.id, null);
-              confirm("Back to the original demo text.");
-            }}
+            disabled={!canSave || busy}
+            onClick={() => run(null, "Back to the original demo text.")}
           >
             <RotateCcw size={14} /> Revert to demo text
           </Button>
         )}
-        {draft === "" && (
+        {draft === "" && canSave && (
           <Button
             size="sm"
             variant="ghost"
@@ -569,12 +750,17 @@ function FieldEditor({
             Start from current text
           </Button>
         )}
-        {saved && (
+        {message && (
           <span
-            role="status"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-ink"
+            role={message.ok ? "status" : "alert"}
+            className={
+              message.ok
+                ? "inline-flex items-center gap-1.5 text-sm font-medium text-ink"
+                : "inline-flex items-center gap-1.5 text-sm font-medium text-[#9a1b1b]"
+            }
           >
-            <Check size={15} /> {saved}
+            {message.ok ? <Check size={15} /> : <TriangleAlert size={15} />}{" "}
+            {message.text}
           </span>
         )}
       </div>
@@ -588,9 +774,7 @@ function FieldEditor({
             {earlier.map((entry) => (
               <li
                 key={entry.at}
-                className={cn(
-                  "flex flex-wrap items-start justify-between gap-3 border border-black/10 p-3",
-                )}
+                className="flex flex-wrap items-start justify-between gap-3 border border-black/10 p-3"
               >
                 <div className="min-w-0 flex-1">
                   <div className="mb-1 text-xs text-ink-faint">
@@ -604,10 +788,8 @@ function FieldEditor({
                   size="sm"
                   variant="ghost"
                   className="cursor-pointer"
-                  onClick={() => {
-                    copyStorage.push(field.id, entry.text);
-                    confirm("Earlier version restored.");
-                  }}
+                  disabled={!canSave || busy}
+                  onClick={() => run(entry.text, "Earlier version restored.")}
                 >
                   Use this version
                 </Button>

@@ -10,28 +10,38 @@ import {
 } from "react";
 
 import { copyDefaults } from "@/content/copy";
-import { copyStorage, currentText, type CopyHistory } from "@/lib/copy-storage";
+import { PENDING_TTL, pendingEdits } from "@/lib/copy-storage";
+import { publishedText } from "@/lib/site-text";
 
 type CopyContextValue = {
-  /** Text for an id: the latest edit from the admin panel, else the demo text. */
+  /**
+   * Text for an id: a just-saved edit that isn't live yet (this browser
+   * only), else the published edit, else the demo text.
+   */
   t: (id: string) => string;
-  history: CopyHistory;
 };
 
 const CopyContext = createContext<CopyContextValue | null>(null);
 
+/** The text the published site shows for an id. */
+export function publishedValue(id: string) {
+  return publishedText.texts[id] ?? copyDefaults[id];
+}
+
 export function CopyProvider({ children }: { children: ReactNode }) {
-  // The server (and first client render) uses the demo text; saved edits
-  // from this browser are applied straight after hydration.
-  const history = useSyncExternalStore(
-    copyStorage.subscribe,
-    copyStorage.getSnapshot,
-    copyStorage.getServerSnapshot,
+  const pending = useSyncExternalStore(
+    pendingEdits.subscribe,
+    pendingEdits.getSnapshot,
+    pendingEdits.getServerSnapshot,
   );
 
   const t = useCallback(
     (id: string) => {
-      const text = currentText(history, id) ?? copyDefaults[id];
+      let text = publishedValue(id);
+      const edit = pending[id];
+      if (edit && Date.now() - edit.at < PENDING_TTL) {
+        text = edit.text ?? copyDefaults[id];
+      }
       if (text === undefined) {
         if (process.env.NODE_ENV !== "production") {
           console.warn(`[copy] Unknown text id "${id}"`);
@@ -40,10 +50,10 @@ export function CopyProvider({ children }: { children: ReactNode }) {
       }
       return text.replaceAll("{year}", String(new Date().getFullYear()));
     },
-    [history],
+    [pending],
   );
 
-  const value = useMemo(() => ({ t, history }), [t, history]);
+  const value = useMemo(() => ({ t }), [t]);
 
   return <CopyContext.Provider value={value}>{children}</CopyContext.Provider>;
 }

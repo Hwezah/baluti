@@ -1,50 +1,50 @@
-// Site text edits made in the admin panel, kept in this browser's
-// localStorage (no database). Each text id keeps its full history so any
-// earlier version, or the original demo text, can be restored.
+// Edits saved from the admin panel take a minute or two to go live (they
+// are committed to the repository and the site redeploys). Meanwhile this
+// browser shows them straight away from this short-lived "pending" list,
+// kept in localStorage. Entries stop applying once the published site
+// contains them, or after PENDING_TTL as a safety net.
 //
 // Exposed as an external store for React's useSyncExternalStore.
 
-export type CopyEntry = {
-  /** The submitted text, or null for "reverted to the demo text". */
+export type PendingEdit = {
+  /** The saved text, or null for "reverted to the demo text". */
   text: string | null;
-  /** ISO timestamp. */
-  at: string;
+  /** Epoch milliseconds. */
+  at: number;
 };
 
-export type CopyHistory = Record<string, CopyEntry[]>;
+export type PendingEdits = Record<string, PendingEdit>;
 
-const STORAGE_KEY = "baluti-site-text-v1";
-const MAX_ENTRIES = 30;
-const EMPTY: CopyHistory = {};
+const STORAGE_KEY = "baluti-site-text-pending-v1";
+export const PENDING_TTL = 30 * 60 * 1000;
+const EMPTY: PendingEdits = {};
 
-let cache: CopyHistory | null = null;
+let cache: PendingEdits | null = null;
 const listeners = new Set<() => void>();
 
-function read(): CopyHistory {
+function read(): PendingEdits {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     const parsed: unknown = raw ? JSON.parse(raw) : {};
-    return parsed && typeof parsed === "object" ? (parsed as CopyHistory) : {};
+    return parsed && typeof parsed === "object" ? (parsed as PendingEdits) : {};
   } catch {
-    // Storage blocked (private mode, disabled cookies) or corrupt.
     return {};
   }
 }
 
-function write(next: CopyHistory) {
+function write(next: PendingEdits) {
   cache = next;
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
   } catch {
-    // Keep the in-memory copy so the session still works.
+    // Storage blocked: the preview still works for this page view.
   }
   listeners.forEach((l) => l());
 }
 
-export const copyStorage = {
+export const pendingEdits = {
   subscribe(listener: () => void) {
     listeners.add(listener);
-    // Another tab saved a change.
     const onStorage = (e: StorageEvent) => {
       if (e.key === STORAGE_KEY) {
         cache = read();
@@ -57,41 +57,26 @@ export const copyStorage = {
       window.removeEventListener("storage", onStorage);
     };
   },
-  getSnapshot(): CopyHistory {
+  getSnapshot(): PendingEdits {
     if (cache === null) cache = read();
     return cache;
   },
-  getServerSnapshot(): CopyHistory {
+  getServerSnapshot(): PendingEdits {
     return EMPTY;
   },
-  /** Record new text for an id (null reverts to the demo text). */
-  push(id: string, text: string | null) {
-    const history = copyStorage.getSnapshot();
-    const entries = [
-      ...(history[id] ?? []),
-      { text, at: new Date().toISOString() },
-    ];
-    write({ ...history, [id]: entries.slice(-MAX_ENTRIES) });
+  set(id: string, text: string | null) {
+    write({ ...pendingEdits.getSnapshot(), [id]: { text, at: Date.now() } });
   },
-  /** Replace everything, e.g. when importing a saved file. */
-  replaceAll(next: CopyHistory) {
-    write(next);
-  },
-  isAvailable() {
-    try {
-      const probe = "__baluti_probe__";
-      window.localStorage.setItem(probe, "1");
-      window.localStorage.removeItem(probe);
-      return true;
-    } catch {
-      return false;
-    }
+  /** Drop entries the published site already shows, or that are too old. */
+  prune(isPublished: (id: string, text: string | null) => boolean) {
+    const current = pendingEdits.getSnapshot();
+    const now = Date.now();
+    const next = Object.fromEntries(
+      Object.entries(current).filter(
+        ([id, edit]) =>
+          now - edit.at < PENDING_TTL && !isPublished(id, edit.text),
+      ),
+    );
+    if (Object.keys(next).length !== Object.keys(current).length) write(next);
   },
 };
-
-/** The text currently in effect for an id, or undefined for the demo text. */
-export function currentText(history: CopyHistory, id: string) {
-  const entries = history[id];
-  const last = entries?.[entries.length - 1];
-  return last?.text ?? undefined;
-}
