@@ -1501,7 +1501,7 @@ function FieldEditor({
       <div className="flex flex-wrap items-center gap-2 max-sm:flex-col max-sm:items-center">
         <Button
           size="sm"
-          className="cursor-pointer max-sm:w-[80vw]"
+          className="cursor-pointer disabled:opacity-100 max-sm:w-[80vw]"
           disabled={
             !canSave || busy || !draft.trim() || draft.trim() === current
           }
