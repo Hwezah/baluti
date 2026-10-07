@@ -26,7 +26,7 @@ export function SiteUIProvider({ children }: { children: ReactNode }) {
 
   const openPanel = useCallback(
     (next: Exclude<Panel, null>) => setPanel(next),
-    []
+    [],
   );
   const closePanel = useCallback(() => setPanel(null), []);
 
@@ -47,7 +47,7 @@ export function SiteUIProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(
     () => ({ panel, openPanel, closePanel }),
-    [panel, openPanel, closePanel]
+    [panel, openPanel, closePanel],
   );
 
   return (

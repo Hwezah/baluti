@@ -14,7 +14,7 @@ export function PageHero({
   className = "py-[clamp(56px,7vw,104px)]",
 }: {
   crumbs: Crumb[];
-  eyebrow: string;
+  eyebrow: ReactNode;
   title: ReactNode;
   intro: ReactNode;
   titleClassName?: string;
@@ -60,8 +60,8 @@ export function CtaBand({
   children,
   className = "border-t border-black/8 bg-paper",
 }: {
-  title: string;
-  body: string;
+  title: ReactNode;
+  body: ReactNode;
   children: ReactNode;
   className?: string;
 }) {

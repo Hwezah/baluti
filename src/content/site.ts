@@ -24,13 +24,14 @@ export const site = {
   },
 } as const;
 
+/** Main navigation; labels are editable text (see src/content/copy.ts). */
 export const navLinks = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Practice Areas", href: "/practice-areas" },
-  { label: "People", href: "/people" },
-  { label: "Insights", href: "/insights" },
-  { label: "Contact", href: "/contact" },
+  { copyId: "nav.home", href: "/" },
+  { copyId: "nav.about", href: "/about" },
+  { copyId: "nav.practice", href: "/practice-areas" },
+  { copyId: "nav.people", href: "/people" },
+  { copyId: "nav.insights", href: "/insights" },
+  { copyId: "nav.contact", href: "/contact" },
 ] as const;
 
 export const values = [

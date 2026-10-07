@@ -11,6 +11,7 @@ import {
 } from "@/content/practice-areas";
 import { personHref, practiceLeads } from "@/content/people";
 import { Button } from "@/components/ui/button";
+import { Copy as C, PhoneLink } from "@/components/site/copy";
 import { MaybeLink } from "@/components/site/maybe-link";
 import { CtaBand, PageHero } from "@/components/site/page-hero";
 import { Avatar, Eyebrow } from "@/components/site/primitives";
@@ -27,49 +28,31 @@ export async function generateMetadata({
   return area ? { title: area.title, description: area.intro } : {};
 }
 
-const defaultSteps = [
-  {
-    title: "Listen",
-    body: "We begin by understanding your situation, your goals, and what a good outcome looks like for you.",
-  },
-  {
-    title: "Advise",
-    body: "We set out the law and your options clearly, so you can make informed decisions.",
-  },
-  {
-    title: "Act",
-    body: "We move deliberately on your behalf, keeping you informed at every stage of the matter.",
-  },
-  {
-    title: "Deliver",
-    body: "We pursue the result that best protects your interests, and stand behind our work.",
-  },
-];
-
 export default async function PracticeAreaPage({
   params,
 }: PageProps<"/practice-areas/[slug]">) {
   const area = getPracticeArea((await params).slug);
   if (!area) notFound();
 
-  const steps = area.steps ?? defaultSteps;
-  const related = area.related
-    .map((slug) => getPracticeArea(slug))
-    .filter((a) => a !== undefined);
+  const p = (field: string) => `practice.${area.slug}.${field}`;
+  // Areas with their own approach use it; the rest share the default steps.
+  const stepId = (i: number, part: "title" | "body") =>
+    area.steps ? p(`steps.${i}.${part}`) : `practiceDetail.steps.${i}.${part}`;
+  const related = area.related.filter((slug) => getPracticeArea(slug));
 
   return (
     <>
       <PageHero
         className="py-[clamp(52px,7vw,92px)]"
         crumbs={[
-          { label: "Home", href: "/" },
-          { label: "Practice Areas", href: "/practice-areas" },
-          { label: area.title },
+          { label: <C id="nav.home" />, href: "/" },
+          { label: <C id="nav.practice" />, href: "/practice-areas" },
+          { label: <C id={p("title")} /> },
         ]}
-        eyebrow={area.group}
-        title={area.title}
+        eyebrow={<C id={p("group")} />}
+        title={<C id={p("title")} />}
         titleClassName="max-w-[20ch] text-[clamp(2.3rem,4.6vw,3.7rem)] leading-[1.06]"
-        intro={area.intro}
+        intro={<C id={p("intro")} />}
       />
 
       {/* BODY + SIDEBAR */}
@@ -77,37 +60,50 @@ export default async function PracticeAreaPage({
         <div className="site-container grid grid-cols-1 items-start gap-[clamp(36px,5vw,64px)] md:grid-cols-[1.7fr_1fr]">
           <div>
             <h2 className="m-0 mb-[18px] font-serif text-[clamp(1.6rem,2.8vw,2.2rem)] font-bold">
-              How we can help
+              <C id="practiceDetail.help" />
             </h2>
-            <p className="m-0 mb-[18px] text-[16.5px] text-ink-soft">{area.overview[0]}</p>
-            <p className="m-0 mb-10 text-base text-muted-foreground">{area.overview[1]}</p>
+            <p className="m-0 mb-[18px] text-[16.5px] text-ink-soft">
+              <C id={p("overview.0")} />
+            </p>
+            <p className="m-0 mb-10 text-base text-muted-foreground">
+              <C id={p("overview.1")} />
+            </p>
 
             <h3 className="m-0 mb-[22px] font-serif text-[1.4rem] font-semibold">
-              Our services include
+              <C id="practiceDetail.services" />
             </h3>
             <ul className="m-0 mb-11 grid list-none grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-0.5 border border-black/10 bg-black/10 p-0">
-              {area.services.map((service) => (
-                <li key={service} className="flex items-center gap-3.5 bg-paper px-6 py-[22px]">
+              {area.services.map((_, i) => (
+                <li
+                  key={i}
+                  className="flex items-center gap-3.5 bg-paper px-6 py-[22px]"
+                >
                   <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-black/6">
                     <Check size={16} strokeWidth={2.6} className="text-ink" />
                   </span>
-                  <span className="text-[15px] text-ink-body">{service}</span>
+                  <span className="text-[15px] text-ink-body">
+                    <C id={p(`services.${i}`)} />
+                  </span>
                 </li>
               ))}
             </ul>
 
             <div className="bg-ink p-[clamp(28px,3.5vw,44px)] text-white">
               <h3 className="m-0 mb-[26px] font-serif text-[1.4rem] font-semibold">
-                Our approach
+                <C id="practiceDetail.approach" />
               </h3>
               <ol className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-7 p-0">
-                {steps.map((step, i) => (
-                  <li key={step.title} className="border-t border-white/25 pt-4">
-                    <span className="font-serif text-[1.2rem] text-white/45">0{i + 1}</span>
+                {[0, 1, 2, 3].map((i) => (
+                  <li key={i} className="border-t border-white/25 pt-4">
+                    <span className="font-serif text-[1.2rem] text-white/45">
+                      0{i + 1}
+                    </span>
                     <h4 className="m-0 my-2 font-serif text-[1.1rem] font-semibold">
-                      {step.title}
+                      <C id={stepId(i, "title")} />
                     </h4>
-                    <p className="m-0 text-[13.5px] text-white/66">{step.body}</p>
+                    <p className="m-0 text-[13.5px] text-white/66">
+                      <C id={stepId(i, "body")} />
+                    </p>
                   </li>
                 ))}
               </ol>
@@ -117,36 +113,36 @@ export default async function PracticeAreaPage({
           <StickyColumn as="aside" className="flex flex-col gap-6">
             <div className="border border-black/10 bg-white p-7">
               <h3 className="m-0 mb-1.5 font-serif text-[1.2rem] font-semibold">
-                Speak to our team
+                <C id="practiceDetail.sidebar.title" />
               </h3>
               <p className="m-0 mb-[18px] text-sm text-muted-foreground">
-                Book a free, confidential consultation about your matter.
+                <C id="practiceDetail.sidebar.body" />
               </p>
               <Button asChild size="full" className="p-[13px] text-[14.5px]">
-                <Link href="/contact">Free consultation</Link>
+                <Link href="/contact">
+                  <C id="common.freeConsultation" />
+                </Link>
               </Button>
-              {site.phones.map((phone, i) => (
-                <a
-                  key={phone.href}
-                  href={phone.href}
+              {site.phones.map((_, i) => (
+                <PhoneLink
+                  key={i}
+                  id={`contact.phone.${i}`}
                   className={`block text-center text-[14.5px] font-semibold text-ink ${i === 0 ? "mt-3" : "mt-1.5"}`}
-                >
-                  {phone.label}
-                </a>
+                />
               ))}
             </div>
             <div className="border border-black/10 bg-sand p-7">
               <h3 className="m-0 mb-4 font-serif text-[1.15rem] font-semibold">
-                Related areas
+                <C id="practiceDetail.related" />
               </h3>
               <div className="flex flex-col">
-                {related.map((r) => (
+                {related.map((slug) => (
                   <Link
-                    key={r.slug}
-                    href={practiceAreaHref(r.slug)}
+                    key={slug}
+                    href={practiceAreaHref(slug)}
                     className="flex items-center justify-between border-b border-black/10 py-[11px] text-[14.5px] text-ink-body hover:text-crimson"
                   >
-                    {r.title}
+                    <C id={`practice.${slug}.title`} />
                     <ArrowRight size={16} className="text-ink-faint" />
                   </Link>
                 ))}
@@ -160,16 +156,18 @@ export default async function PracticeAreaPage({
       <section className="gutter bg-sand py-section-sm">
         <div className="site-container">
           <div className="mb-10">
-            <Eyebrow className="mb-3.5">Key contacts</Eyebrow>
+            <Eyebrow className="mb-3.5">
+              <C id="practiceDetail.contacts.eyebrow" />
+            </Eyebrow>
             <h2 className="m-0 font-serif text-[clamp(1.7rem,3vw,2.4rem)] font-bold">
-              Advocates in this practice
+              <C id="practiceDetail.contacts.title" />
             </h2>
           </div>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-[26px]">
-            {practiceLeads.map((person, i) => (
+            {practiceLeads.map((key) => (
               <MaybeLink
-                key={i}
-                href={personHref(person)}
+                key={key}
+                href={personHref(key)}
                 className="flex items-center gap-[18px] border border-black/9 bg-white p-5 transition-shadow duration-300 hover:shadow-[0_20px_40px_-24px_rgba(20,20,24,.4)]"
               >
                 <Avatar
@@ -179,10 +177,10 @@ export default async function PracticeAreaPage({
                 />
                 <div>
                   <h3 className="m-0 mb-[3px] font-serif text-[1.15rem] font-semibold">
-                    {person.name}
+                    <C id={`person.${key}.name`} />
                   </h3>
                   <div className="text-xs font-semibold tracking-[.06em] text-muted-foreground uppercase">
-                    {person.role}
+                    <C id={`person.${key}.role`} />
                   </div>
                 </div>
               </MaybeLink>
@@ -192,11 +190,13 @@ export default async function PracticeAreaPage({
       </section>
 
       <CtaBand
-        title="Facing a matter in this area?"
-        body="Tell us what you’re dealing with and we’ll advise on the best way forward."
+        title={<C id="practiceDetail.cta.title" />}
+        body={<C id="practiceDetail.cta.body" />}
       >
         <Button asChild size="cta">
-          <Link href="/contact">Get in touch</Link>
+          <Link href="/contact">
+            <C id="common.getInTouch" />
+          </Link>
         </Button>
       </CtaBand>
     </>

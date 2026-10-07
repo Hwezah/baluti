@@ -34,6 +34,6 @@ export const clerkEnabled =
 
 if (!clerkEnabled && (publishableKey || secretKey)) {
   console.warn(
-    "[clerk] NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY / CLERK_SECRET_KEY are missing or invalid; auth is disabled."
+    "[clerk] NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY / CLERK_SECRET_KEY are missing or invalid; auth is disabled.",
   );
 }

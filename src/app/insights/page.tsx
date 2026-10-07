@@ -5,6 +5,7 @@ import Link from "next/link";
 import { featuredInsight, insightHref, insights } from "@/content/insights";
 import { InsightsBrowser } from "@/components/insights/insights-browser";
 import { NewsletterForm } from "@/components/insights/newsletter-form";
+import { Copy as C } from "@/components/site/copy";
 import { PageHero } from "@/components/site/page-hero";
 import { Avatar, Eyebrow } from "@/components/site/primitives";
 
@@ -19,11 +20,14 @@ export default function InsightsPage() {
   return (
     <>
       <PageHero
-        crumbs={[{ label: "Home", href: "/" }, { label: "Insights" }]}
-        eyebrow="News & insights"
-        title="Perspectives on the law that affects you"
+        crumbs={[
+          { label: <C id="nav.home" />, href: "/" },
+          { label: <C id="nav.insights" /> },
+        ]}
+        eyebrow={<C id="insights.hero.eyebrow" />}
+        title={<C id="insights.hero.title" />}
         titleClassName="max-w-[20ch]"
-        intro="Analysis, commentary, and firm news from the advocates at Baluti & Co. — written to keep you informed and ahead."
+        intro={<C id="insights.hero.intro" />}
       />
 
       {/* FEATURED */}
@@ -44,22 +48,23 @@ export default function InsightsPage() {
             </div>
             <div className="flex flex-col justify-center p-[clamp(28px,3.5vw,48px)]">
               <span className="mb-5 self-start rounded-full border border-black/20 px-[11px] py-[5px] text-[11.5px] font-semibold tracking-[.12em] text-ink-soft uppercase">
-                Featured · {featured.category}
+                <C id="insights.featured.label" /> · {featured.category}
               </span>
               <h2 className="m-0 mb-4 font-serif text-[clamp(1.5rem,2.6vw,2.1rem)] leading-[1.2] font-bold">
-                {featured.title}
+                <C id={`insight.${featured.slug}.title`} />
               </h2>
               <p className="m-0 mb-[22px] max-w-[52ch] text-[15.5px] text-muted-foreground">
-                The most significant reform of Uganda’s labour law since 2006
-                widens who counts as an employee, reshapes termination, and
-                raises the cost of getting it wrong. Here’s what to act on.
+                <C id="insights.featured.teaser" />
               </p>
               <div className="flex items-center gap-3.5">
                 <Avatar size={40} />
                 <div className="text-[13.5px]">
-                  <div className="font-semibold text-ink">{featured.author}</div>
+                  <div className="font-semibold text-ink">
+                    <C id={`person.${featured.author}.name`} />
+                  </div>
                   <div className="text-ink-faint">
-                    {featured.date} · {featured.readTime}
+                    <C id={`insight.${featured.slug}.date`} /> ·{" "}
+                    <C id={`insight.${featured.slug}.readTime`} />
                   </div>
                 </div>
               </div>
@@ -78,13 +83,14 @@ export default function InsightsPage() {
       {/* NEWSLETTER */}
       <section className="gutter bg-ink py-section-sm text-white">
         <div className="mx-auto max-w-[920px] text-center">
-          <Eyebrow className="mb-4">Stay informed</Eyebrow>
+          <Eyebrow className="mb-4">
+            <C id="insights.newsletter.eyebrow" />
+          </Eyebrow>
           <h2 className="m-0 mb-4 font-serif text-[clamp(1.8rem,3.4vw,2.7rem)] leading-[1.14] font-bold">
-            Get our insights in your inbox
+            <C id="insights.newsletter.title" />
           </h2>
           <p className="m-0 mb-8 text-base text-white/70">
-            Occasional, considered updates on the legal developments that matter
-            to you. No noise.
+            <C id="insights.newsletter.body" />
           </p>
           <NewsletterForm />
         </div>

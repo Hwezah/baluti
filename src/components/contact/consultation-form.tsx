@@ -5,9 +5,8 @@ import { Check, ChevronDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { practiceAreas } from "@/content/practice-areas";
+import { useCopy } from "@/context/copy-context";
 import { Button } from "@/components/ui/button";
-
-const areaNames = practiceAreas.map((a) => a.title).sort();
 
 const field =
   "w-full min-w-0 rounded-[2px] border border-black/12 bg-field p-3.5 text-[15px] leading-[normal] text-ink placeholder:text-ink-helper focus:border-crimson focus:outline-none";
@@ -19,6 +18,10 @@ export function ConsultationForm() {
   const [area, setArea] = useState("");
   const [areaOpen, setAreaOpen] = useState(false);
   const areaRef = useRef<HTMLDivElement>(null);
+  const { t } = useCopy();
+  const areaNames = practiceAreas
+    .map((a) => t(`practice.${a.slug}.title`))
+    .sort((x, y) => x.localeCompare(y));
 
   // Close the practice-area menu on an outside click.
   useEffect(() => {
@@ -39,10 +42,11 @@ export function ConsultationForm() {
         <span className="flex size-16 items-center justify-center rounded-full bg-ink text-white">
           <Check size={32} strokeWidth={2.5} />
         </span>
-        <h3 className="m-0 font-serif text-[1.6rem]">Thank you</h3>
+        <h3 className="m-0 font-serif text-[1.6rem]">
+          {t("form.thanks.title")}
+        </h3>
         <p className="m-0 max-w-[34ch] text-muted-foreground">
-          We’ve received your request. A member of our team will be in touch
-          within one business day.
+          {t("form.thanks.body")}
         </p>
       </div>
     );
@@ -62,8 +66,8 @@ export function ConsultationForm() {
           required
           name="name"
           autoComplete="name"
-          aria-label="Full name"
-          placeholder="Full name"
+          aria-label={t("form.name")}
+          placeholder={t("form.name")}
           className={cn(field, "col-span-full")}
         />
         <input
@@ -71,16 +75,16 @@ export function ConsultationForm() {
           type="email"
           name="email"
           autoComplete="email"
-          aria-label="Email"
-          placeholder="Email"
+          aria-label={t("form.email")}
+          placeholder={t("form.email")}
           className={field}
         />
         <input
           type="tel"
           name="phone"
           autoComplete="tel"
-          aria-label="Phone"
-          placeholder="Phone"
+          aria-label={t("form.phone")}
+          placeholder={t("form.phone")}
           className={field}
         />
       </div>
@@ -95,16 +99,16 @@ export function ConsultationForm() {
           className={cn(
             "flex w-full cursor-pointer items-center justify-between gap-3 rounded-lg border bg-white px-4 py-3.5 text-left text-[15px] leading-[normal] transition-colors duration-200",
             areaOpen ? "border-crimson" : "border-black/15",
-            area ? "text-ink" : "text-[#8a8a8a]"
+            area ? "text-ink" : "text-[#8a8a8a]",
           )}
         >
-          <span>{area || "Select a practice area…"}</span>
+          <span>{area || t("form.area")}</span>
           <ChevronDown
             size={18}
             strokeWidth={2.5}
             className={cn(
               "text-ink transition-transform duration-200",
-              areaOpen && "rotate-180"
+              areaOpen && "rotate-180",
             )}
           />
         </button>
@@ -128,11 +132,15 @@ export function ConsultationForm() {
                   }}
                   className={cn(
                     "flex w-full cursor-pointer items-center justify-between gap-2.5 rounded-md px-3 py-[11px] text-left text-[14.5px] transition-colors hover:bg-black/5",
-                    selected ? "bg-black/6 font-medium text-ink" : "text-[#3a3a3a]"
+                    selected
+                      ? "bg-black/6 font-medium text-ink"
+                      : "text-[#3a3a3a]",
                   )}
                 >
                   <span>{name}</span>
-                  {selected && <Check size={16} strokeWidth={3} className="text-ink" />}
+                  {selected && (
+                    <Check size={16} strokeWidth={3} className="text-ink" />
+                  )}
                 </button>
               );
             })}
@@ -144,15 +152,15 @@ export function ConsultationForm() {
         required
         name="message"
         rows={5}
-        aria-label="How can we help you?"
-        placeholder="How can we help you?"
+        aria-label={t("form.message")}
+        placeholder={t("form.message")}
         className={cn(field, "resize-y")}
       />
       <Button type="submit" size="full" className="cursor-pointer p-4">
-        Book an appointment
+        {t("form.submit")}
       </Button>
       <p className="m-0 text-center text-[12.5px] text-ink-helper">
-        Your enquiry is confidential and protected.
+        {t("form.privacy")}
       </p>
     </form>
   );

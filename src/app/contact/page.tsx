@@ -4,6 +4,7 @@ import { Clock, Mail, MapPin, Phone } from "lucide-react";
 
 import { site } from "@/content/site";
 import { ConsultationForm } from "@/components/contact/consultation-form";
+import { Copy as C, EmailLink, PhoneLink } from "@/components/site/copy";
 import { Faq } from "@/components/contact/faq";
 import { PageHero } from "@/components/site/page-hero";
 import { Eyebrow } from "@/components/site/primitives";
@@ -21,7 +22,7 @@ function ContactItem({
   children,
 }: {
   icon: ReactNode;
-  title: string;
+  title: ReactNode;
   children: ReactNode;
 }) {
   return (
@@ -44,10 +45,13 @@ export default function ContactPage() {
     <>
       <PageHero
         className="py-[clamp(56px,7vw,96px)]"
-        crumbs={[{ label: "Home", href: "/" }, { label: "Contact" }]}
-        eyebrow="Need help?"
-        title="Receive legal help today"
-        intro="Contact us anytime for a consultation. We’re available 24/7 online, and during office hours by phone and in person."
+        crumbs={[
+          { label: <C id="nav.home" />, href: "/" },
+          { label: <C id="nav.contact" /> },
+        ]}
+        eyebrow={<C id="contact.hero.eyebrow" />}
+        title={<C id="contact.hero.title" />}
+        intro={<C id="contact.hero.intro" />}
       />
 
       {/* FORM + DETAILS */}
@@ -55,45 +59,52 @@ export default function ContactPage() {
         <div className="site-container grid grid-cols-[minmax(0,1fr)] items-start gap-[clamp(36px,5vw,64px)] md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
           <div>
             <h2 className="m-0 mb-[18px] font-serif text-[clamp(1.7rem,3vw,2.4rem)] leading-[1.14] font-bold">
-              Book a free consultation
+              <C id="contact.book.title" />
             </h2>
             <p className="m-0 mb-7 max-w-[48ch] text-base text-muted-foreground">
-              Tell us a little about your situation and the right advocate will
-              be in touch within one business day.
+              <C id="contact.book.body" />
             </p>
             <div className="flex flex-col gap-[22px]">
-              <ContactItem icon={<MapPin size={21} />} title="Visit us">
+              <ContactItem
+                icon={<MapPin size={21} />}
+                title={<C id="contact.label.visit" />}
+              >
                 <a href={site.address.mapUrl} className={detail}>
-                  {site.address.line1}
+                  <C id="contact.address.line1" />
                   <br />
-                  {site.address.line2}
+                  <C id="contact.address.line2" />
                 </a>
               </ContactItem>
-              <ContactItem icon={<Phone size={21} />} title="Call us">
-                {site.phones.map((p, i) => (
-                  <span key={p.href}>
+              <ContactItem
+                icon={<Phone size={21} />}
+                title={<C id="contact.label.call" />}
+              >
+                {site.phones.map((_, i) => (
+                  <span key={i}>
                     {i > 0 && <br />}
-                    <a href={p.href} className={detail}>
-                      {p.label}
-                    </a>
+                    <PhoneLink id={`contact.phone.${i}`} className={detail} />
                   </span>
                 ))}
               </ContactItem>
-              <ContactItem icon={<Mail size={21} />} title="Email us">
-                {site.emails.map((e, i) => (
-                  <span key={e.href}>
+              <ContactItem
+                icon={<Mail size={21} />}
+                title={<C id="contact.label.email" />}
+              >
+                {site.emails.map((_, i) => (
+                  <span key={i}>
                     {i > 0 && <br />}
-                    <a href={e.href} className={detail}>
-                      {e.label}
-                    </a>
+                    <EmailLink id={`contact.email.${i}`} className={detail} />
                   </span>
                 ))}
               </ContactItem>
-              <ContactItem icon={<Clock size={21} />} title="Office hours">
+              <ContactItem
+                icon={<Clock size={21} />}
+                title={<C id="contact.label.hours" />}
+              >
                 <div className={detail}>
-                  {site.hours.weekdays}
+                  <C id="contact.hours.weekdays" />
                   <br />
-                  {site.hours.saturday}
+                  <C id="contact.hours.saturday" />
                 </div>
               </ContactItem>
             </div>
@@ -116,8 +127,12 @@ export default function ContactPage() {
           <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,.06)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,.06)_1px,transparent_1px)] bg-size-[44px_44px]" />
           <div className="relative text-center">
             <div className="mx-auto mb-3.5 size-[52px] -rotate-45 rounded-[50%_50%_50%_0] bg-crimson shadow-[0_12px_24px_-8px_rgba(20,20,24,.5)]" />
-            <div className="font-semibold text-ink">Baluti &amp; Co. Advocates</div>
-            <div className="text-sm text-muted-foreground">{site.address.short}</div>
+            <div className="font-semibold text-ink">
+              <C id="contact.map.name" />
+            </div>
+            <div className="text-sm text-muted-foreground">
+              <C id="contact.address.short" />
+            </div>
           </div>
         </a>
       </section>
@@ -126,9 +141,11 @@ export default function ContactPage() {
       <section className="gutter bg-paper py-section">
         <div className="mx-auto max-w-[900px]">
           <div className="mb-11 text-center">
-            <Eyebrow className="mb-3.5">Before you reach out</Eyebrow>
+            <Eyebrow className="mb-3.5">
+              <C id="faq.eyebrow" />
+            </Eyebrow>
             <h2 className="m-0 font-serif text-[clamp(1.8rem,3.2vw,2.6rem)] font-bold">
-              Frequently asked questions
+              <C id="faq.title" />
             </h2>
           </div>
           <Faq />

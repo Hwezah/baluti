@@ -1,3 +1,5 @@
+import type { PersonKey } from "@/content/people";
+
 export type ArticleBlock =
   | { type: "p"; text: string }
   | { type: "h2"; text: string }
@@ -13,8 +15,8 @@ export type Insight = {
   date: string;
   readTime: string;
   img: string;
-  author: string;
-  authorRole: string;
+  /** Key into `people`; name and role come from there. */
+  author: PersonKey;
   lede?: string;
   blocks?: ArticleBlock[];
 };
@@ -40,8 +42,7 @@ export const insights: Insight[] = [
     date: "June 2026",
     readTime: "7 min read",
     img: "https://images.unsplash.com/photo-1505664194779-8beaceb93744?w=1400&q=80",
-    author: "Emmanuel Baluti",
-    authorRole: "Founder & Principal Attorney",
+    author: "emmanuel",
     lede: "The most significant reform of Uganda’s labour law since the Employment Act of 2006 has arrived. It widens who counts as an employee, reshapes how contracts end, and raises the cost of getting it wrong.",
     blocks: [
       {
@@ -89,8 +90,7 @@ export const insights: Insight[] = [
     date: "May 2026",
     readTime: "6 min read",
     img: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&q=80",
-    author: "Emmanuel Baluti",
-    authorRole: "Founder & Principal Attorney",
+    author: "emmanuel",
   },
   {
     slug: "health-facilities-data-protection-officers",
@@ -102,8 +102,7 @@ export const insights: Insight[] = [
     date: "May 2026",
     readTime: "5 min read",
     img: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&q=80",
-    author: "Emmanuel Baluti",
-    authorRole: "Founder & Principal Attorney",
+    author: "emmanuel",
   },
   {
     slug: "new-duties-for-employers",
@@ -115,8 +114,7 @@ export const insights: Insight[] = [
     date: "April 2026",
     readTime: "6 min read",
     img: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80",
-    author: "Emmanuel Baluti",
-    authorRole: "Founder & Principal Attorney",
+    author: "emmanuel",
   },
   {
     slug: "joint-tenancy-vs-tenancy-in-common",
@@ -128,20 +126,19 @@ export const insights: Insight[] = [
     date: "March 2026",
     readTime: "8 min read",
     img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80",
-    author: "Emmanuel Baluti",
-    authorRole: "Founder & Principal Attorney",
+    author: "emmanuel",
   },
   {
     slug: "pdpo-first-criminal-conviction",
     category: "Corporate",
-    title: "PDPO secures its first criminal conviction: the compliance takeaways",
+    title:
+      "PDPO secures its first criminal conviction: the compliance takeaways",
     excerpt:
       "The conviction of a lending director signals a shift from awareness-building to active enforcement.",
     date: "February 2026",
     readTime: "4 min read",
     img: "https://images.unsplash.com/photo-1479142506502-19b3a3b7ff33?w=800&q=80",
-    author: "Emmanuel Baluti",
-    authorRole: "Founder & Principal Attorney",
+    author: "emmanuel",
   },
 ];
 

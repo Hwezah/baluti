@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { navLinks, site } from "@/content/site";
 import { practiceAreaHref, practiceAreas } from "@/content/practice-areas";
 import { useSiteUI } from "@/context/site-ui-context";
+import { Copy as C, EmailLink, PhoneLink } from "@/components/site/copy";
 import { Wordmark } from "@/components/site/primitives";
 
 function isCurrent(pathname: string, href: string) {
@@ -79,27 +80,24 @@ export function SiteHeader() {
           <div className="hidden bg-ink text-[13px] text-white/72 lg:block">
             <div className="gutter flex flex-wrap items-center justify-between gap-5 py-[9px]">
               <span className="tracking-[.02em]">
-                {site.hours.weekdays} · {site.address.short}
+                <C id="contact.hours.weekdays" /> ·{" "}
+                <C id="contact.address.short" />
               </span>
               <div className="flex flex-wrap items-center gap-[22px]">
-                {site.emails.map((e) => (
-                  <a
-                    key={e.href}
-                    href={e.href}
+                {site.emails.map((_, i) => (
+                  <EmailLink
+                    key={i}
+                    id={`contact.email.${i}`}
                     className="text-white/72 hover:text-white"
-                  >
-                    {e.label}
-                  </a>
+                  />
                 ))}
                 <span className="opacity-30">|</span>
-                {site.phones.map((p) => (
-                  <a
-                    key={p.href}
-                    href={p.href}
+                {site.phones.map((_, i) => (
+                  <PhoneLink
+                    key={i}
+                    id={`contact.phone.${i}`}
                     className="text-white/72 hover:text-white"
-                  >
-                    {p.label}
-                  </a>
+                  />
                 ))}
               </div>
             </div>
@@ -133,7 +131,7 @@ export function SiteHeader() {
                           : "text-ink",
                       )}
                     >
-                      {link.label}
+                      <C id={link.copyId} />
                     </Link>
                     <button
                       type="button"
@@ -163,7 +161,7 @@ export function SiteHeader() {
                         : "text-ink",
                     )}
                   >
-                    {link.label}
+                    <C id={link.copyId} />
                   </Link>
                 ),
               )}
@@ -197,7 +195,7 @@ export function SiteHeader() {
           >
             <div className="gutter pt-7 pb-9">
               <div className="mb-4 text-xs font-semibold tracking-[.2em] text-muted-foreground uppercase">
-                Our Practice Areas
+                <C id="nav.areasHeading" />
               </div>
               <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-x-[30px] gap-y-0.5">
                 {practiceAreas.map((area) => (
@@ -207,7 +205,7 @@ export function SiteHeader() {
                     onClick={() => setAreasOpen(false)}
                     className="block border-b border-black/7 py-2.5 text-[15px] text-ink-body hover:text-crimson"
                   >
-                    {area.title}
+                    <C id={`practice.${area.slug}.title`} />
                   </Link>
                 ))}
               </div>
@@ -291,7 +289,7 @@ function MobileMenu({
               isCurrent(pathname, link.href) ? "text-crimson" : "text-white/92",
             )}
           >
-            {link.label}
+            <C id={link.copyId} />
           </Link>
         ))}
       </nav>
@@ -301,17 +299,22 @@ function MobileMenu({
           onClick={onClose}
           className="flex items-center justify-center gap-2 rounded-[2px] bg-white p-[15px] text-center text-[15px] font-semibold text-ink hover:bg-crimson hover:text-white"
         >
-          Free consultation
+          <C id="nav.menuCta" />
         </Link>
         <div className="mt-[22px] flex flex-col items-center gap-2.5 text-center text-sm">
-          {[...site.phones, ...site.emails].map((c) => (
-            <a
-              key={c.href}
-              href={c.href}
+          {site.phones.map((_, i) => (
+            <PhoneLink
+              key={`p${i}`}
+              id={`contact.phone.${i}`}
               className="whitespace-nowrap text-white/70 hover:text-crimson"
-            >
-              {c.label}
-            </a>
+            />
+          ))}
+          {site.emails.map((_, i) => (
+            <EmailLink
+              key={`e${i}`}
+              id={`contact.email.${i}`}
+              className="whitespace-nowrap text-white/70 hover:text-crimson"
+            />
           ))}
         </div>
       </div>
@@ -337,9 +340,11 @@ function ContactPanel({ onClose }: { onClose: () => void }) {
       >
         <X size={40} strokeWidth={1.4} />
       </button>
-      <div className="eyebrow mb-3.5">Need help?</div>
+      <div className="eyebrow mb-3.5">
+        <C id="panel.eyebrow" />
+      </div>
       <h2 className="m-0 mb-[30px] font-serif text-[clamp(2rem,4vw,2.6rem)] leading-[1.08] font-bold">
-        Receive legal help today
+        <C id="panel.title" />
       </h2>
       <div className="mb-[34px] flex flex-col gap-[22px]">
         <div className="grid grid-cols-[40px_1fr] items-center gap-3.5">
@@ -347,9 +352,9 @@ function ContactPanel({ onClose }: { onClose: () => void }) {
             <MapPin size={19} />
           </span>
           <span className="text-[14.5px] text-white/80">
-            {site.address.line1}
+            <C id="contact.address.line1" />
             <br />
-            {site.address.line2}
+            <C id="contact.address.line2" />
           </span>
         </div>
         <div className="grid grid-cols-[40px_1fr] items-center gap-3.5">
@@ -357,10 +362,8 @@ function ContactPanel({ onClose }: { onClose: () => void }) {
             <Phone size={19} />
           </span>
           <div className="flex flex-col gap-[3px]">
-            {site.phones.map((p) => (
-              <a key={p.href} href={p.href} className={link}>
-                {p.label}
-              </a>
+            {site.phones.map((_, i) => (
+              <PhoneLink key={i} id={`contact.phone.${i}`} className={link} />
             ))}
           </div>
         </div>
@@ -369,10 +372,8 @@ function ContactPanel({ onClose }: { onClose: () => void }) {
             <Mail size={19} />
           </span>
           <span className="flex flex-col">
-            {site.emails.map((e) => (
-              <a key={e.href} href={e.href} className={link}>
-                {e.label}
-              </a>
+            {site.emails.map((_, i) => (
+              <EmailLink key={i} id={`contact.email.${i}`} className={link} />
             ))}
           </span>
         </div>
@@ -381,7 +382,7 @@ function ContactPanel({ onClose }: { onClose: () => void }) {
             <Clock size={19} />
           </span>
           <span className="text-[14.5px] text-white/80">
-            {site.hours.compact}
+            <C id="contact.hours.compact" />
           </span>
         </div>
       </div>
@@ -390,7 +391,7 @@ function ContactPanel({ onClose }: { onClose: () => void }) {
         onClick={onClose}
         className="flex items-center justify-center gap-2.5 rounded-[2px] bg-white p-4 text-[15px] font-semibold text-ink hover:bg-crimson hover:text-white"
       >
-        Free consultation <ArrowUpRight size={17} />
+        <C id="panel.cta" /> <ArrowUpRight size={17} />
       </Link>
     </Overlay>
   );

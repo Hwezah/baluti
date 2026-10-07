@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
+import { CopyProvider } from "@/context/copy-context";
 import { SiteUIProvider } from "@/context/site-ui-context";
 import { clerkEnabled } from "@/lib/clerk";
 import { siteUrl } from "@/lib/site-url";
@@ -34,13 +35,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   const page = (
     <html lang="en" className={`${figtree.variable} ${robotoSerif.variable}`}>
       <body>
-        <SiteUIProvider>
-          <div className="overflow-x-clip">
-            <SiteHeader />
-            <main>{children}</main>
-            <SiteFooter />
-          </div>
-        </SiteUIProvider>
+        <CopyProvider>
+          <SiteUIProvider>
+            <div className="overflow-x-clip">
+              <SiteHeader />
+              <main>{children}</main>
+              <SiteFooter />
+            </div>
+          </SiteUIProvider>
+        </CopyProvider>
       </body>
     </html>
   );

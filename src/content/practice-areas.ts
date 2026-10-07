@@ -176,7 +176,8 @@ export const practiceAreas: PracticeArea[] = [
     slug: "family",
     group: "People & Workplace",
     title: "Family",
-    summary: "Sensitive guidance through separation, custody, and family matters.",
+    summary:
+      "Sensitive guidance through separation, custody, and family matters.",
     intro:
       "Family matters are among the most personal a person can face. We offer sensitive, discreet guidance through separation, custody, succession, and the decisions that shape family life.",
     overview: [
@@ -253,7 +254,10 @@ export function practiceAreaHref(slug: string) {
 
 /** Groupings shown on the Practice Areas index page. */
 export const practiceGroups = [
-  { name: "Corporate & Commercial", slugs: ["business", "banking", "ma", "tax"] },
+  {
+    name: "Corporate & Commercial",
+    slugs: ["business", "banking", "ma", "tax"],
+  },
   { name: "Disputes & Litigation", slugs: ["litigation"] },
   { name: "People & Workplace", slugs: ["labour", "family"] },
   { name: "Property & Intellectual Property", slugs: ["property", "ip"] },

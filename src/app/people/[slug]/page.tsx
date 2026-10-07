@@ -2,10 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { site } from "@/content/site";
-import { attorneys, bioOtherPeople, getAttorney, personHref } from "@/content/people";
-import { getPracticeArea, practiceAreaHref } from "@/content/practice-areas";
+import {
+  attorneyKeys,
+  attorneys,
+  bioOtherPeople,
+  getAttorney,
+  personHref,
+} from "@/content/people";
+import { practiceAreaHref } from "@/content/practice-areas";
 import { Button } from "@/components/ui/button";
+import { Copy as C, EmailLink, PhoneLink } from "@/components/site/copy";
 import { MaybeLink } from "@/components/site/maybe-link";
 import {
   Breadcrumbs,
@@ -25,15 +31,22 @@ export async function generateMetadata({
 }: PageProps<"/people/[slug]">): Promise<Metadata> {
   const attorney = getAttorney((await params).slug);
   return attorney
-    ? { title: `${attorney.name} — ${attorney.role}`, description: attorney.tagline }
+    ? {
+        title: `${attorney.name} — ${attorney.role}`,
+        description: attorney.tagline,
+      }
     : {};
 }
 
-export default async function AttorneyPage({ params }: PageProps<"/people/[slug]">) {
-  const attorney = getAttorney((await params).slug);
+export default async function AttorneyPage({
+  params,
+}: PageProps<"/people/[slug]">) {
+  const { slug } = await params;
+  const attorney = getAttorney(slug);
   if (!attorney) notFound();
 
-  const office = site.phones[0];
+  const key = attorneyKeys[slug];
+  const a = (field: string) => `attorney.${key}.${field}`;
 
   return (
     <>
@@ -44,9 +57,9 @@ export default async function AttorneyPage({ params }: PageProps<"/people/[slug]
           <Breadcrumbs
             className="mb-7"
             items={[
-              { label: "Home", href: "/" },
-              { label: "People", href: "/people" },
-              { label: attorney.name },
+              { label: <C id="nav.home" />, href: "/" },
+              { label: <C id="nav.people" />, href: "/people" },
+              { label: <C id={`person.${key}.name`} /> },
             ]}
           />
           <div className="grid grid-cols-1 items-center gap-[clamp(28px,4vw,56px)] md:grid-cols-[0.5fr_1fr]">
@@ -58,13 +71,13 @@ export default async function AttorneyPage({ params }: PageProps<"/people/[slug]
             />
             <div>
               <Eyebrow rule className="mb-[18px]">
-                {attorney.role}
+                <C id={`person.${key}.role`} />
               </Eyebrow>
               <h1 className="m-0 mb-[18px] font-serif text-[clamp(2.2rem,4.4vw,3.5rem)] leading-[1.05] font-bold">
-                {attorney.name}
+                <C id={`person.${key}.name`} />
               </h1>
               <p className="m-0 mb-7 max-w-[52ch] text-[clamp(1.02rem,1.4vw,1.2rem)] text-white/74">
-                {attorney.tagline}
+                <C id={a("tagline")} />
               </p>
               <div className="flex flex-nowrap gap-3">
                 <Button
@@ -72,14 +85,16 @@ export default async function AttorneyPage({ params }: PageProps<"/people/[slug]
                   variant="light"
                   className="min-w-0 flex-[1_1_0] truncate px-[clamp(12px,3.5vw,26px)] py-[13px] text-[14.5px]"
                 >
-                  <a href={`mailto:${attorney.email}`}>Email {attorney.first}</a>
+                  <EmailLink id={a("email")}>
+                    <C id="attorney.label.email" /> <C id={a("first")} />
+                  </EmailLink>
                 </Button>
                 <Button
                   asChild
                   variant="ghostOnDark"
                   className="flex-none px-[clamp(12px,3.5vw,26px)] py-[13px] text-[14.5px]"
                 >
-                  <a href={office.href}>{office.label}</a>
+                  <PhoneLink id="contact.phone.0" />
                 </Button>
               </div>
             </div>
@@ -92,27 +107,29 @@ export default async function AttorneyPage({ params }: PageProps<"/people/[slug]
         <div className="site-container grid grid-cols-1 items-start gap-[clamp(36px,5vw,64px)] md:grid-cols-[1.7fr_1fr]">
           <div>
             <h2 className="m-0 mb-[18px] font-serif text-[clamp(1.6rem,2.8vw,2.2rem)] font-bold">
-              About {attorney.first}
+              <C id="attorney.label.about" /> <C id={a("first")} />
             </h2>
-            {attorney.about.map((para) => (
-              <p key={para.slice(0, 24)} className="m-0 mb-[18px] text-[16.5px] text-ink-soft">
-                {para}
+            {attorney.about.map((_, i) => (
+              <p key={i} className="m-0 mb-[18px] text-[16.5px] text-ink-soft">
+                <C id={a(`about.${i}`)} />
               </p>
             ))}
 
             <h3 className="m-0 mt-[38px] mb-5 font-serif text-[1.4rem] font-semibold">
-              Representative work
+              <C id="attorney.label.work" />
             </h3>
             <ul className="m-0 flex list-none flex-col border-t border-black/14 p-0">
-              {attorney.matters.map((matter) => (
+              {attorney.matters.map((_, i) => (
                 <li
-                  key={matter}
+                  key={i}
                   className="grid grid-cols-[24px_1fr] gap-3.5 border-b border-black/14 py-[18px]"
                 >
                   <span aria-hidden="true" className="mt-0.5 text-ink-faint">
                     ◈
                   </span>
-                  <span className="text-[15.5px] text-ink-body">{matter}</span>
+                  <span className="text-[15.5px] text-ink-body">
+                    <C id={a(`matters.${i}`)} />
+                  </span>
                 </li>
               ))}
             </ul>
@@ -121,36 +138,44 @@ export default async function AttorneyPage({ params }: PageProps<"/people/[slug]
           <StickyColumn as="aside" className="flex flex-col gap-6">
             <div className="border border-black/10 bg-white p-7">
               <h3 className="m-0 mb-4 font-serif text-[1.15rem] font-semibold">
-                Practice areas
+                <C id="attorney.label.areas" />
               </h3>
               <div className="flex flex-wrap gap-2">
-                {attorney.areas.map((slug) => (
+                {attorney.areas.map((area) => (
                   <Link
-                    key={slug}
-                    href={practiceAreaHref(slug)}
+                    key={area}
+                    href={practiceAreaHref(area)}
                     className="rounded-full border border-black/18 px-3.5 py-[7px] text-[13px] text-ink-body hover:border-crimson hover:text-crimson"
                   >
-                    {getPracticeArea(slug)?.title}
+                    <C id={`practice.${area}.title`} />
                   </Link>
                 ))}
               </div>
             </div>
             <div className="border border-black/10 bg-sand p-7">
               <h3 className="m-0 mb-4 font-serif text-[1.15rem] font-semibold">
-                Credentials
+                <C id="attorney.label.credentials" />
               </h3>
               <div className="flex flex-col gap-3.5">
-                {attorney.credentials.map((c) => (
-                  <div key={c.title}>
-                    <div className="text-[14.5px] font-semibold">{c.title}</div>
-                    <div className="text-[13.5px] text-muted-foreground">{c.detail}</div>
+                {attorney.credentials.map((_, i) => (
+                  <div key={i}>
+                    <div className="text-[14.5px] font-semibold">
+                      <C id={a(`credentials.${i}.title`)} />
+                    </div>
+                    <div className="text-[13.5px] text-muted-foreground">
+                      <C id={a(`credentials.${i}.detail`)} />
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
             <div className="bg-ink p-7 text-white">
-              <h3 className="m-0 mb-2 font-serif text-[1.15rem] font-semibold">Languages</h3>
-              <p className="m-0 text-[14.5px] text-white/72">{attorney.languages}</p>
+              <h3 className="m-0 mb-2 font-serif text-[1.15rem] font-semibold">
+                <C id="attorney.label.languages" />
+              </h3>
+              <p className="m-0 text-[14.5px] text-white/72">
+                <C id={a("languages")} />
+              </p>
             </div>
           </StickyColumn>
         </div>
@@ -161,23 +186,29 @@ export default async function AttorneyPage({ params }: PageProps<"/people/[slug]
         <div className="site-container">
           <div className="mb-10 flex flex-wrap items-end justify-between gap-5">
             <h2 className="m-0 font-serif text-[clamp(1.6rem,2.8vw,2.2rem)] font-bold">
-              More from our team
+              <C id="attorney.label.more" />
             </h2>
-            <UnderlineLink href="/people">View all people</UnderlineLink>
+            <UnderlineLink href="/people">
+              <C id="common.viewAllPeople" />
+            </UnderlineLink>
           </div>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-[26px]">
-            {bioOtherPeople.map((person, i) => (
-              <MaybeLink key={i} href={personHref(person)} className="text-ink">
+            {bioOtherPeople.map((other) => (
+              <MaybeLink
+                key={other}
+                href={personHref(other)}
+                className="text-ink"
+              >
                 <Silhouette
                   className="mb-4 h-[240px]"
                   head={{ top: "24%", width: "30%" }}
                   body={{ bottom: "-16%", width: "58%" }}
                 />
                 <h3 className="m-0 mb-[3px] font-serif text-[1.2rem] font-semibold">
-                  {person.name}
+                  <C id={`person.${other}.name`} />
                 </h3>
                 <div className="text-[12.5px] font-semibold tracking-[.06em] text-muted-foreground uppercase">
-                  {person.role}
+                  <C id={`person.${other}.role`} />
                 </div>
               </MaybeLink>
             ))}

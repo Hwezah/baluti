@@ -31,6 +31,12 @@ All optional; see `.env.example`.
 
 Content (practice areas, people, articles, contact details) lives in `src/content/`. The original design handoff is in `design/`.
 
+## Admin panel (editing the site text)
+
+The coloured **Admin panel** pill in the footer opens `/admin`, which lists every piece of text on the site, grouped into sections that explain what each part is for and what it should cover. Under each text there is a box to type a replacement and a **Save to site** button; the site updates immediately. Every field keeps its history, so the client can **revert to the demo text** or restore any earlier version.
+
+There is no database: edits are saved in the browser that made them (localStorage). Other people and devices still see the demo text, and clearing browser data removes the edits — the admin page says this up front. The client can **Download changes** (a `.json` file) or **Copy changes** (a readable list) and send them to you; a downloaded file can be loaded back with **Restore from file**. To make wording permanent, copy it into `src/content/copy.ts` (or the data files it reads from).
+
 ## Still to do
 
 - Replace the Unsplash placeholder photos and grey portrait placeholders with firm photography.

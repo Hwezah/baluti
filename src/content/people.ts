@@ -56,54 +56,73 @@ export const emmanuel: Attorney = {
   languages: "English, Luganda, Swahili",
 };
 
+/**
+ * Everyone shown on the site, by key. Pages list people by key so a name
+ * edited once (e.g. replacing a "Name" placeholder) updates everywhere.
+ */
+export const people = {
+  emmanuel,
+  partner1: {
+    name: "Name",
+    role: "Partner",
+    bio: "Heads corporate and commercial matters, advising businesses through growth and transactions.",
+  },
+  partner2: {
+    name: "Name",
+    role: "Partner",
+    bio: "Specialises in banking, finance, and regulatory work for institutions across the region.",
+  },
+  senior1: {
+    name: "Name",
+    role: "Senior Associate",
+    area: "Litigation & Disputes",
+  },
+  associate1: { name: "Name", role: "Associate", area: "Labour & Employment" },
+  associate2: {
+    name: "Name",
+    role: "Associate",
+    area: "Property & Development",
+  },
+  associate3: { name: "Name", role: "Associate", area: "Family Law" },
+} satisfies Record<string, Person>;
+
+export type PersonKey = keyof typeof people;
+
+export const personKeys = Object.keys(people) as PersonKey[];
+
 export const attorneys: Attorney[] = [emmanuel];
+
+/** Attorney bio pages, by slug, with the key used for their copy. */
+export const attorneyKeys: Record<string, PersonKey> = {
+  [emmanuel.slug]: "emmanuel",
+};
 
 export function getAttorney(slug: string) {
   return attorneys.find((a) => a.slug === slug);
 }
 
-export function personHref(person: Person) {
+export function personHref(key: PersonKey) {
+  const person: Person = people[key];
   return person.slug ? `/people/${person.slug}` : undefined;
 }
 
-// Placeholder entries ("Name") are waiting for real names and titles.
-export const leaders: Person[] = [
-  emmanuel,
-  {
-    name: "Name",
-    role: "Partner",
-    bio: "Heads corporate and commercial matters, advising businesses through growth and transactions.",
-  },
-  {
-    name: "Name",
-    role: "Partner",
-    bio: "Specialises in banking, finance, and regulatory work for institutions across the region.",
-  },
+export const leaders: PersonKey[] = ["emmanuel", "partner1", "partner2"];
+export const team: PersonKey[] = [
+  "senior1",
+  "associate1",
+  "associate2",
+  "associate3",
 ];
-
-export const team: Person[] = [
-  { name: "Name", role: "Senior Associate", area: "Litigation & Disputes" },
-  { name: "Name", role: "Associate", area: "Labour & Employment" },
-  { name: "Name", role: "Associate", area: "Property & Development" },
-  { name: "Name", role: "Associate", area: "Family Law" },
+export const homeAttorneys: PersonKey[] = [
+  "emmanuel",
+  "senior1",
+  "associate1",
+  "associate2",
 ];
-
-export const homeAttorneys: Person[] = [
-  emmanuel,
-  { name: "Name", role: "Senior Associate" },
-  { name: "Name", role: "Associate" },
-  { name: "Name", role: "Associate" },
+export const bioOtherPeople: PersonKey[] = [
+  "partner1",
+  "partner2",
+  "senior1",
+  "associate1",
 ];
-
-export const bioOtherPeople: Person[] = [
-  { name: "Name", role: "Partner" },
-  { name: "Name", role: "Partner" },
-  { name: "Name", role: "Senior Associate" },
-  { name: "Name", role: "Associate" },
-];
-
-export const practiceLeads: Person[] = [
-  emmanuel,
-  { name: "Name", role: "Senior Associate" },
-  { name: "Name", role: "Associate" },
-];
+export const practiceLeads: PersonKey[] = ["emmanuel", "senior1", "associate1"];

@@ -37,7 +37,7 @@ export function Eyebrow({
   );
 }
 
-export type Crumb = { label: string; href?: string };
+export type Crumb = { label: ReactNode; href?: string };
 
 export function Breadcrumbs({
   items,
@@ -53,7 +53,7 @@ export function Breadcrumbs({
       className={cn("text-[13px]", muted, className)}
     >
       {items.map((item, i) => (
-        <span key={item.label}>
+        <span key={i}>
           {i > 0 && <>&nbsp;/&nbsp; </>}
           {item.href ? (
             <Link href={item.href} className={muted}>
@@ -186,9 +186,9 @@ export function SectionHeader({
   className,
   titleClassName,
 }: {
-  eyebrow?: string;
+  eyebrow?: ReactNode;
   title: ReactNode;
-  link?: { label: string; href: string };
+  link?: { label: ReactNode; href: string };
   onDark?: boolean;
   className?: string;
   titleClassName?: string;

@@ -1,16 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-const WORDS = [
-  "future",
-  "business",
-  "legacy",
-  "property",
-  "reputation",
-  "family",
-  "investments",
-];
+import { useCopy } from "@/context/copy-context";
 
 const TYPE_MS = 95;
 const HOLD_MS = 2200;
@@ -22,12 +14,27 @@ const GAP_MS = 380;
  * The cycle restarts whenever the hero scrolls back into view.
  */
 export function RotatingWord() {
-  const [text, setText] = useState(WORDS[0]);
+  const wordList = useCopy().t("home.hero.words");
+  const words = useMemo(
+    () =>
+      wordList
+        .split(",")
+        .map((w) => w.trim())
+        .filter(Boolean),
+    [wordList],
+  );
+  const [typed, setTyped] = useState<string | null>(null);
+  // Before the animation starts (and with reduced motion) show the first word.
+  const text = typed ?? words[0] ?? "";
   const ref = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (
+      !el ||
+      !words.length ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
       return;
     }
 
@@ -36,16 +43,16 @@ export function RotatingWord() {
     let wasOut = true;
 
     const type = (i: number) => {
-      const word = WORDS[index % WORDS.length];
-      setText(word.slice(0, i));
+      const word = words[index % words.length];
+      setTyped(word.slice(0, i));
       timer =
         i < word.length
           ? setTimeout(() => type(i + 1), TYPE_MS)
           : setTimeout(() => erase(word.length), HOLD_MS);
     };
     const erase = (i: number) => {
-      const word = WORDS[index % WORDS.length];
-      setText(word.slice(0, i));
+      const word = words[index % words.length];
+      setTyped(word.slice(0, i));
       if (i > 0) {
         timer = setTimeout(() => erase(i - 1), ERASE_MS);
       } else {
@@ -64,10 +71,10 @@ export function RotatingWord() {
           }
         } else {
           wasOut = true;
-          setText("");
+          setTyped("");
         }
       },
-      { threshold: 0.6 }
+      { threshold: 0.6 },
     );
     observer.observe(el);
 
@@ -75,11 +82,11 @@ export function RotatingWord() {
       clearTimeout(timer);
       observer.disconnect();
     };
-  }, []);
+  }, [words]);
 
   return (
     <span className="whitespace-nowrap text-crimson italic">
-      <span className="sr-only">future</span>
+      <span className="sr-only">{words[0]}</span>
       <span ref={ref} aria-hidden="true">
         {text}
       </span>

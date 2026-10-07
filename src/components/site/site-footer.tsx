@@ -1,17 +1,21 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, PenLine } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { site } from "@/content/site";
-import { footerPracticeAreas, practiceAreaHref } from "@/content/practice-areas";
+import {
+  footerPracticeAreas,
+  practiceAreaHref,
+} from "@/content/practice-areas";
+import { Copy as C, EmailLink, PhoneLink } from "@/components/site/copy";
 import { Wordmark } from "@/components/site/primitives";
 
 const companyLinks = [
-  { label: "Home", href: "/" },
-  { label: "About Us", href: "/about" },
-  { label: "Our People", href: "/people" },
-  { label: "Insights", href: "/insights" },
-  { label: "Contact", href: "/contact" },
+  { copyId: "footer.link.home", href: "/" },
+  { copyId: "footer.link.about", href: "/about" },
+  { copyId: "footer.link.people", href: "/people" },
+  { copyId: "footer.link.insights", href: "/insights" },
+  { copyId: "footer.link.contact", href: "/contact" },
 ];
 
 // Placeholder profile links until the firm's accounts are confirmed.
@@ -37,13 +41,12 @@ export function SiteFooter() {
             <Wordmark subColor="text-white" />
           </div>
           <p className="m-0 mb-5 text-[14.5px]">
-            Applying law to facts. Caring, dedicated representation for
-            individuals and businesses across Uganda and the region.
+            <C id="footer.blurb" />
           </p>
           <div className="m-0 mb-[22px] text-sm leading-[1.7] text-white/50">
-            {site.address.short}
+            <C id="contact.address.short" />
             <br />
-            {site.hours.compact}
+            <C id="contact.hours.compact" />
           </div>
           <div className="flex justify-center gap-3 min-[800px]:justify-start">
             {socials.map((s) => (
@@ -60,40 +63,59 @@ export function SiteFooter() {
         </div>
 
         <div className="hidden min-[800px]:block">
-          <h4 className={heading}>Company</h4>
+          <h4 className={heading}>
+            <C id="footer.companyHeading" />
+          </h4>
           <div className={list}>
             {companyLinks.map((l) => (
               <Link key={l.href} href={l.href} className={link}>
-                {l.label}
+                <C id={l.copyId} />
               </Link>
             ))}
           </div>
         </div>
 
         <div>
-          <h4 className={heading}>Practice Areas</h4>
+          <h4 className={heading}>
+            <C id="footer.areasHeading" />
+          </h4>
           <div className={list}>
             {footerPracticeAreas.map((a) => (
-              <Link key={a.slug} href={practiceAreaHref(a.slug)} className={link}>
-                {a.label}
+              <Link
+                key={a.slug}
+                href={practiceAreaHref(a.slug)}
+                className={link}
+              >
+                <C id={`footer.area.${a.slug}`} />
               </Link>
             ))}
             <Link
               href="/practice-areas"
               className="mt-1 inline-flex items-center gap-1.5 font-semibold text-white hover:text-crimson"
             >
-              View all areas <ArrowRight size={16} />
+              <C id="footer.viewAll" /> <ArrowRight size={16} />
             </Link>
           </div>
         </div>
 
         <div>
-          <h4 className={heading}>Get in touch</h4>
+          <h4 className={heading}>
+            <C id="footer.contactHeading" />
+          </h4>
           <div className={list}>
-            {[...site.phones, ...site.emails].map((c) => (
-              <a key={c.href} href={c.href} className={link}>
-                {c.label}
-              </a>
+            {site.phones.map((_, i) => (
+              <PhoneLink
+                key={`p${i}`}
+                id={`contact.phone.${i}`}
+                className={link}
+              />
+            ))}
+            {site.emails.map((_, i) => (
+              <EmailLink
+                key={`e${i}`}
+                id={`contact.email.${i}`}
+                className={link}
+              />
             ))}
             <BookButton className="mt-2 hidden self-start px-[22px] py-3 text-sm min-[800px]:inline-block" />
           </div>
@@ -104,15 +126,20 @@ export function SiteFooter() {
 
       <div className="site-container flex flex-col items-center justify-center gap-3 pt-6 pb-[30px] text-center text-[13px] min-[800px]:flex-row min-[800px]:justify-between min-[800px]:text-left">
         <span>
-          © Copyright {new Date().getFullYear()} Baluti &amp; Co. Advocates. All
-          Rights Reserved.
+          <C id="footer.copyright" />
         </span>
-        <div className="flex gap-[22px]">
-          <Link href="/" className={link}>
-            Terms of Service
+        <div className="flex flex-wrap items-center justify-center gap-[22px]">
+          <Link
+            href="/admin"
+            className="inline-flex items-center gap-1.5 rounded-full bg-crimson px-4 py-[7px] text-[13px] font-semibold text-white shadow-[0_6px_18px_-8px_rgba(200,16,46,.9)] hover:bg-crimson-light hover:text-white"
+          >
+            <PenLine size={14} aria-hidden="true" /> Admin panel
           </Link>
           <Link href="/" className={link}>
-            Privacy Policy
+            <C id="footer.terms" />
+          </Link>
+          <Link href="/" className={link}>
+            <C id="footer.privacy" />
           </Link>
         </div>
       </div>
@@ -126,10 +153,10 @@ function BookButton({ className }: { className: string }) {
       href="/contact"
       className={cn(
         "rounded-[2px] bg-white font-semibold text-ink hover:bg-crimson hover:text-white",
-        className
+        className,
       )}
     >
-      Book an appointment
+      <C id="footer.book" />
     </Link>
   );
 }
