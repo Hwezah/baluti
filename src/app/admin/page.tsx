@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { AdminPanel } from "@/components/admin/admin-panel";
+import { aiSearchEnabled } from "@/lib/ai-search";
 import {
   missingSettings,
   passcodeRequired,
@@ -18,6 +19,7 @@ export default function AdminPage() {
       mode={publishingMode()}
       passcodeRequired={passcodeRequired()}
       missing={missingSettings()}
+      aiSearch={aiSearchEnabled()}
     />
   );
 }

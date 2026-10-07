@@ -13,8 +13,11 @@ import {
   Info,
   LockKeyhole,
   RotateCcw,
+  Undo2,
   Search,
+  Sparkles,
   TriangleAlert,
+  X,
 } from "lucide-react";
 
 import {
@@ -27,6 +30,12 @@ import {
 import { cn } from "@/lib/utils";
 import { publishedValue } from "@/context/copy-context";
 import { pendingEdits } from "@/lib/copy-storage";
+import {
+  compileQuery,
+  highlightParts,
+  scoreZones,
+  type CompiledQuery,
+} from "@/lib/smart-search";
 import {
   publishedText,
   type SiteTextFile,
@@ -50,6 +59,29 @@ function formatDate(iso: string) {
 }
 
 const sectionAnchor = (id: string) => `section-${id}`;
+
+type AiMatch = { id: string; reason: string };
+type AiResults = { question: string; matches: AiMatch[] };
+
+/** Matching words in `text` are marked. */
+function Highlight({
+  text,
+  query,
+}: {
+  text: string;
+  query: CompiledQuery | null;
+}) {
+  if (!query) return text;
+  return highlightParts(text, query).map((part, i) =>
+    part.hit ? (
+      <mark key={i} className="rounded-[2px] bg-[#fde68a] px-0.5 text-ink">
+        {part.text}
+      </mark>
+    ) : (
+      part.text
+    ),
+  );
+}
 
 /** Text the latest saved version gives an id. */
 const savedValue = (file: SiteTextFile, id: string) =>
@@ -89,10 +121,12 @@ export function AdminPanel({
   mode,
   passcodeRequired,
   missing,
+  aiSearch,
 }: {
   mode: Mode;
   passcodeRequired: boolean;
   missing: string[];
+  aiSearch: boolean;
 }) {
   const [passcode, setPasscode] = useState<string | null>(null);
   const [unlocked, setUnlocked] = useState(!passcodeRequired && mode !== "off");
@@ -101,6 +135,9 @@ export function AdminPanel({
   const [query, setQuery] = useState("");
   const [onlyChanged, setOnlyChanged] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [ai, setAi] = useState<AiResults | null>(null);
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
 
   const canSave = mode !== "off" && unlocked;
 
@@ -175,24 +212,115 @@ export function AdminPanel({
     [file],
   );
 
+  const compiled = useMemo(
+    () => (ai ? null : compileQuery(query)),
+    [query, ai],
+  );
+
+  const reasons = useMemo(
+    () => new Map(ai?.matches.map((m) => [m.id, m.reason])),
+    [ai],
+  );
+
   const visibleSections = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return copySections
-      .map((section) => {
-        const sectionHit =
-          q && `${section.group} ${section.title}`.toLowerCase().includes(q);
-        const fields = section.fields.filter((field) => {
-          if (onlyChanged && !changed.has(field.id)) return false;
-          if (!q || sectionHit) return true;
-          const now = savedValue(file, field.id);
-          return `${field.label} ${field.text} ${now}`
-            .toLowerCase()
-            .includes(q);
-        });
-        return { ...section, fields };
+    const allowed = (id: string) => !onlyChanged || changed.has(id);
+
+    // "Ask in your own words": Claude's picks, best first.
+    if (ai) {
+      const rank = new Map(ai.matches.map((m, i) => [m.id, i]));
+      return copySections
+        .map((section) => {
+          const fields = section.fields
+            .filter((f) => rank.has(f.id) && allowed(f.id))
+            .sort((a, b) => rank.get(a.id)! - rank.get(b.id)!);
+          return {
+            section: { ...section, fields },
+            best: rank.get(fields[0]?.id) ?? 0,
+          };
+        })
+        .filter(({ section }) => section.fields.length > 0)
+        .sort((a, b) => a.best - b.best)
+        .map(({ section }) => section);
+    }
+
+    if (!compiled) {
+      return copySections
+        .map((section) => ({
+          ...section,
+          fields: section.fields.filter((f) => allowed(f.id)),
+        }))
+        .filter((s) => s.fields.length > 0);
+    }
+
+    // Smart search: score every text, keep the good ones, best first.
+    const scored = copySections.map((section) => {
+      const context = `${section.group} ${section.title}`;
+      const about = `${section.purpose} ${section.covers}`;
+      const fields = section.fields
+        .filter((f) => allowed(f.id))
+        .map((field) => ({
+          field,
+          score: scoreZones(compiled, [
+            { text: field.label, weight: 3 },
+            { text: savedValue(file, field.id), weight: 2.5 },
+            { text: field.text, weight: 1.5 },
+            { text: context, weight: 1.5 },
+            { text: about, weight: 0.6 },
+          ]),
+        }));
+      return { section, fields };
+    });
+    const top = Math.max(
+      0,
+      ...scored.flatMap((s) => s.fields.map((f) => f.score)),
+    );
+    // Drop weak matches when there are strong ones.
+    const cutoff = top * 0.4;
+    return scored
+      .map(({ section, fields }) => {
+        const kept = fields
+          .filter((f) => f.score > 0 && f.score >= cutoff)
+          .sort((a, b) => b.score - a.score);
+        return {
+          section: { ...section, fields: kept.map((f) => f.field) },
+          best: kept[0]?.score ?? 0,
+        };
       })
-      .filter((s) => s.fields.length > 0);
-  }, [query, onlyChanged, changed, file]);
+      .filter(({ section }) => section.fields.length > 0)
+      .sort((a, b) => b.best - a.best)
+      .map(({ section }) => section);
+  }, [compiled, ai, onlyChanged, changed, file]);
+
+  const matchCount = visibleSections.reduce((n, s) => n + s.fields.length, 0);
+
+  const askAi = async () => {
+    const question = query.trim();
+    if (!question) return;
+    setAiBusy(true);
+    setAiError(null);
+    try {
+      const res = await fetch("/api/site-text/search", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-passcode": passcode ?? "",
+        },
+        body: JSON.stringify({ question }),
+      });
+      const body = (await res.json().catch(() => null)) as {
+        matches?: AiMatch[];
+        error?: string;
+      } | null;
+      if (!res.ok || !body?.matches) {
+        setAiError(body?.error ?? "The AI search isn’t available right now.");
+      } else {
+        setAi({ question, matches: body.matches });
+      }
+    } catch {
+      setAiError("The AI search isn’t available right now.");
+    }
+    setAiBusy(false);
+  };
 
   const flash = (message: string) => {
     setNotice(message);
@@ -219,6 +347,28 @@ export function AdminPanel({
     setFile({ texts: body.texts, history: body.history });
     // Show it in this browser now; everyone else sees it after the redeploy.
     pendingEdits.set(id, body.texts[id] ?? null);
+    return null;
+  };
+
+  /** Delete every edit and go back to the demo text. Returns an error or null. */
+  const resetAll = async (confirmCode: string) => {
+    const res = await fetch("/api/site-text", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-passcode": passcode ?? "",
+      },
+      body: JSON.stringify({ passcode: confirmCode }),
+    });
+    const body = (await res.json().catch(() => null)) as
+      | (SiteTextFile & { error?: string })
+      | null;
+    if (res.status === 401) return "That passcode isn’t right.";
+    if (!res.ok || !body)
+      return body?.error ?? "Resetting failed. Please try again.";
+    const ids = Object.keys(file.texts);
+    setFile({ texts: body.texts, history: body.history });
+    ids.forEach((id) => pendingEdits.set(id, null));
     return null;
   };
 
@@ -263,6 +413,15 @@ export function AdminPanel({
 
         <HowItWorks mode={mode} missing={missing} />
 
+        {canSave && (
+          <ResetAll
+            mode={mode}
+            changedCount={changed.size}
+            passcodeRequired={passcodeRequired}
+            onReset={resetAll}
+          />
+        )}
+
         {mode !== "off" && !unlocked && (
           <PasscodeForm
             onSubmit={async (code) => {
@@ -290,20 +449,49 @@ export function AdminPanel({
 
         {/* Toolbar */}
         <div className="z-20 mb-8 flex flex-wrap items-center gap-3 border border-black/10 bg-white p-3 shadow-[0_12px_30px_-24px_rgba(0,0,0,.5)] lg:sticky lg:top-[calc(var(--header-h)+8px)]">
-          <label className="relative min-w-[220px] flex-1">
-            <span className="sr-only">Search the text</span>
-            <Search
-              size={16}
-              className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-ink-faint"
-            />
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search for a word or phrase…"
-              className="w-full rounded-[2px] border border-black/12 bg-field py-2.5 pr-3 pl-9 text-[15px] focus:border-ink focus:outline-none"
-            />
-          </label>
+          <form
+            role="search"
+            className="flex min-w-[220px] flex-1 flex-wrap gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (aiSearch && canSave) askAi();
+            }}
+          >
+            <label className="relative min-w-[200px] flex-1">
+              <span className="sr-only">Search the text</span>
+              <Search
+                size={16}
+                className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-ink-faint"
+              />
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setAi(null);
+                  setAiError(null);
+                }}
+                placeholder={
+                  aiSearch && canSave
+                    ? "Search, or describe what you’re looking for…"
+                    : "Search for a word or phrase…"
+                }
+                className="w-full rounded-[2px] border border-black/12 bg-field py-2.5 pr-3 pl-9 text-[15px] focus:border-ink focus:outline-none"
+              />
+            </label>
+            {aiSearch && canSave && (
+              <Button
+                type="submit"
+                size="sm"
+                variant="ghost"
+                className="cursor-pointer self-stretch"
+                disabled={!query.trim() || aiBusy}
+              >
+                <Sparkles size={15} />
+                {aiBusy ? "Thinking…" : "Ask in your own words"}
+              </Button>
+            )}
+          </form>
           <label className="flex cursor-pointer items-center gap-2 text-sm font-medium">
             <input
               type="checkbox"
@@ -331,6 +519,45 @@ export function AdminPanel({
               <Download size={15} /> Download a copy
             </Button>
           </div>
+          {(compiled || ai) && (
+            <p
+              role="status"
+              className="m-0 flex w-full flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-soft"
+            >
+              {ai ? (
+                <>
+                  <span>
+                    <strong className="text-ink">{matchCount}</strong>{" "}
+                    {matchCount === 1 ? "text" : "texts"} related to “
+                    {ai.question}”
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setAi(null)}
+                    className="inline-flex cursor-pointer items-center gap-1 font-semibold text-ink underline-offset-4 hover:underline"
+                  >
+                    <X size={14} /> Back to normal search
+                  </button>
+                </>
+              ) : (
+                <span>
+                  <strong className="text-ink">{matchCount}</strong>{" "}
+                  {matchCount === 1 ? "match" : "matches"}, best first
+                  {aiSearch && canSave
+                    ? ". Not what you meant? Press “Ask in your own words”."
+                    : ". Related words and small typos are included."}
+                </span>
+              )}
+            </p>
+          )}
+          {aiError && (
+            <p
+              role="alert"
+              className="m-0 w-full text-sm font-medium text-[#9a1b1b]"
+            >
+              {aiError}
+            </p>
+          )}
           {notice && (
             <p
               role="status"
@@ -346,8 +573,9 @@ export function AdminPanel({
           <div className="flex min-w-0 flex-col gap-8">
             {visibleSections.length === 0 && (
               <p className="m-0 border border-black/10 bg-white p-8 text-center text-muted-foreground">
-                Nothing matches. Try another word, or untick “Only show changed
-                text”.
+                {ai
+                  ? "The AI search found nothing related. Try describing it another way."
+                  : "Nothing matches. Try another word, or untick “Only show changed text”."}
               </p>
             )}
             {visibleSections.map((section) => (
@@ -359,6 +587,8 @@ export function AdminPanel({
                 canSave={canSave}
                 mode={mode}
                 onSave={save}
+                query={compiled}
+                reasons={reasons}
               />
             ))}
           </div>
@@ -425,11 +655,151 @@ function HowItWorks({ mode, missing }: { mode: Mode; missing: string[] }) {
             </li>
           )}
           <li>
-            Every change is recorded. Use <strong>Revert to demo text</strong>{" "}
-            or <strong>Earlier versions</strong> on any item to undo it.
+            Every change is recorded. Use <strong>Undo last save</strong>,{" "}
+            <strong>Revert to demo text</strong> or{" "}
+            <strong>Earlier versions</strong> on any item to undo it.
           </li>
         </ul>
       </div>
+    </aside>
+  );
+}
+
+function ResetAll({
+  mode,
+  changedCount,
+  passcodeRequired,
+  onReset,
+}: {
+  mode: Mode;
+  changedCount: number;
+  passcodeRequired: boolean;
+  onReset: (code: string) => Promise<string | null>;
+}) {
+  const [open, setOpen] = useState(false);
+  const [code, setCode] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(
+    null,
+  );
+  // Without a passcode (local development), typing RESET confirms instead.
+  const ready = passcodeRequired ? code.length > 0 : code.trim() === "RESET";
+
+  return (
+    <aside className="mb-8 border border-black/12 bg-white p-5 text-[15px] text-ink">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <p className="m-0 mb-1 font-semibold">
+            Start over: reset the whole site to the demo text
+          </p>
+          <p className="m-0 text-ink-soft">
+            Only use this if you want to throw away all your changes at once. To
+            undo a single change, use <strong>Undo last save</strong> or{" "}
+            <strong>Revert to demo text</strong> on that item instead.
+          </p>
+        </div>
+        {!open && (
+          <Button
+            size="sm"
+            variant="ghost"
+            className="cursor-pointer"
+            disabled={changedCount === 0}
+            onClick={() => {
+              setOpen(true);
+              setMessage(null);
+            }}
+          >
+            <RotateCcw size={14} /> Reset everything…
+          </Button>
+        )}
+      </div>
+
+      {open && (
+        <form
+          className="mt-4 border border-[#d9b44a] bg-[#fff8e1] p-4"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            if (!ready) return;
+            setBusy(true);
+            const error = await onReset(code);
+            setBusy(false);
+            if (error) {
+              setMessage({ ok: false, text: error });
+            } else {
+              setOpen(false);
+              setCode("");
+              setMessage({
+                ok: true,
+                text:
+                  mode === "github"
+                    ? "Everything was reset. The demo text will be live for everyone in about 1–2 minutes."
+                    : "Everything was reset to the demo text.",
+              });
+            }
+          }}
+        >
+          <p className="m-0 mb-3 flex gap-2 font-semibold">
+            <TriangleAlert
+              size={20}
+              className="mt-0.5 shrink-0 text-[#9a6b00]"
+              aria-hidden="true"
+            />
+            <span>
+              Please note: this will delete everything you’ve been editing (
+              {changedCount} {changedCount === 1 ? "change" : "changes"} and all
+              earlier versions) and revert the site text to its original demo
+              text. This can’t be undone from the admin panel.
+            </span>
+          </p>
+          <label className="mb-3 flex max-w-[360px] flex-col gap-1.5 font-semibold">
+            {passcodeRequired
+              ? "Enter the admin passcode to confirm"
+              : "Type RESET to confirm"}
+            <input
+              type={passcodeRequired ? "password" : "text"}
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              autoComplete="off"
+              className="rounded-[2px] border border-black/15 bg-white p-3 text-[15px] font-normal focus:border-ink focus:outline-none"
+            />
+          </label>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              type="submit"
+              size="sm"
+              className="cursor-pointer"
+              disabled={!ready || busy}
+            >
+              {busy ? "Resetting…" : "Yes, delete my changes and reset"}
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              className="cursor-pointer"
+              onClick={() => {
+                setOpen(false);
+                setCode("");
+                setMessage(null);
+              }}
+            >
+              Cancel
+            </Button>
+          </div>
+        </form>
+      )}
+
+      {message && (
+        <p
+          role={message.ok ? "status" : "alert"}
+          className={cn(
+            "m-0 mt-3 text-sm font-medium",
+            message.ok ? "text-ink" : "text-[#9a1b1b]",
+          )}
+        >
+          {message.text}
+        </p>
+      )}
     </aside>
   );
 }
@@ -600,6 +970,8 @@ function SectionCard({
   canSave,
   mode,
   onSave,
+  query,
+  reasons,
 }: {
   section: CopySection;
   file: SiteTextFile;
@@ -607,6 +979,8 @@ function SectionCard({
   canSave: boolean;
   mode: Mode;
   onSave: (id: string, text: string | null) => Promise<string | null>;
+  query: CompiledQuery | null;
+  reasons: Map<string, string>;
 }) {
   return (
     <section
@@ -627,7 +1001,7 @@ function SectionCard({
           </Link>
         </div>
         <h2 className="m-0 mb-4 font-serif text-[clamp(1.4rem,2.4vw,1.8rem)] leading-[1.2] font-bold">
-          {section.title}
+          <Highlight text={section.title} query={query} />
         </h2>
         <dl className="m-0 grid gap-3 text-[15px] md:grid-cols-2">
           <div className="bg-paper p-4">
@@ -655,6 +1029,8 @@ function SectionCard({
             canSave={canSave}
             mode={mode}
             onSave={onSave}
+            query={query}
+            reason={reasons.get(field.id)}
           />
         ))}
       </div>
@@ -670,6 +1046,8 @@ function FieldEditor({
   canSave,
   mode,
   onSave,
+  query,
+  reason,
 }: {
   field: CopyField;
   current: string;
@@ -678,6 +1056,8 @@ function FieldEditor({
   canSave: boolean;
   mode: Mode;
   onSave: (id: string, text: string | null) => Promise<string | null>;
+  query: CompiledQuery | null;
+  reason?: string;
 }) {
   const [draft, setDraft] = useState("");
   const [busy, setBusy] = useState(false);
@@ -685,6 +1065,13 @@ function FieldEditor({
     null,
   );
   const lastChange = entries[entries.length - 1];
+  // What this text was before the last save (null: the demo text).
+  const previous =
+    entries.length > 0
+      ? (entries[entries.length - 2]?.text ?? null)
+      : undefined;
+  const canUndo =
+    previous !== undefined && (previous ?? field.text) !== current;
   // Saved, but this build of the site doesn't have it yet.
   const goingLive = mode === "github" && publishedValue(field.id) !== current;
 
@@ -729,7 +1116,7 @@ function FieldEditor({
     <div className="p-[clamp(20px,3vw,32px)]">
       <div className="mb-2 flex flex-wrap items-center gap-2">
         <label htmlFor={inputId} className="text-[15px] font-semibold">
-          {field.label}
+          <Highlight text={field.label} query={query} />
         </label>
         {isChanged && (
           <span className="rounded-full bg-ink px-2 py-0.5 text-[11px] font-semibold tracking-[.06em] text-white uppercase">
@@ -749,17 +1136,24 @@ function FieldEditor({
         )}
       </div>
 
+      {reason && (
+        <p className="m-0 mb-2 inline-flex items-start gap-1.5 text-[13.5px] text-ink-soft">
+          <Sparkles size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
+          {reason}
+        </p>
+      )}
+
       <div className="mb-3 border-l-[3px] border-ink/20 bg-paper px-4 py-3">
         <div className="mb-1 text-[11.5px] font-semibold tracking-[.12em] text-ink-faint uppercase">
           Current text
         </div>
         <p className="m-0 text-[15px] whitespace-pre-line text-ink">
-          {current}
+          <Highlight text={current} query={query} />
         </p>
         {isChanged && (
           <p className="m-0 mt-2 text-[13.5px] text-muted-foreground">
             <span className="font-semibold">Original demo text:</span>{" "}
-            {field.text}
+            <Highlight text={field.text} query={query} />
           </p>
         )}
       </div>
@@ -789,6 +1183,18 @@ function FieldEditor({
         >
           {busy ? "Saving…" : "Save to site"}
         </Button>
+        {canUndo && (
+          <Button
+            size="sm"
+            variant="ghost"
+            className="cursor-pointer"
+            disabled={!canSave || busy}
+            title={`Go back to: ${previous ?? field.text}`}
+            onClick={() => run(previous ?? null, "Last save undone.")}
+          >
+            <Undo2 size={14} /> Undo last save
+          </Button>
+        )}
         {isChanged && (
           <Button
             size="sm"

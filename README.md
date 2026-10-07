@@ -33,7 +33,9 @@ Content (practice areas, people, articles, contact details) lives in `src/conten
 
 ## Admin panel (editing the site text)
 
-The coloured **Admin panel** pill in the footer opens `/admin`, which lists every piece of text on the site in sections that explain what each part is for and what it should cover. The client types a replacement under any text and presses **Save to site**. Every field keeps its history, so they can **revert to the demo text** or restore any earlier version.
+The coloured **Admin panel** pill in the footer opens `/admin`, which lists every piece of text on the site in sections that explain what each part is for and what it should cover. The client types a replacement under any text and presses **Save to site**. Every field keeps its history, so they can **undo the last save**, **revert to the demo text** or restore any earlier version. **Reset everything** (it asks for the passcode again, with a warning) wipes all edits and their history and puts the whole site back to the demo text; the repo's commit history still has the old text if it's ever needed.
+
+**Search.** The search box forgives typos, accents, punctuation and word order, knows related words ("phone" finds "call", "lawyers" finds "advocates") and ranks the best matches first with the matching words highlighted (`src/lib/smart-search.ts`). With `ANTHROPIC_API_KEY` set, an **Ask in your own words** button also appears: Claude reads the list of every text and picks the ones related to a plain-English description (`src/lib/ai-search.ts`, `POST /api/site-text/search`, passcode-protected). It uses Claude Opus 5.5 at low effort with the text list prompt-cached, and server-side refusal fallbacks are switched on. Without the key the button simply doesn't show.
 
 **Saving writes into the site's own code.** Each save is committed to `src/content/site-text.json` in this repository, and Vercel rebuilds the site (live for everyone in about 1–2 minutes; the client sees it immediately). There is no database: the text lives in the repo, so moving the code moves the text.
 
@@ -44,6 +46,7 @@ Setup (Vercel → Settings → Environment Variables, then redeploy):
 | `GITHUB_TOKEN` | A GitHub token with write access to this repo's contents |
 | `ADMIN_PASSCODE` | The passcode the client types to unlock the admin panel |
 | `GITHUB_REPO`, `GITHUB_BRANCH` | Optional; Vercel provides the repo and branch automatically |
+| `ANTHROPIC_API_KEY` | Optional; turns on **Ask in your own words** in the admin search |
 
 Until these are set, the admin panel is read-only. In `npm run dev` it saves straight to the file on disk.
 

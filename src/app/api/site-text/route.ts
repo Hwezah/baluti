@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { copyDefaults, copySections, isCopyId } from "@/content/copy";
-import { applyEdit } from "@/lib/site-text";
+import { applyEdit, emptySiteText } from "@/lib/site-text";
 import {
   StoreError,
   checkPasscode,
@@ -69,6 +69,31 @@ export async function POST(request: NextRequest) {
     const file = await updateSiteText(
       (current) => applyEdit(current, id, value),
       `Site text: ${value === null ? "revert" : "update"} ${labels.get(id) ?? id}`,
+    );
+    return NextResponse.json(file);
+  } catch (error) {
+    return failure(error);
+  }
+}
+
+/**
+ * Reset the whole site to the demo text, deleting every edit and its history
+ * (the repository's commit history still has them). The passcode must be
+ * typed again in the body: `{ passcode }`.
+ */
+export async function DELETE(request: NextRequest) {
+  if (!checkPasscode(request.headers.get("x-admin-passcode")))
+    return unauthorized();
+  const body = (await request.json().catch(() => null)) as {
+    passcode?: unknown;
+  } | null;
+  const confirm = typeof body?.passcode === "string" ? body.passcode : null;
+  if (!checkPasscode(confirm)) return unauthorized();
+
+  try {
+    const file = await updateSiteText(
+      () => emptySiteText(),
+      "Site text: reset everything to the demo text",
     );
     return NextResponse.json(file);
   } catch (error) {
