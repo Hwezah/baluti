@@ -1330,159 +1330,58 @@ export function isEssentialField(id: string) {
 }
 
 // ─── What each text states ─────────────────────────────────────────────────
-// A short note shown above the text in the admin panel, so the client knows
-// exactly what they are confirming (e.g. "40+" is the number of attorneys
-// and staff). Covers the "must check first" texts, including added items.
-
-const promise =
-  "This is a promise to visitors (for example 24/7, free, reply times). Make sure the firm can keep it.";
+// A few words shown above each "must check first" text in the admin panel,
+// saying what it is (e.g. "Number of attorneys and staff"). Keep them short:
+// they sit above every box, including on phones.
 
 const hintRules: [RegExp, string | ((m: RegExpMatchArray) => string)][] = [
-  [
-    /^contact\.address\.short$/,
-    "Your office address on one line, as shown in the top bar.",
-  ],
-  [
-    /^contact\.address\.line[12]$/,
-    "Your office address. It appears in the footer and on the Contact page.",
-  ],
-  [
-    /^contact\.phone\./,
-    "A phone number visitors can tap to call. It appears in the top bar, the menu, the footer and on the Contact page.",
-  ],
-  [
-    /^contact\.email\.0$/,
-    "The main email address for enquiries. Visitors can tap it to write to the firm.",
-  ],
-  [
-    /^contact\.email\.1$/,
-    "Emmanuel’s email address, shown in the top bar and on the Contact page.",
-  ],
-  [/^contact\.hours\.weekdays$/, "Your opening hours from Monday to Friday."],
-  [
-    /^contact\.hours\.saturday$/,
-    "Your opening hours on Saturday. Say “Closed” if the office is shut.",
-  ],
-  [
-    /^contact\.hours\.compact$/,
-    "Your opening hours in a few words, shown in the top bar and the contact panel. Keep it in line with the hours above.",
-  ],
+  [/^contact\.address\./, "Office address."],
+  [/^contact\.phone\./, "Phone number."],
+  [/^contact\.email\.0$/, "Enquiries email."],
+  [/^contact\.email\.1$/, "Emmanuel’s email."],
+  [/^contact\.hours\.weekdays$/, "Weekday opening hours."],
+  [/^contact\.hours\.saturday$/, "Saturday opening hours."],
+  [/^contact\.hours\.compact$/, "Opening hours, short."],
   [
     /^(home\.stats|about\.mission\.stat)\.(\d+)\.value$/,
-    (m) =>
-      `The number the site shows for “${copyDefaults[`${m[1]}.${m[2]}.label`]}”. Visitors read it as fact, so make sure it’s accurate.`,
+    (m) => `Number of ${copyDefaults[`${m[1]}.${m[2]}.label`].toLowerCase()}.`,
   ],
   [
     /^(home\.stats|about\.mission\.stat)\.(\d+)\.label$/,
-    (m) =>
-      `The words under the number “${copyDefaults[`${m[1]}.${m[2]}.value`]}”: what that number counts.`,
+    (m) => `What “${copyDefaults[`${m[1]}.${m[2]}.value`]}” counts.`,
   ],
+  [/^home\.reviews\.[^.]+\.quote$/, "A real client’s review."],
+  [/^home\.reviews\.[^.]+\.name$/, "Reviewer’s name."],
+  [/^home\.reviews\.[^.]+\.place$/, "Reviewer’s town."],
+  [/^about\.story\.[^.]+\.year$/, "Year of this milestone."],
+  [/^about\.story\.[^.]+\.title$/, "What happened."],
+  [/^about\.story\.[^.]+\.body$/, "Milestone details."],
+  [/^about\.quote$/, "Emmanuel’s own words."],
+  [/^person\.[^.]+\.name$/, "Full name."],
+  [/^person\.[^.]+\.role$/, "Job title."],
+  [/^person\.[^.]+\.bio$/, "What they lead."],
+  [/^person\.[^.]+\.area$/, "Main area of practice."],
+  [/^attorney\.emmanuel\.first$/, "First name."],
+  [/^attorney\.emmanuel\.email$/, "Email address."],
+  [/^attorney\.emmanuel\.tagline$/, "One-line summary."],
+  [/^attorney\.emmanuel\.about\./, "Biography."],
+  [/^attorney\.emmanuel\.matters\./, "A past case (no client names)."],
+  [/^attorney\.emmanuel\.credentials\.[^.]+\.title$/, "Qualification."],
+  [/^attorney\.emmanuel\.credentials\.[^.]+\.detail$/, "Where it’s from."],
+  [/^attorney\.emmanuel\.languages$/, "Languages spoken."],
+  [/^practiceIndex\.hero\.title$/, "Number of practice areas."],
+  [/^practice\.[^.]+\.title$/, "Practice area name."],
+  [/^practice\.[^.]+\.summary$/, "One-line description."],
+  [/^practice\.[^.]+\.services\./, "A service offered."],
+  [/^faq\.[^.]+\.q$/, "Question."],
+  [/^faq\.[^.]+\.a$/, "Answer."],
   [
-    /^home\.reviews\.[^.]+\.quote$/,
-    "A real client’s words, used with their permission. Replace this demo review, or hide it.",
+    /^(home\.cta\.body|contact\.hero\.intro)$/,
+    "When and how clients can reach you.",
   ],
-  [
-    /^home\.reviews\.[^.]+\.name$/,
-    "How the client who wrote this review is named, e.g. first name and initial.",
-  ],
-  [
-    /^home\.reviews\.[^.]+\.place$/,
-    "The town of the client who wrote this review.",
-  ],
-  [
-    /^about\.story\.[^.]+\.year$/,
-    "The year of this milestone in the firm’s history.",
-  ],
-  [/^about\.story\.[^.]+\.title$/, "What happened that year, in a few words."],
-  [
-    /^about\.story\.[^.]+\.body$/,
-    "One sentence about this milestone. Make sure the facts are right.",
-  ],
-  [
-    /^about\.quote$/,
-    "A quote shown under Emmanuel’s name. It must be something he said or approves.",
-  ],
-  [
-    /^person\.[^.]+\.name$/,
-    "This person’s full name as it should appear on the site. “Name” is a placeholder: type the real name, or hide the person.",
-  ],
-  [
-    /^person\.[^.]+\.role$/,
-    "This person’s job title, e.g. Partner or Associate.",
-  ],
-  [
-    /^person\.[^.]+\.bio$/,
-    "One sentence on what this person leads, shown on the People page.",
-  ],
-  [
-    /^person\.[^.]+\.area$/,
-    "This person’s main area of practice, shown on the People page.",
-  ],
-  [
-    /^attorney\.emmanuel\.first$/,
-    "Emmanuel’s first name, used in “About Emmanuel” and the “Email Emmanuel” button.",
-  ],
-  [
-    /^attorney\.emmanuel\.email$/,
-    "The address the “Email Emmanuel” button on his profile writes to.",
-  ],
-  [
-    /^attorney\.emmanuel\.tagline$/,
-    "One sentence under Emmanuel’s name at the top of his profile.",
-  ],
-  [
-    /^attorney\.emmanuel\.about\./,
-    "A paragraph of Emmanuel’s biography. Check every fact (years, roles, achievements).",
-  ],
-  [
-    /^attorney\.emmanuel\.matters\./,
-    "An example of work Emmanuel has done. Keep client details confidential.",
-  ],
-  [
-    /^attorney\.emmanuel\.credentials\.[^.]+\.title$/,
-    "One of Emmanuel’s qualifications or admissions, e.g. a degree.",
-  ],
-  [
-    /^attorney\.emmanuel\.credentials\.[^.]+\.detail$/,
-    "Where the qualification is from, or what it means.",
-  ],
-  [
-    /^attorney\.emmanuel\.languages$/,
-    "The languages Emmanuel works in, separated by commas.",
-  ],
-  [
-    /^practiceIndex\.hero\.title$/,
-    "Headline of the Practice Areas page. It states how many practice areas the firm has, so make sure the number is right.",
-  ],
-  [
-    /^practice\.[^.]+\.title$/,
-    "The name of a practice area the firm offers. It appears in the menus, footer, cards and on its own page.",
-  ],
-  [
-    /^practice\.[^.]+\.summary$/,
-    "One sentence describing this practice area, shown on cards across the site.",
-  ],
-  [
-    /^practice\.[^.]+\.services\./,
-    "One service the firm offers in this practice area. Hide it if the firm doesn’t offer it.",
-  ],
-  [/^faq\.[^.]+\.q$/, "A question visitors often ask before getting in touch."],
-  [
-    /^faq\.[^.]+\.a$/,
-    "The firm’s answer. Visitors take it as a promise, so keep it accurate.",
-  ],
-  [
-    /^(home\.cta\.body|contact\.hero\.intro|contact\.book\.body|form\.thanks\.body)$/,
-    promise,
-  ],
-  [
-    /^form\.privacy$/,
-    "What the firm promises about the privacy of enquiries sent through the form.",
-  ],
-  [
-    /^article\.disclaimer\.text$/,
-    "The legal disclaimer at the end of every article.",
-  ],
+  [/^(contact\.book\.body|form\.thanks\.body)$/, "How fast you reply."],
+  [/^form\.privacy$/, "Privacy promise."],
+  [/^article\.disclaimer\.text$/, "Legal disclaimer."],
 ];
 
 /** What a text states, for the note above it in the admin panel. */
