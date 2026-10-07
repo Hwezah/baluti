@@ -20,7 +20,8 @@ import {
 
 import {
   copyDefaults,
-  copyGroups,
+  adminGroups,
+  adminSections,
   copySections,
   type CopyField,
   type CopySection,
@@ -195,7 +196,7 @@ export function AdminPanel({
   const changed = useMemo(
     () =>
       new Set(
-        copySections.flatMap((s) =>
+        adminSections.flatMap((s) =>
           s.fields.filter((f) => f.id in file.texts).map((f) => f.id),
         ),
       ),
@@ -208,7 +209,7 @@ export function AdminPanel({
     const allowed = (id: string) => !onlyChanged || changed.has(id);
 
     if (!compiled) {
-      return copySections
+      return adminSections
         .map((section) => ({
           ...section,
           fields: section.fields.filter((f) => allowed(f.id)),
@@ -217,7 +218,7 @@ export function AdminPanel({
     }
 
     // Smart search: score every text, keep the good ones, best first.
-    const scored = copySections.map((section) => {
+    const scored = adminSections.map((section) => {
       const context = `${section.group} ${section.title}`;
       const about = `${section.purpose} ${section.covers}`;
       const fields = section.fields
@@ -339,10 +340,12 @@ export function AdminPanel({
             Edit the text on your website
           </h1>
           <p className="m-0 text-base text-ink-soft">
-            Every piece of text on the site is listed below, grouped by page and
-            section. Under each one, type the text you would like instead and
-            press <strong>Save to site</strong>. You can always go back to the
-            original demo text or to any earlier version.
+            Below is the text only you can get right: your firm’s details,
+            people and credentials, practice areas, articles and client reviews,
+            grouped by page. Under each one, type the text you would like
+            instead and press <strong>Save to site</strong>. You can always undo
+            a change or go back to the original demo text. Menus, buttons and
+            small headings are looked after by your developer.
           </p>
         </header>
 
@@ -784,7 +787,7 @@ function SectionNav({
       aria-label="Sections"
       className="hidden max-h-[calc(100vh-var(--header-h)-120px)] overflow-y-auto border border-black/10 bg-white p-4 lg:sticky lg:top-[calc(var(--header-h)+100px)] lg:block"
     >
-      {copyGroups.map((group) => {
+      {adminGroups.map((group) => {
         const inGroup = sections.filter((s) => s.group === group);
         if (inGroup.length === 0) return null;
         return (

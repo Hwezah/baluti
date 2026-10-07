@@ -1,6 +1,7 @@
-// Every piece of editable text on the site, organised into the sections the
-// admin panel (/admin) shows. Pages render text by id through <Copy> /
-// useCopy(), which return the client's latest edit or this demo text.
+// Every piece of text on the site, organised into sections. Pages render
+// text by id through <Copy> / useCopy(), which return the client's latest
+// edit or this demo text. The admin panel (/admin) shows only the fields the
+// client should own (see `isClientField`); the rest stays developer-managed.
 //
 // Data-backed text (practice areas, people, articles, contact details) is
 // generated from src/content so there is still one source of demo text.
@@ -123,12 +124,11 @@ const siteWide: CopySection[] = [
   {
     id: "footer",
     group: "Site-wide",
-    title: "Footer",
+    title: "Firm description (footer)",
     href: "/",
     purpose:
       "The black band at the bottom of every page: a short description of the firm, quick links and contact details.",
-    covers:
-      "A one or two sentence summary of who the firm serves and how, plus clear column headings. Legal links (Terms, Privacy) should match real policy pages once they exist.",
+    covers: "A one or two sentence summary of who the firm serves and how.",
     fields: [
       f(
         "footer.blurb",
@@ -447,7 +447,7 @@ const home: CopySection[] = [
     purpose:
       "The closing band on the home page that asks visitors to get in touch.",
     covers:
-      "A direct invitation to contact the firm, when and how they can reach it, and a clear button label.",
+      "When and how visitors can reach the firm (online, by phone, in person). Make sure any promise, like “24/7”, is accurate.",
     fields: [
       f("home.cta.eyebrow", "Small label", "Need help?"),
       f(
@@ -840,7 +840,7 @@ const practiceIndex: CopySection[] = [
     purpose:
       "The overview page listing every practice area under four groups, followed by the firm’s process.",
     covers:
-      "How broad the firm’s expertise is, the names of the groups, and the steps every matter follows.",
+      "How broad the firm’s expertise is (keep the number of areas accurate) and the names of the groups.",
     fields: [
       f("practiceIndex.hero.eyebrow", "Small label", "What we do"),
       f(
@@ -907,12 +907,11 @@ const practiceIndex: CopySection[] = [
   {
     id: "practice-detail-labels",
     group: "Practice areas",
-    title: "Practice area pages — shared text",
+    title: "How we handle a matter (practice area pages)",
     href: "/practice-areas/banking",
     purpose:
-      "Headings, the sidebar and the default four-step approach used on every individual practice area page.",
-    covers:
-      "Clear headings and a short pitch for the free consultation in the sidebar.",
+      "The four-step approach shown on practice area pages that don’t have their own steps.",
+    covers: "The stages a client goes through, one word and one sentence each.",
     fields: [
       f("practiceDetail.help", "“How we can help” heading", "How we can help"),
       f("practiceDetail.services", "Services heading", "Our services include"),
@@ -1036,9 +1035,8 @@ const insightSections: CopySection[] = [
     title: "Insights page",
     href: "/insights",
     purpose:
-      "The news and articles page: its heading, the featured article and the newsletter sign-up.",
-    covers:
-      "Why readers should follow the firm’s insights, a teaser for the featured article, and a short promise about the newsletter.",
+      "The teaser for the featured article at the top of the Insights page.",
+    covers: "Two sentences on why the featured article matters to readers.",
     fields: [
       f("insights.hero.eyebrow", "Small label", "News & insights"),
       f(
@@ -1088,10 +1086,9 @@ const insightSections: CopySection[] = [
   {
     id: "article-labels",
     group: "Insights",
-    title: "Article pages — shared text",
+    title: "Legal disclaimer (article pages)",
     href: `/insights/${featuredInsight.slug}`,
-    purpose:
-      "Text shown on every article page, including the legal disclaimer.",
+    purpose: "The disclaimer shown at the end of every article.",
     covers:
       "A disclaimer that the article is general information, not legal advice, reviewed by the firm.",
     fields: [
@@ -1158,9 +1155,9 @@ const contact: CopySection[] = [
     title: "Contact page",
     href: "/contact",
     purpose:
-      "The heading, booking introduction and contact-detail labels. The address, numbers and emails themselves are in “Contact details” under Site-wide.",
+      "The introduction and booking text on the Contact page. The address, numbers and emails themselves are in “Contact details” under Firm details.",
     covers:
-      "Reassurance that help is available, how quickly the firm responds, and clear labels for each way to get in touch.",
+      "When the firm can be reached and how quickly it responds. These are promises to clients, so keep them accurate.",
     fields: [
       f("contact.hero.eyebrow", "Small label", "Need help?"),
       f("contact.hero.title", "Headline", "Receive legal help today"),
@@ -1188,9 +1185,8 @@ const contact: CopySection[] = [
     title: "Consultation form",
     href: "/contact",
     purpose:
-      "The booking form’s box hints, button and the thank-you message shown after sending.",
-    covers:
-      "Short hints for each box, a clear button, and a thank-you that says when the firm will reply.",
+      "The confidentiality note under the booking form and the thank-you message shown after sending.",
+    covers: "What happens to the enquiry and when the firm will reply.",
     fields: [
       f("form.name", "Box hint — name", "Full name"),
       f("form.email", "Box hint — email", "Email"),
@@ -1261,7 +1257,58 @@ export const copySections: CopySection[] = [
   ...contact,
 ];
 
-export const copyGroups = [...new Set(copySections.map((s) => s.group))];
+// ─── What the client edits ─────────────────────────────────────────────────
+// The admin panel lists the firm's facts and legal content: contact details,
+// people and credentials, practice areas, articles, reviews, numbers, the
+// firm's story and promises. Menus, buttons, small labels, section headings
+// and form hints are site furniture and stay developer-managed (they still
+// render through <Copy>, just not in the admin panel).
+
+const developerManaged: RegExp[] = [
+  /^nav\./,
+  /^panel\./,
+  /^common\./,
+  /^footer\.(?!blurb$)/,
+  /\.eyebrow$/,
+  /^home\.hero\.(cta|chip|line2$)/,
+  /^home\.(why|practice|trust|values|team|insights)\./,
+  /^home\.(stats|reviews)\.title$/,
+  /^home\.cta\.(title|button)$/,
+  /^about\.hero\.title$/,
+  /^about\.(mission|story|values|approach)\.title$/,
+  /^about\.cta\./,
+  /^people\.(hero|leadership|team|cta)\./,
+  /^people\.careers\.(title|cta)$/,
+  /^attorney\.label\./,
+  /^practiceIndex\.(process|steps|cta)\./,
+  /^practiceDetail\.(?!steps\.)/,
+  /^practice\.[^.]+\.group$/,
+  /^insights\.(hero|newsletter)\./,
+  /^insights\.featured\.label$/,
+  /^article\.(?!disclaimer\.text$)/,
+  /^insight\.[^.]+\.readTime$/,
+  /^contact\.(hero\.title|book\.title|label\.|map\.)/,
+  /^form\.(?!privacy$|thanks\.body$)/,
+  /^faq\.title$/,
+];
+
+/** Whether the client edits this text in the admin panel. */
+export function isClientField(id: string) {
+  return !developerManaged.some((pattern) => pattern.test(id));
+}
+
+const groupNames: Record<string, string> = { "Site-wide": "Firm details" };
+
+/** The sections and fields the admin panel shows. */
+export const adminSections: CopySection[] = copySections
+  .map((section) => ({
+    ...section,
+    group: groupNames[section.group] ?? section.group,
+    fields: section.fields.filter((field) => isClientField(field.id)),
+  }))
+  .filter((section) => section.fields.length > 0);
+
+export const adminGroups = [...new Set(adminSections.map((s) => s.group))];
 
 /** id → original demo text. */
 export const copyDefaults: Record<string, string> = Object.fromEntries(
