@@ -459,7 +459,7 @@ export function AdminPanel({
   };
 
   return (
-    <div className="bg-sand px-2 pt-4 pb-12 sm:px-4 sm:pt-10 lg:px-10 lg:pt-16 lg:pb-[110px]">
+    <div className="bg-sand px-1 pt-3 pb-12 sm:px-4 sm:pt-10 lg:px-10 lg:pt-16 lg:pb-[110px]">
       <div className="site-container">
         <header className="mb-4 max-w-[70ch] max-sm:px-1 sm:mb-8">
           <div className="eyebrow mb-3">Admin panel</div>
@@ -1182,9 +1182,9 @@ function SectionCard({
   return (
     <section
       id={sectionAnchor(section.id)}
-      className="scroll-mt-[calc(var(--header-h)+100px)] border border-black/10 bg-white"
+      className="scroll-mt-[calc(var(--header-h)+100px)] border border-black/10 bg-white max-sm:!px-0"
     >
-      <div className="border-b border-black/10 p-3 sm:p-5 lg:p-8">
+      <div className="border-b border-black/10 px-2 py-3 sm:p-5 lg:p-8">
         <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
           <span className="text-xs font-semibold tracking-[.14em] text-ink-faint uppercase">
             {section.group}
@@ -1201,13 +1201,13 @@ function SectionCard({
           <Highlight text={section.title} query={query} />
         </h2>
         <dl className="m-0 grid gap-2 text-[15px] sm:gap-3 md:grid-cols-2">
-          <div className="bg-paper p-3 sm:p-4">
+          <div className="bg-paper p-2 sm:p-4">
             <dt className="mb-1 text-xs font-semibold tracking-[.12em] text-ink-faint uppercase">
               What this section is for
             </dt>
             <dd className="m-0 text-ink-soft">{section.purpose}</dd>
           </div>
-          <div className="bg-paper p-3 sm:p-4">
+          <div className="bg-paper p-2 sm:p-4">
             <dt className="mb-1 text-xs font-semibold tracking-[.12em] text-ink-faint uppercase">
               What it should cover
             </dt>
@@ -1227,7 +1227,7 @@ function SectionCard({
         )}
       </div>
       {sectionItem?.item.hidden ? (
-        <p className="m-0 p-3 sm:p-5 lg:p-8 text-[15px] text-ink-soft">
+        <p className="m-0 px-2 py-3 sm:p-5 lg:p-8 text-[15px] text-ink-soft">
           This {sectionItem.def.noun} is hidden from the site. Its text is kept,
           so you can show it again at any time.
         </p>
@@ -1381,11 +1381,11 @@ function ItemCard({
   return (
     <div
       className={cn(
-        "border-l-4",
+        "border-l-2 sm:border-l-4",
         hidden ? "border-black/10 bg-paper" : "border-ink/70",
       )}
     >
-      <div className="flex flex-wrap items-center justify-between gap-3 px-3 max-sm:flex-col max-sm:items-center pt-3 sm:px-5 sm:pt-5 lg:px-8">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-2 max-sm:flex-col max-sm:items-center pt-3 sm:px-5 sm:pt-5 lg:px-8">
         <div className="flex items-center gap-2 max-sm:self-start">
           <span className="font-serif text-[1.15rem] font-semibold">
             {title}
@@ -1406,7 +1406,7 @@ function ItemCard({
         />
       </div>
       {hidden ? (
-        <p className="m-0 px-3 pt-2 pb-3 sm:px-5 sm:pb-5 lg:px-8 text-[14.5px] text-ink-soft">
+        <p className="m-0 px-2 pt-2 pb-3 sm:px-5 sm:pb-5 lg:px-8 text-[14.5px] text-ink-soft">
           Not shown on the site. Its text is kept, so you can show it again at
           any time.
         </p>
@@ -1437,7 +1437,7 @@ function AddItem({
   const ready = def.parts.every((p) => (values[p.part] ?? "").trim());
 
   return (
-    <div className="bg-paper/60 p-3 sm:p-5 lg:p-8">
+    <div className="bg-paper/60 px-2 py-3 sm:p-5 lg:p-8">
       {!open ? (
         <div className="flex flex-wrap items-center gap-3 max-sm:flex-col max-sm:items-center">
           <Button
@@ -1614,7 +1614,7 @@ function FieldEditor({
   const inputId = `field-${field.id}`;
 
   return (
-    <div className="p-3 sm:p-5 lg:p-8">
+    <div className="px-2 py-3 sm:p-5 lg:p-8">
       <div className="mb-2 flex flex-wrap items-center gap-2">
         <label htmlFor={inputId} className="text-[15px] font-semibold">
           <Highlight text={field.label} query={query} />
@@ -1645,7 +1645,7 @@ function FieldEditor({
         </p>
       )}
 
-      <div className="mb-3 border-l-[3px] border-ink/20 bg-paper px-4 py-3">
+      <div className="mb-3 border-l-[3px] border-ink/20 bg-paper px-2 py-2 sm:px-4 sm:py-3">
         <div className="mb-1 text-[11.5px] font-semibold tracking-[.12em] text-ink-faint uppercase">
           Current text
         </div>
